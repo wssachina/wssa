@@ -1,7 +1,7 @@
 <?php
 
 class Env {
-	const PREFIX = 'CUBINGCHINA_';
+	const PREFIX = 'WSSA_';
 
 	private static $envs;
 

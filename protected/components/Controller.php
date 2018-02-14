@@ -315,7 +315,7 @@ class Controller extends CController {
 		Yii::app()->language = $language;
 		if ($setCookie) {
 			$_COOKIE['language'] = $language;
-			setcookie('language', $language, time() + 365 * 86400, '/', DEV ? null : '.cubingchina.com');
+			setcookie('language', $language, time() + 365 * 86400, '/');
 		}
 	}
 

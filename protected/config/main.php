@@ -40,25 +40,12 @@ $config = [
 			'options'=>[
 				'lock_mode'=>Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler::LOCK_NONE,
 			],
-			'sessionName'=>'CUBINGCHINA_SID',
+			'sessionName'=>'WSSACHINA_SID',
 			'timeout'=>86400 * 7,
 		],
 		'urlManager'=>[
 			'urlFormat'=>'path',
 			'rules'=>[
-				// due to ssl cert
-				// 'http://ac2016.cubingchina.com/'=>[
-				// 	'competition/detail',
-				// 	'defaultParams'=>[
-				// 		'name'=>'Asian-Championship-2016',
-				// 	],
-				// ],
-				// 'http://ac2016.cubingchina.com/<action:schedule|travel|regulations|competitors|registration|scan>'=>[
-				// 	'competition/<action>',
-				// 	'defaultParams'=>[
-				// 		'name'=>'Asian-Championship-2016',
-				// 	],
-				// ],
 				'<page:\d+>'=>'site/index',
 				'faq/<category_id:\d+>'=>[
 					'faq/index',
@@ -285,13 +272,9 @@ $config = [
 		'baseUrl'=>'https://cubingchina.com',
 		'languages'=>['en', 'zh_cn', 'zh_tw'],
 		'author'=>'Baiqiang Dong',
-		'description'=>'The Chinese speedcubing website.',
+		'description'=>'The Chinese WSSA website.',
 		'keywords'=>[
-			'Cubing China',
-			'Cubing',
-			'CubingChina Website',
-			"Rubik's Cube",
-			'Speedcubing',
+			'WSSA China',
 		],
 		'staticPath'=>PUBLIC_PATH . '/static/',
 		'staticUrlPrefix'=>'/static/',

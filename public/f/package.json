@@ -1,7 +1,7 @@
 {
-  "name": "cubingchina",
+  "name": "wssa",
   "version": "1.0.0",
-  "description": "Frontend resources for Cubing China",
+  "description": "Frontend resources for WSSA China",
   "main": "js/main.js",
   "scripts": {
     "build": "webpack -p",

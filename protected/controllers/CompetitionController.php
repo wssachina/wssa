@@ -21,13 +21,6 @@ class CompetitionController extends Controller {
 		);
 	}
 
-	public function init() {
-		if (!DEV) {
-			Yii::app()->urlManager->setBaseUrl(Yii::app()->params->baseUrl);
-		}
-		parent::init();
-	}
-
 	public function actionCompetitors() {
 		$competition = $this->getCompetition();
 		$model = new Registration('search');
