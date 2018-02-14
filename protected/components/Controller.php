@@ -148,80 +148,13 @@ class Controller extends CController {
 
 	public function getNavibar() {
 		if ($this->_navibar === null) {
+			$disclaimer = Config::getConfig('disclaimer');
 			$this->setNavibar(array(
 				array(
 					'label'=>Html::fontAwesome('home', 'a') . Yii::t('common', 'Home'),
 					'url'=>array('/site/index'),
 					'itemOptions'=>array(
 						'class'=>'nav-item',
-					),
-				),
-				array(
-					'label'=>Html::fontAwesome('cubes', 'a') . Yii::t('common', 'Competitions'),
-					'url'=>array('/competition/index'),
-					'itemOptions'=>array(
-						'class'=>'nav-item dropdown',
-					),
-				),
-				array(
-					'label'=>Html::fontAwesome('newspaper-o', 'a') . Yii::t('common', 'Results') . Html::fontAwesome('angle-down', 'b'),
-					'url'=>'#',
-					'active'=>$this->id === 'results',
-					'itemOptions'=>array(
-						'class'=>'nav-item dropdown',
-					),
-					'linkOptions'=>array(
-						'class'=>'dropdown-toggle',
-						'data-toggle'=>'dropdown',
-						'data-hover'=>'dropdown',
-						'data-delay'=>0,
-						'data-close-others'=>'false',
-					),
-					'items'=>array(
-						array(
-							'url'=>array('/results/person'),
-							'label'=>Html::fontAwesome('users', 'a') . Yii::t('common', 'Persons'),
-						),
-						array(
-							'url'=>array('/results/competition'),
-							'label'=>Html::fontAwesome('archive', 'a') . Yii::t('Competitions', 'Competitions'),
-						),
-						array(
-							'url'=>array('/results/rankings'),
-							'label'=>Html::fontAwesome('trophy', 'a') . Yii::t('common', 'Rankings'),
-						),
-						array(
-							'url'=>array('/results/records'),
-							'label'=>Html::fontAwesome('flag-checkered', 'a') . Yii::t('common', 'Records'),
-						),
-						array(
-							'url'=>array('/results/statistics'),
-							'label'=>Html::fontAwesome('bar-chart', 'a') . Yii::t('common', 'Statistics'),
-						),
-					),
-				),
-				array(
-					'label'=>Html::fontAwesome('wrench', 'a') . Yii::t('common', 'Tools') . Html::fontAwesome('angle-down', 'b'),
-					'url'=>'#',
-					'itemOptions'=>array(
-						'class'=>'nav-item dropdown',
-					),
-					'linkOptions'=>array(
-						'class'=>'dropdown-toggle',
-						'data-toggle'=>'dropdown',
-						'data-hover'=>'dropdown',
-						'data-delay'=>0,
-						'data-close-others'=>'false',
-					),
-					'items'=>array(
-						array(
-							'url'=>array('/tools/luckyDraw'),
-							'label'=>Html::fontAwesome('gift', 'a') . Yii::t('common', 'Lucky Draw'),
-						),
-						array(
-							'url'=>'/static/score-card.xlsx',
-							'label'=>Html::fontAwesome('tasks', 'a') . Yii::t('common', 'Score Card'),
-						),
 					),
 				),
 				array(
@@ -241,6 +174,7 @@ class Controller extends CController {
 						array(
 							'url'=>array('/faq/index'),
 							'label'=>Html::fontAwesome('question-circle', 'a') . Yii::t('common', 'FAQ'),
+							'visible'=>Faq::model()->countByAttributes(['status'=>Faq::STATUS_SHOW]) > 0,
 						),
 						array(
 							'url'=>array('/site/page', 'view'=>'about'),
@@ -256,7 +190,8 @@ class Controller extends CController {
 						),
 						array(
 							'url'=>array('/site/page', 'view'=>'disclaimer'),
-							'label'=>Html::fontAwesome('list-alt', 'a') . Config::getConfig('disclaimer')->getAttributeValue('title'),
+							'label'=>Html::fontAwesome('list-alt', 'a') . ($disclaimer == null ? '免责声明' : $disclaimer->getAttributeValue('title')),
+							'visible'=>$disclaimer !== null,
 						),
 					),
 				),
@@ -285,45 +220,14 @@ class Controller extends CController {
 					'data-close-others'=>'false',
 				),
 				'items'=>array(
-					array(
-						'label'=>Yii::t('common', 'Profile'),
-						'url'=>array('/user/profile'),
-					),
-					array(
-						'label'=>Yii::t('common', 'My Registration'),
-						'url'=>array('/user/competitions'),
-					),
-					array(
-						'label'=>Yii::t('common', 'Competition History'),
-						'url'=>array('/user/competitionHistory'),
-						'visible'=>!$isGuest && $user->wcaid != '',
-					),
-					array(
-						'label'=>Yii::t('common', 'My Homepage'),
-						'url'=>$isGuest ? '' : array('/results/p', 'id'=>$user->wcaid),
-						'visible'=>!$isGuest && $user->wcaid != '',
-					),
-					array(
-						'label'=>Yii::t('common', 'My Annual Summary', [
-							'{year}'=>Summary::getCurrentYear(),
-						]),
-						'url'=>$isGuest ? '' : array('/summary/person', 'id'=>$user->wcaid, 'year'=>Summary::getCurrentYear()),
-						'visible'=>!$isGuest && $user->wcaid != '',
-					),
-					array(
-						'label'=>Yii::t('common', 'My Certificates'),
-						'url'=>$isGuest ? '' : array('/user/cert'),
-						'visible'=>!$isGuest && $user->hasCerts,
-					),
+					// array(
+					// 	'label'=>Yii::t('common', 'Profile'),
+					// 	'url'=>array('/user/profile'),
+					// ),
 					array(
 						'label'=>Yii::t('common', 'Board'),
 						'url'=>array('/board/competition/index'),
 						'visible'=>Yii::app()->user->checkRole(User::ROLE_ORGANIZER) || $applied,
-					),
-					array(
-						'label'=>Yii::t('common', 'Apply for Competition'),
-						'url'=>array('/board/competition/apply'),
-						'visible'=>!Yii::app()->user->checkRole(User::ROLE_ORGANIZER) && Yii::app()->user->checkRole(User::ROLE_CHECKED) && !$applied,
 					),
 					array(
 						'label'=>Yii::t('common', 'Logout'),
@@ -332,50 +236,50 @@ class Controller extends CController {
 				),
 				'visible'=>!$isGuest,
 			),
-			array(
-				'label'=>Yii::t('common', 'Login'),
-				'url'=>array('/site/login'),
-				'itemOptions'=>array(
-					'class'=>'nav-item visible-xs',
-				),
-				'visible'=>$isGuest,
-			),
-			array(
-				'label'=>Yii::t('common', 'Register'),
-				'url'=>array('/site/register'),
-				'itemOptions'=>array(
-					'class'=>'nav-item visible-xs',
-				),
-				'visible'=>$isGuest,
-			),
-			array(
-				'label'=>'Language' . Html::fontAwesome('angle-down', 'b'),
-				'url'=>'#',
-				'itemOptions'=>array(
-					'class'=>'nav-item dropdown visible-xs',
-				),
-				'linkOptions'=>array(
-					'class'=>'dropdown-toggle',
-					'data-toggle'=>'dropdown',
-					'data-hover'=>'dropdown',
-					'data-delay'=>0,
-					'data-close-others'=>'false',
-				),
-				'items'=>array(
-					array(
-						'label'=>'简体中文',
-						'url'=>$this->getLangUrl('zh_cn'),
-					),
-					array(
-						'label'=>'繁体中文',
-						'url'=>$this->getLangUrl('zh_tw'),
-					),
-					array(
-						'label'=>'English',
-						'url'=>$this->getLangUrl('en'),
-					),
-				),
-			)
+			// array(
+			// 	'label'=>Yii::t('common', 'Login'),
+			// 	'url'=>array('/site/login'),
+			// 	'itemOptions'=>array(
+			// 		'class'=>'nav-item visible-xs',
+			// 	),
+			// 	'visible'=>$isGuest,
+			// ),
+			// array(
+			// 	'label'=>Yii::t('common', 'Register'),
+			// 	'url'=>array('/site/register'),
+			// 	'itemOptions'=>array(
+			// 		'class'=>'nav-item visible-xs',
+			// 	),
+			// 	'visible'=>$isGuest,
+			// ),
+			// array(
+			// 	'label'=>'Language' . Html::fontAwesome('angle-down', 'b'),
+			// 	'url'=>'#',
+			// 	'itemOptions'=>array(
+			// 		'class'=>'nav-item dropdown visible-xs',
+			// 	),
+			// 	'linkOptions'=>array(
+			// 		'class'=>'dropdown-toggle',
+			// 		'data-toggle'=>'dropdown',
+			// 		'data-hover'=>'dropdown',
+			// 		'data-delay'=>0,
+			// 		'data-close-others'=>'false',
+			// 	),
+			// 	'items'=>array(
+			// 		array(
+			// 			'label'=>'简体中文',
+			// 			'url'=>$this->getLangUrl('zh_cn'),
+			// 		),
+			// 		array(
+			// 			'label'=>'繁体中文',
+			// 			'url'=>$this->getLangUrl('zh_tw'),
+			// 		),
+			// 		array(
+			// 			'label'=>'English',
+			// 			'url'=>$this->getLangUrl('en'),
+			// 		),
+			// 	),
+			// )
 		));
 		$this->_navibar = $navibar;
 	}

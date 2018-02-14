@@ -9,6 +9,7 @@
       </div>
       <div class="panel-collapse collapse in">
         <div class="portlet-body">
+          <?php echo CHtml::link(Html::fontAwesome('plus') . '新增', ['/board/config/add'], ['class'=>'btn btn-square btn-large btn-green']); ?>
           <?php $this->widget('GridView', array(
             'dataProvider'=>$model->search(),
             'columns'=>array(

@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.6.4
+-- version 4.7.4
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: 2017-08-02 07:35:25
--- 服务器版本： 5.6.35
--- PHP Version: 7.1.6
+-- Generation Time: 2018-02-14 21:10:28
+-- 服务器版本： 5.7.20
+-- PHP Version: 7.1.11
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Database: `cubingchina`
+-- Database: `wssa_dev`
 --
 
 -- --------------------------------------------------------
@@ -89,7 +89,12 @@ CREATE TABLE `competition` (
   `podiums_greater_china` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `podiums_u8` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `podiums_u10` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
-  `podiums_u12` tinyint(1) UNSIGNED NOT NULL DEFAULT '0'
+  `podiums_u12` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  `t_shirt` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  `staff` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  `live_stream_url` varchar(256) NOT NULL DEFAULT '',
+  `auto_accept` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  `podiums_num` tinyint(1) UNSIGNED NOT NULL DEFAULT '3'
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -156,7 +161,7 @@ DROP TABLE IF EXISTS `competition_event`;
 CREATE TABLE `competition_event` (
   `id` int(11) UNSIGNED NOT NULL,
   `competition_id` int(11) UNSIGNED NOT NULL,
-  `event` varchar(6) DEFAULT NULL,
+  `event` varchar(32) DEFAULT NULL,
   `round` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `fee` mediumint(6) UNSIGNED NOT NULL DEFAULT '0',
   `fee_second` mediumint(6) UNSIGNED NOT NULL DEFAULT '0',
@@ -189,7 +194,8 @@ CREATE TABLE `competition_location` (
   `delegate_text` varchar(256) NOT NULL DEFAULT '',
   `fee` varchar(128) NOT NULL DEFAULT '',
   `longitude` decimal(12,9) NOT NULL DEFAULT '0.000000000',
-  `latitude` decimal(12,9) NOT NULL DEFAULT '0.000000000'
+  `latitude` decimal(12,9) NOT NULL DEFAULT '0.000000000',
+  `status` tinyint(1) UNSIGNED NOT NULL DEFAULT '1'
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -220,6 +226,21 @@ CREATE TABLE `config` (
   `content_zh` longtext NOT NULL,
   `status` tinyint(1) UNSIGNED NOT NULL DEFAULT '0'
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `custom_event`
+--
+
+DROP TABLE IF EXISTS `custom_event`;
+CREATE TABLE `custom_event` (
+  `id` varchar(32) NOT NULL,
+  `name` varchar(32) NOT NULL,
+  `name_zh` varchar(32) NOT NULL,
+  `rank` int(11) NOT NULL DEFAULT '0',
+  `has_icon` tinyint(1) UNSIGNED NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -304,7 +325,7 @@ DROP TABLE IF EXISTS `live_event_round`;
 CREATE TABLE `live_event_round` (
   `id` int(10) UNSIGNED NOT NULL,
   `competition_id` int(10) UNSIGNED NOT NULL,
-  `event` varchar(6) NOT NULL DEFAULT '',
+  `event` varchar(32) DEFAULT NULL,
   `round` char(1) NOT NULL DEFAULT '',
   `format` char(1) NOT NULL DEFAULT '',
   `cut_off` int(10) UNSIGNED NOT NULL DEFAULT '0',
@@ -367,7 +388,7 @@ CREATE TABLE `live_result` (
   `user_id` int(10) UNSIGNED NOT NULL,
   `user_type` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `number` mediumint(6) UNSIGNED NOT NULL,
-  `event` varchar(6) NOT NULL DEFAULT '',
+  `event` varchar(32) DEFAULT NULL,
   `round` char(1) NOT NULL DEFAULT '',
   `format` char(1) NOT NULL DEFAULT '',
   `best` int(11) NOT NULL DEFAULT '0',
@@ -484,7 +505,10 @@ CREATE TABLE `news` (
   `content_zh` longtext NOT NULL,
   `weight` tinyint(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT '排序权重',
   `date` int(10) UNSIGNED NOT NULL,
-  `status` tinyint(1) UNSIGNED NOT NULL DEFAULT '0'
+  `status` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  `description` longtext NOT NULL,
+  `description_zh` longtext NOT NULL,
+  `alias` varchar(128) NOT NULL DEFAULT ''
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -610,7 +634,10 @@ CREATE TABLE `registration` (
   `entourage_name` varchar(100) DEFAULT '',
   `accept_time` int(11) UNSIGNED NOT NULL DEFAULT '0',
   `cancel_time` int(11) UNSIGNED NOT NULL DEFAULT '0',
-  `guest_paid` tinyint(1) UNSIGNED NOT NULL DEFAULT '0'
+  `guest_paid` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  `t_shirt_size` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  `staff_type` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  `staff_statement` varchar(2048) DEFAULT ''
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -709,7 +736,8 @@ CREATE TABLE `user` (
   `status` tinyint(4) UNSIGNED NOT NULL DEFAULT '0',
   `passport_type` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `passport_name` varchar(100) DEFAULT '',
-  `passport_number` varchar(50) DEFAULT ''
+  `passport_number` varchar(50) DEFAULT '',
+  `show_as_delegate` tinyint(1) UNSIGNED NOT NULL DEFAULT '0'
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -772,6 +800,20 @@ CREATE TABLE `user_schedule` (
   `competition_id` int(10) UNSIGNED NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `wechat_user`
+--
+
+DROP TABLE IF EXISTS `wechat_user`;
+CREATE TABLE `wechat_user` (
+  `id` varchar(32) NOT NULL,
+  `nickname` varchar(128) NOT NULL,
+  `avatar` varchar(256) NOT NULL,
+  `user_id` int(11) UNSIGNED NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 --
 -- Indexes for dumped tables
 --
@@ -833,6 +875,12 @@ ALTER TABLE `competition_organizer`
 -- Indexes for table `config`
 --
 ALTER TABLE `config`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `custom_event`
+--
+ALTER TABLE `custom_event`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -1053,6 +1101,13 @@ ALTER TABLE `user_schedule`
   ADD KEY `user_id` (`user_id`,`competition_id`) USING BTREE;
 
 --
+-- Indexes for table `wechat_user`
+--
+ALTER TABLE `wechat_user`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
 -- 在导出的表使用AUTO_INCREMENT
 --
 
@@ -1061,171 +1116,205 @@ ALTER TABLE `user_schedule`
 --
 ALTER TABLE `competition`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- 使用表AUTO_INCREMENT `competition_application`
 --
 ALTER TABLE `competition_application`
   MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- 使用表AUTO_INCREMENT `competition_cert`
 --
 ALTER TABLE `competition_cert`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- 使用表AUTO_INCREMENT `competition_delegate`
 --
 ALTER TABLE `competition_delegate`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- 使用表AUTO_INCREMENT `competition_event`
 --
 ALTER TABLE `competition_event`
   MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- 使用表AUTO_INCREMENT `competition_location`
 --
 ALTER TABLE `competition_location`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- 使用表AUTO_INCREMENT `competition_organizer`
 --
 ALTER TABLE `competition_organizer`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- 使用表AUTO_INCREMENT `delegate`
 --
 ALTER TABLE `delegate`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- 使用表AUTO_INCREMENT `faq`
 --
 ALTER TABLE `faq`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- 使用表AUTO_INCREMENT `faq_category`
 --
 ALTER TABLE `faq_category`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- 使用表AUTO_INCREMENT `group_schedule`
 --
 ALTER TABLE `group_schedule`
   MODIFY `id` int(10) NOT NULL AUTO_INCREMENT;
+
 --
 -- 使用表AUTO_INCREMENT `live_event_round`
 --
 ALTER TABLE `live_event_round`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- 使用表AUTO_INCREMENT `live_message`
 --
 ALTER TABLE `live_message`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- 使用表AUTO_INCREMENT `live_registration`
 --
 ALTER TABLE `live_registration`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- 使用表AUTO_INCREMENT `live_result`
 --
 ALTER TABLE `live_result`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- 使用表AUTO_INCREMENT `live_user`
 --
 ALTER TABLE `live_user`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- 使用表AUTO_INCREMENT `login_history`
 --
 ALTER TABLE `login_history`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- 使用表AUTO_INCREMENT `logs`
 --
 ALTER TABLE `logs`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
 --
 -- 使用表AUTO_INCREMENT `mail`
 --
 ALTER TABLE `mail`
   MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- 使用表AUTO_INCREMENT `news`
 --
 ALTER TABLE `news`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- 使用表AUTO_INCREMENT `news_template`
 --
 ALTER TABLE `news_template`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- 使用表AUTO_INCREMENT `old_competition`
 --
 ALTER TABLE `old_competition`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- 使用表AUTO_INCREMENT `pay`
 --
 ALTER TABLE `pay`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- 使用表AUTO_INCREMENT `preferred_event`
 --
 ALTER TABLE `preferred_event`
   MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- 使用表AUTO_INCREMENT `region`
 --
 ALTER TABLE `region`
   MODIFY `id` int(10) NOT NULL AUTO_INCREMENT;
+
 --
 -- 使用表AUTO_INCREMENT `registration`
 --
 ALTER TABLE `registration`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- 使用表AUTO_INCREMENT `review`
 --
 ALTER TABLE `review`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- 使用表AUTO_INCREMENT `scan_auth`
 --
 ALTER TABLE `scan_auth`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- 使用表AUTO_INCREMENT `schedule`
 --
 ALTER TABLE `schedule`
   MODIFY `id` int(10) NOT NULL AUTO_INCREMENT;
+
 --
 -- 使用表AUTO_INCREMENT `user`
 --
 ALTER TABLE `user`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- 使用表AUTO_INCREMENT `user_action`
 --
 ALTER TABLE `user_action`
   MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- 使用表AUTO_INCREMENT `user_avatar`
 --
 ALTER TABLE `user_avatar`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID';
+
 --
 -- 使用表AUTO_INCREMENT `user_permission`
 --
 ALTER TABLE `user_permission`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- 使用表AUTO_INCREMENT `user_schedule`
 --
 ALTER TABLE `user_schedule`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

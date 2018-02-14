@@ -23,6 +23,21 @@
               ),
               'enableClientValidation'=>true,
             )); ?>
+            <?php if ($model->isNewRecord): ?>
+            <div class="text-danger col-lg-12">
+              除非你明确知道新增的配置作用于何处，否则请联系管理员。
+            </div>
+            <?php echo Html::formGroup(
+              $model, 'id', array(
+                'class'=>'col-lg-12',
+              ),
+              $form->labelEx($model, 'id', array(
+                'label'=>'ID',
+              )),
+              Html::activeTextField($model, 'id'),
+              $form->error($model, 'id', array('class'=>'text-danger'))
+            );?>
+            <?php endif; ?>
             <div class="clearfix"></div>
             <?php echo Html::formGroup(
               $model, 'title_zh', array(

@@ -77,7 +77,7 @@ class News extends ActiveRecord {
 
 	public function getDescriptionOrContent() {
 		$description = $this->getAttributeValue('description');
-		if (trim(strip_tags($description)) !== '') {
+		if (trim(strip_tags($description, '<img>')) !== '') {
 			return $description . CHtml::tag('p', ['class'=>'read-more'], CHtml::link(Yii::t('common', 'Read more....'), $this->url));
 		}
 		return $this->getAttributeValue('content');

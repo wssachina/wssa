@@ -19,7 +19,8 @@
         ),
         array(
           'url'=>array('/site/page', 'view'=>'disclaimer'),
-          'label'=>Config::getConfig('disclaimer')->getAttributeValue('title'),
+          'label'=>Config::getConfig('disclaimer') ? Config::getConfig('disclaimer')->getAttributeValue('title') : '',
+          'visible'=>Config::getConfig('disclaimer') !== null
         ),
       ),
     )); ?>

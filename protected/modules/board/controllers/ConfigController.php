@@ -17,6 +17,21 @@ class ConfigController extends AdminController {
 		);
 	}
 
+	public function actionAdd() {
+		$model = new Config();
+		$model->status = News::STATUS_HIDE;
+		if (isset($_POST['Config'])) {
+			$model->attributes = $_POST['Config'];
+			if ($model->save()) {
+				Yii::app()->user->setFlash('success', '添加配置成功');
+				$this->redirect(['/board/config/index']);
+			}
+		}
+		$this->render('edit', array(
+			'model'=>$model,
+		));
+	}
+
 	public function actionEdit() {
 		$id = $this->sGet('id');
 		$model = Config::model()->findByPk($id);

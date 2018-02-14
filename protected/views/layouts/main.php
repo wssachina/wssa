@@ -7,20 +7,11 @@
       </h1><!--//logo-->
       <div class="info col-md-8 col-sm-8 hidden-xs">
         <ul class="menu-top navbar-right">
-          <li class="divider"><a href="<?php echo $this->getLangUrl('zh_cn'); ?>">简体中文</a></li>
-          <li class="divider"><a href="<?php echo $this->getLangUrl('zh_tw'); ?>">繁体中文</a></li>
-          <li><a href="<?php echo $this->getLangUrl('en'); ?>">English</a></li>
-        </ul>
-        <br />
-        <div class="contact pull-right">
-          <?php if (Yii::app()->user->isGuest): ?>
-          <p class="phone"><?php echo CHtml::link(Html::fontAwesome('sign-in') . Yii::t('common', 'Login'), array('/site/login')); ?></p>
-          <p class="email"><?php echo CHtml::link(Html::fontAwesome('user') . Yii::t('common', 'Register'), array('/site/register')); ?></p>
-          <?php else: ?>
-          <p class="phone"><?php echo CHtml::link(Html::fontAwesome('user') . $this->user->getAttributeValue('name', true), array('/user/profile')); ?></p>
-          <p class="email"><?php echo CHtml::link(Html::fontAwesome('sign-out') . Yii::t('common', 'Logout'), array('/site/logout')); ?></p>
-          <?php endif; ?>
-        </div>
+        <?php foreach (Config::getConfig('toplinks.*') as $key=>$link): ?>
+          <li>
+            <?php echo CHtml::link($link->getAttributeValue('content'), $link->getAttributeValue('title'), ['target'=>'_blank']); ?>
+          </li>
+        <?php endforeach; ?>
       </div><!--//info-->
     </div><!--//header-main-->
   </header><!--//header-->

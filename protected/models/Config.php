@@ -20,15 +20,35 @@ class Config extends ActiveRecord {
 
 	public static function getAllStatus() {
 		return array(
-			self::STATUS_HIDE=>'隐藏', 
-			self::STATUS_SHOW=>'发布', 
-			// self::STATUS_DELETE=>'删除', 
+			self::STATUS_HIDE=>'隐藏',
+			self::STATUS_SHOW=>'发布',
+			// self::STATUS_DELETE=>'删除',
 		);
 	}
 
 	public static function getConfig($id) {
-		if (!isset(self::$_configs[$id])) {
-			self::$_configs[$id] = self::model()->findByPk($id);
+		if (!array_key_exists($id, self::$_configs)) {
+			if (substr($id, -1) === '*') {
+				$search = substr($id, 0, -1);
+				$configs = self::model()->findAllByAttributes([
+					'status'=>self::STATUS_SHOW,
+				], [
+					'condition'=>'id LIKE :id',
+					'params'=>[
+						'id'=>$search . '%',
+					]
+				]);
+				self::$_configs[$id] = [];
+				foreach ($configs as $config) {
+					$key = str_replace($config->id, $search, '');
+					self::$_configs[$id][$key] = $config;
+				}
+			} else {
+				self::$_configs[$id] = self::model()->findByAttributes([
+					'id'=>$id,
+					'status'=>self::STATUS_SHOW,
+				]);
+			}
 		}
 		return self::$_configs[$id];
 	}
