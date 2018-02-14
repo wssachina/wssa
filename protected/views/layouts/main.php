@@ -50,7 +50,7 @@
   <div class="bottom-bar">
     <div class="container">
       <div class="row">
-        <small class="copyright col-md-6 col-sm-12 col-xs-12">Copyright @ <?php echo date('Y'); ?> <?php echo Yii::t('common', Yii::app()->name); ?> 京ICP备14025871号</small>
+        <small class="copyright col-md-6 col-sm-12 col-xs-12">Copyright @ <?php echo date('Y'); ?> <?php echo Yii::t('common', Yii::app()->name); ?></small>
         <ul class="social pull-right col-md-6 col-sm-12 col-xs-12">
           <li class="row-end"><?php echo CHtml::link(Html::fontAwesome('rss'), array('/feed/index')); ?></li>
         </ul>
