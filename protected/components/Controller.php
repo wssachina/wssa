@@ -337,13 +337,6 @@ class Controller extends CController {
 
 	protected function beforeAction($action) {
 		$userAgent = Yii::app()->request->getUserAgent();
-		if ($this->isInWechat) {
-			$this->getWechatApplication([
-				'oauth'=>[
-					'scopes'=>['snsapi_userinfo'],
-				]
-			]);
-		}
 		if ($this->module === null) {
 			$clientScript = Yii::app()->clientScript;
 			$map = json_decode(file_get_contents(APP_PATH . '/public/f/assets-map.json'), true);
