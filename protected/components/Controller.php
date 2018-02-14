@@ -285,26 +285,7 @@ class Controller extends CController {
 	}
 
 	public function init() {
-		if(isset($_REQUEST['lang']) && $_REQUEST['lang'] != '') {
-			$this->setLanguage($_REQUEST['lang'], true);
-		} else if(isset($_COOKIE['language']) && $_COOKIE['language'] != '') {
-			$this->setLanguage($_COOKIE['language']);
-		} else if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])){
-			$languages = Yii::app()->params->languages;
-			$acceptLanguage = strtolower(str_replace('-', '_', $_SERVER['HTTP_ACCEPT_LANGUAGE']));
-			$pos = strlen($acceptLanguage);
-			$userLanguage = false;
-			foreach ($languages as $language) {
-				$temp = strpos($acceptLanguage, $language);
-				if ($temp !== false && $temp < $pos) {
-					$pos = $temp;
-					$userLanguage = $language;
-				}
-			}
-			if ($userLanguage !== false) {
-				$this->setLanguage($userLanguage);
-			}
-		}
+		Yii::app()->language = 'zh_cn';
 		parent::init();
 	}
 
