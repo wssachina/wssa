@@ -17,10 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Club' => '全国俱乐部',
-  'Equipment' => '比赛器材',
   'Fee' => '',
-  'Sponsor' => '赞助商',
   'WCA ID' => '',
   'more' => '',
   '金色雨林' => '',
@@ -136,6 +133,7 @@ return array (
   'Cities' => '城市',
   'City' => '城市',
   'Close' => '关闭',
+  'Club' => '全国俱乐部',
   'Competition' => '比赛',
   'Competition History' => '参赛经历',
   'Competition Site' => '分赛场',
@@ -159,6 +157,7 @@ return array (
   'Email' => '邮箱',
   'Enter WCA ID' => '输入WCA ID',
   'Enter your WCA ID' => '输入您的WCA ID',
+  'Equipment' => '比赛器材',
   'Event' => '项目',
   'Event List' => '项目列表',
   'FAQ' => '常见问题',
@@ -280,6 +279,7 @@ return array (
   'Signed in Date' => '签到日期',
   'Single' => '单次',
   'Something goes wrong' => '啊呃，好像哪里不对劲的样子',
+  'Sponsor' => '赞助商',
   'Statistics' => '统计',
   'Step 1. Have you ever participated in WCA competitions?' => '第一步，您是否参加过WCA比赛？',
   'Step 2. Fill out the following information.' => '第二步，填写相关信息。',

@@ -17,10 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Club' => '',
-  'Equipment' => '',
   'Fee' => '',
-  'Sponsor' => '',
   'WCA ID' => '',
   'more' => '',
   '金色雨林' => '',
@@ -112,7 +109,7 @@ return array (
   ', ' => '、',
   '.' => '。',
   'A reset password mail was sent to your email address, please check your inbox.' => '重設密碼郵件已經發送您的郵箱，請檢查您的收件箱並根據提示進行重設密碼。',
-  'About' => '關於本站',
+  'About' => '關於',
   'Accepted' => '已通過',
   'Activate Account' => '激活賬號',
   'Activate my account' => '激活我的賬號',
@@ -136,6 +133,7 @@ return array (
   'Cities' => '城市',
   'City' => '城市',
   'Close' => '關閉',
+  'Club' => '全國俱樂部',
   'Competition' => '比賽',
   'Competition History' => '參賽經歷',
   'Competition Site' => '分賽場',
@@ -159,6 +157,7 @@ return array (
   'Email' => '郵箱',
   'Enter WCA ID' => '輸入WCA ID',
   'Enter your WCA ID' => '輸入您的WCA ID',
+  'Equipment' => '比賽器材',
   'Event' => '項目',
   'Event List' => '項目列表',
   'FAQ' => '常見問題',
@@ -280,6 +279,7 @@ return array (
   'Signed in Date' => '簽到日期',
   'Single' => '單次',
   'Something goes wrong' => '啊呃，好像哪里不對勁的樣子',
+  'Sponsor' => '贊助商',
   'Statistics' => '統計',
   'Step 1. Have you ever participated in WCA competitions?' => '第一步，您是否參加過WCA比賽？',
   'Step 2. Fill out the following information.' => '第二步，填寫相關信息。',
