@@ -17,14 +17,17 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'No.' => '',
   'Average' => '',
   'Best' => '',
   'Country' => '',
+  'Current' => '当前纪录',
   'Event' => '',
   'Format' => '',
+  'History' => '历史纪录',
   'ID' => '',
-  'No.' => '',
   'Person Name' => '',
+  'Personal Record' => '官方成绩',
   'Pos' => '',
   'Regional Average Record' => '',
   'Regional Single Record' => '',
@@ -33,9 +36,6 @@ return array (
   'Value3' => '',
   'Value4' => '',
   'Value5' => '',
-  'Current' => '当前纪录',
-  'History' => '历史纪录',
-  'Personal Record' => '官方成绩',
   'CR' => '洲际纪录',
   'Career' => '参赛经历',
   'Closest Cubers' => '最亲密魔友',

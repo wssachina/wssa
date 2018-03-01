@@ -17,18 +17,18 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Cell Name' => '',
-  'ID' => '',
-  'Name' => '',
-  'Rank' => '',
   'B Final' => 'B組決賽',
+  'Cell Name' => '',
   'Combined Final' => '組合制決賽',
   'Combined First' => '組合制初賽',
   'Combined Second' => '組合制復賽',
   'Combined Third' => '組合制半決賽',
   'Combined qualification' => '組合制資格賽',
   'Final' => '決賽',
+  'ID' => '',
+  'Name' => '',
   'Qualification' => '資格賽',
+  'Rank' => '',
   'Second' => '復賽',
   'Semi Final' => '半決賽',
   'First' => '初賽',

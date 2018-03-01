@@ -158,43 +158,97 @@ class Controller extends CController {
 					),
 				),
 				array(
-					'label'=>Html::fontAwesome('info-circle', 'a') . Yii::t('common', 'More Info') . Html::fontAwesome('angle-down', 'b'),
-					'url'=>'#',
+					'label'=>Html::fontAwesome('file-text-o', 'a') . Yii::t('common', 'About'),
+					'url'=>array('/site/page', 'view'=>'about'),
 					'itemOptions'=>array(
-						'class'=>'nav-item dropdown',
-					),
-					'linkOptions'=>array(
-						'class'=>'dropdown-toggle',
-						'data-toggle'=>'dropdown',
-						'data-hover'=>'dropdown',
-						'data-delay'=>0,
-						'data-close-others'=>'false',
-					),
-					'items'=>array(
-						array(
-							'url'=>array('/faq/index'),
-							'label'=>Html::fontAwesome('question-circle', 'a') . Yii::t('common', 'FAQ'),
-							'visible'=>Faq::model()->countByAttributes(['status'=>Faq::STATUS_SHOW]) > 0,
-						),
-						array(
-							'url'=>array('/site/page', 'view'=>'about'),
-							'label'=>Html::fontAwesome('file-text-o', 'a') . Yii::t('common', 'About'),
-						),
-						array(
-							'url'=>array('/site/page', 'view'=>'contact'),
-							'label'=>Html::fontAwesome('pencil-square-o', 'a') . Yii::t('common', 'Contact'),
-						),
-						array(
-							'url'=>array('/site/page', 'view'=>'links'),
-							'label'=>Html::fontAwesome('link', 'a') . Yii::t('common', 'Links'),
-						),
-						array(
-							'url'=>array('/site/page', 'view'=>'disclaimer'),
-							'label'=>Html::fontAwesome('list-alt', 'a') . ($disclaimer == null ? '免责声明' : $disclaimer->getAttributeValue('title')),
-							'visible'=>$disclaimer !== null,
-						),
+						'class'=>'nav-item',
 					),
 				),
+				array(
+					'label'=>Html::fontAwesome('cubes', 'a') . Yii::t('common', 'Competitions'),
+					// 'url'=>array('/competition/index'),
+					'url'=>array('/site/page', 'view'=>'competition'),
+					'itemOptions'=>array(
+						'class'=>'nav-item',
+					),
+				),
+				array(
+					'label'=>Html::fontAwesome('flag-checkered', 'a') . Yii::t('common', 'Records'),
+					// 'url'=>array('/records/index'),
+					'url'=>array('/site/page', 'view'=>'record'),
+					'itemOptions'=>array(
+						'class'=>'nav-item',
+					),
+				),
+				array(
+					'label'=>Html::fontAwesome('circle', 'a') . Yii::t('common', 'Equipment'),
+					'url'=>array('/equipment/index'),
+					'itemOptions'=>array(
+						'class'=>'nav-item',
+					),
+				),
+				array(
+					'label'=>Html::fontAwesome('star', 'a') . Yii::t('common', 'Sponsor'),
+					'url'=>array('/site/page', 'view'=>'sponsor'),
+					'itemOptions'=>array(
+						'class'=>'nav-item',
+					),
+				),
+				array(
+					'label'=>Html::fontAwesome('map-marker', 'a') . Yii::t('common', 'Club'),
+					'url'=>array('/site/page', 'view'=>'club'),
+					'itemOptions'=>array(
+						'class'=>'nav-item',
+					),
+				),
+				// [
+				// 	'label'=>Html::fontAwesome('link', 'a') . Yii::t('common', '金色雨林'),
+				// 	'url'=>'#',
+				// 	'itemOptions'=>[
+				// 		'class'=>'nav-item',
+				// 	],
+				// 	'linkOptions'=>[
+				// 		'target'=>'_blank',
+				// 	],
+				// ],
+				// array(
+				// 	'label'=>Html::fontAwesome('info-circle', 'a') . Yii::t('common', 'More Info') . Html::fontAwesome('angle-down', 'b'),
+				// 	'url'=>'#',
+				// 	'itemOptions'=>array(
+				// 		'class'=>'nav-item dropdown',
+				// 	),
+				// 	'linkOptions'=>array(
+				// 		'class'=>'dropdown-toggle',
+				// 		'data-toggle'=>'dropdown',
+				// 		'data-hover'=>'dropdown',
+				// 		'data-delay'=>0,
+				// 		'data-close-others'=>'false',
+				// 	),
+				// 	'items'=>array(
+				// 		array(
+				// 			'url'=>array('/faq/index'),
+				// 			'label'=>Html::fontAwesome('question-circle', 'a') . Yii::t('common', 'FAQ'),
+				// 			'visible'=>Faq::model()->countByAttributes(['status'=>Faq::STATUS_SHOW]) > 0,
+				// 		),
+				// 		array(
+				// 			'url'=>array('/site/page', 'view'=>'about'),
+				// 			'label'=>Html::fontAwesome('file-text-o', 'a') . Yii::t('common', 'About'),
+				// 		),
+				// 		array(
+				// 			'url'=>array('/site/page', 'view'=>'contact'),
+				// 			'label'=>Html::fontAwesome('pencil-square-o', 'a') . Yii::t('common', 'Contact'),
+				// 		),
+				// 		array(
+				// 			'url'=>array('/site/page', 'view'=>'links'),
+				// 			'label'=>Html::fontAwesome('link', 'a') . Yii::t('common', 'Links'),
+				// 		),
+				// 		array(
+				// 			'url'=>array('/site/page', 'view'=>'disclaimer'),
+				// 			'label'=>Html::fontAwesome('list-alt', 'a') . ($disclaimer == null ? '免责声明' : $disclaimer->getAttributeValue('title')),
+				// 			'visible'=>$disclaimer !== null,
+				// 		),
+				// 	),
+				// ),
 			));
 		}
 		return $this->_navibar;

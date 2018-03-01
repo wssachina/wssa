@@ -33,7 +33,7 @@ class WebSocketCommand extends CConsoleCommand {
 				'lock_mode'=>PdoSessionHandler::LOCK_NONE,
 			)),
 			array(
-				'name'=>'CUBINGCHINA_SID'
+				'name'=>'WSSACHINA_SID'
 			)
 		);
 		Yii::getLogger()->autoDump = true;

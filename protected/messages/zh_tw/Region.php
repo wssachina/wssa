@@ -17,7 +17,6 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
-  'Greater China' => '',
   'ID' => '',
   'Name' => '',
   'Name Zh' => '',
@@ -90,6 +89,7 @@ return array (
   'Georgia' => '喬治亞',
   'Germany' => '德國',
   'Ghana' => '迦納',
+  'Greater China' => '',
   'Greece' => '希臘',
   'Grenada' => '格瑞那達',
   'Guatemala' => '瓜地馬拉',

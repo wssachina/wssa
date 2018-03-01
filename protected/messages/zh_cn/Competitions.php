@@ -17,6 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'All Results' => '所有',
   'By Person' => '各选手',
   'Cell Name' => '',
   'City Name' => '',
@@ -32,15 +33,14 @@ return array (
   'Month' => '',
   'Name' => '',
   'Organiser' => '',
+  'Scrambles' => '打乱',
+  'Top 3' => '前三',
   'Venue' => '',
   'Venue Address' => '',
   'Venue Details' => '',
   'Wca Delegate' => '',
   'Website' => '',
-  'Year' => '',
-  'All Results' => '所有',
-  'Competitions' => '比赛',
-  'Scrambles' => '打乱',
-  'Top 3' => '前三',
   'Winners' => '冠军',
+  'Year' => '',
+  'Competitions' => '比赛',
 );

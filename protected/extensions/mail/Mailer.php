@@ -9,7 +9,7 @@ class Mailer extends CApplicationComponent {
 	public $api;
 	public $baseUrl;
 
-	protected $titlePrefix = 'Cubing China (粗饼) - ';
+	protected $titlePrefix = 'WSSA China - ';
 	protected $viewPath;
 
 	public function init() {

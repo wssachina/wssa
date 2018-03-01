@@ -19,9 +19,9 @@
 return array (
   'Country' => '',
   'Gender' => '',
+  'History' => '歷史成績',
   'ID' => '',
   'Name' => '',
   'Subid' => '',
-  'History' => '歷史成績',
   'Map' => '地圖',
 );

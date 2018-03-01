@@ -17,12 +17,12 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'No.' => '',
   'Competition' => '',
   'Event' => '',
   'Is Extra' => '',
-  'No.' => '',
   'Round' => '',
+  'Scramble Num' => '序号',
   'Group' => '分组',
   'Scramble' => '打乱',
-  'Scramble Num' => '序号',
 );

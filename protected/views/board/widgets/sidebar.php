@@ -202,6 +202,40 @@
           ),
         ),
         array(
+          'label'=>'<i class="fa fa-question-circle"></i> 器材 <i class="fa fa-caret-down"></i>',
+          'url'=>'javascript:;',
+          'active'=>$this->controller->id == 'equipment',
+          'visible'=>Yii::app()->user->checkPermission('equipment'),
+          'linkOptions'=>array(
+            'data-parent'=>'#side',
+            'data-toggle'=>'collapse',
+            'class'=>'accordion-toggle',
+            'data-target'=>'#equipment',
+          ),
+          'itemOptions'=>array(
+            'class'=>'panel',
+          ),
+          'submenuOptions'=>array(
+            'class'=>'collapse nav in',
+            'id'=>'equipment',
+          ),
+          'items'=>array(
+            array(
+              'label'=>'<i class="fa fa-angle-double-right"></i> 器材管理',
+              'url'=>array('/board/equipment/index'),
+            ),
+            array(
+              'label'=>'<i class="fa fa-angle-double-right"></i> 新增器材',
+              'url'=>array('/board/equipment/add'),
+            ),
+            array(
+              'label'=>'<i class="fa fa-angle-double-right"></i> 器材分类',
+              'url'=>array('/board/equipment/category'),
+              'visible'=>Yii::app()->user->checkPermission('faq_admin'),
+            ),
+          ),
+        ),
+        array(
           'label'=>'<i class="fa fa-question-circle"></i> FAQ <i class="fa fa-caret-down"></i>',
           'url'=>'javascript:;',
           'active'=>$this->controller->id == 'faq',

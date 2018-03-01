@@ -51,12 +51,12 @@ $config = [
 					'faq/index',
 					'urlSuffix'=>'.html'
 				],
+				'equipment/<category_id:\d+>'=>'equipment/index',
 				''=>'site/index',
 				// 'register/<step:\d>'=>'site/register',
 				'<action:login|logout|banned>'=>'site/<action>',
-				'<view:about|contact|links|disclaimer|please-update-your-browser>'=>[
+				'<view:about|contact|links|disclaimer|competition|record|club|sponsor|please-update-your-browser>'=>[
 					'site/page',
-					'urlSuffix'=>'.html'
 				],
 				// 'competition/<action:signin>'=>'competition/<action>',
 				// 'competition/<alias:[-A-z0-9]+>/<action:schedule|travel|regulations|competitors|registration|scan>'=>'competition/<action>',
