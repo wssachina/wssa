@@ -19,23 +19,18 @@
                 'value'=>'$data->operationButton',
               ),
               'id',
-              array(
-                'name'=>'user_id',
-                'value'=>'$data->user->name_zh',
-                'filter'=>false,
-              ),
-              array(
-                'name'=>'category_id',
-                'filter'=>FaqCategory::getCategories(),
-                'value'=>'$data->category->name_zh',
-              ),
               'title_zh',
               'sequence',
+              array(
+                'name'=>'cover',
+                'type'=>'raw',
+                'value'=>'CHtml::image($data->cover, "", ["style"=>"width:200px"])',
+              ),
               array(
                 'name'=>'status',
                 'type'=>'raw',
                 'value'=>'$data->getStatusText()',
-                'filter'=>Faq::getAllStatus(),
+                'filter'=>Equipment::getAllStatus(),
               ),
             ),
           )); ?>

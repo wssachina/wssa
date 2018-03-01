@@ -53,7 +53,6 @@ class EquipmentController extends AdminController {
 				$this->redirect($this->getReferrer());
 			}
 		}
-		$model->format();
 		$this->render('edit', array(
 			'model'=>$model,
 		));

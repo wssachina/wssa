@@ -28,6 +28,27 @@ class Equipment extends ActiveRecord {
 		);
 	}
 
+	public function getStatusText() {
+		$status = self::getAllStatus();
+		return isset($status[$this->status]) ? $status[$this->status] : $this->status;
+	}
+
+	public function getOperationButton() {
+		$buttons = array();
+		$buttons[] = CHtml::link('编辑',  array('/board/equipment/edit',  'id'=>$this->id), array('class'=>'btn btn-xs btn-blue btn-square'));
+		if (Yii::app()->user->checkPermission('faq_admin')) {
+			switch ($this->status) {
+				case self::STATUS_HIDE:
+					$buttons[] = CHtml::link('发布',  array('/board/equipment/show',  'id'=>$this->id), array('class'=>'btn btn-xs btn-green btn-square'));
+					break;
+				case self::STATUS_SHOW:
+					$buttons[] = CHtml::link('隐藏',  array('/board/equipment/hide',  'id'=>$this->id), array('class'=>'btn btn-xs btn-red btn-square'));
+					break;
+			}
+		}
+		return implode(' ',  $buttons);
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -42,7 +63,7 @@ class Equipment extends ActiveRecord {
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('user_id, title, title_zh, content, content_zh', 'required'),
+			array('user_id, title, title_zh, content_zh', 'required'),
 			array('user_id, status, sequence', 'numerical', 'integerOnly'=>true),
 			array('category_id, sequence', 'length', 'max'=>10),
 			array('title, title_zh', 'length', 'max'=>1024),

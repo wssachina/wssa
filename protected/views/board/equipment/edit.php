@@ -52,7 +52,7 @@
                 'label'=>'排序',
               )),
               Html::activeTextField($model, 'sequence', array(
-                'class'=>'datetime-picker',
+                'class'=>'',
               )),
               $form->error($model, 'sequence', array('class'=>'text-danger'))
             );?>
@@ -80,7 +80,7 @@
               $this->widget('ImageTextInput', [
                 'model'=>$model,
                 'name'=>'cover',
-              ]),
+              ], true),
               $form->error($model, 'cover', array('class'=>'text-danger'))
             );?>
             <div class="clearfix"></div>

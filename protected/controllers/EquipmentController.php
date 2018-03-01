@@ -33,7 +33,23 @@ class EquipmentController extends Controller {
 		));
 	}
 
-	public function actionDetail() {
-
+	public function actionItem() {
+		$id = $this->iGet('id');
+		$model = Equipment::model()->findByAttributes([
+			'id'=>$id,
+			'status'=>Equipment::STATUS_SHOW,
+		]);
+		if ($model === null) {
+			throw new CHttpException(404, 'Not Found');
+		}
+		$this->pageTitle = [$model->getAttributeValue('title'), Yii::t('common', 'Equipment')];
+		$this->title = $model->getAttributeValue('title');
+		$this->breadcrumbs = array(
+			'Equipment'=>['/equipment/index'],
+			$model->getAttributeValue('title')
+		);
+		$this->render('item', [
+			'equipment'=>$model,
+		]);
 	}
 }

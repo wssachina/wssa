@@ -52,6 +52,7 @@ $config = [
 					'urlSuffix'=>'.html'
 				],
 				'equipment/<category_id:\d+>'=>'equipment/index',
+				'equipment/item/<id:\d+>'=>'equipment/item',
 				''=>'site/index',
 				// 'register/<step:\d>'=>'site/register',
 				'<action:login|logout|banned>'=>'site/<action>',
@@ -161,7 +162,7 @@ $config = [
 						'js/plugins/bootstrap/bootstrap.min.js',
 						'js/plugins/hisrc/hisrc.js',
 						'js/flex.js',
-						'js/main.js?v=20170523',
+						'js/main.js?v=20180228',
 					],
 					'depends'=>['jquery'],
 				],
@@ -222,6 +223,12 @@ $config = [
 					],
 					'js'=>[
 						'js/plugins/bootstrap-switch/bootstrap-switch.min.js',
+					],
+				],
+				'upload-preview'=>[
+					'baseUrl'=>'b',
+					'js'=>[
+						'js/plugins/upload-preview/jquery.uploadPreview.min.js',
 					],
 				],
 				'morris'=>[
