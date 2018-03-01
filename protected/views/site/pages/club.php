@@ -4,5 +4,5 @@
     'Club'
 ); ?>
 <div class="content-wrapper col-md-12">
-  <?php echo Config::getConfig('club') ? Config::getConfig('club')->getAttributes('content') : ''; ?>
+  <?php echo Config::getConfig('club') ? Config::getConfig('club')->getAttributeValue('content') : ''; ?>
 </div>

@@ -5,5 +5,5 @@
 ); ?>
 <?php $this->renderPartial('aboutSide', $_data_); ?>
 <div class="content-wrapper col-md-10 col-sm-9">
-  <?php echo Config::getConfig('about') ? Config::getConfig('about')->getAttributes('content') : ''; ?>
+  <?php echo Config::getConfig('about') ? Config::getConfig('about')->getAttributeValue('content') : ''; ?>
 </div>

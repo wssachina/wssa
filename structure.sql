@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: 2018-02-14 21:10:28
+-- Generation Time: 2018-03-02 00:30:07
 -- 服务器版本： 5.7.20
--- PHP Version: 7.1.11
+-- PHP Version: 7.1.14
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -254,6 +254,42 @@ CREATE TABLE `delegate` (
   `name` char(128) NOT NULL,
   `name_zh` char(128) NOT NULL,
   `email` char(128) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `equipment`
+--
+
+DROP TABLE IF EXISTS `equipment`;
+CREATE TABLE `equipment` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `user_id` int(10) NOT NULL,
+  `category_id` int(10) UNSIGNED NOT NULL DEFAULT '0',
+  `title` varchar(1024) NOT NULL,
+  `title_zh` varchar(1024) NOT NULL,
+  `cover` varchar(256) NOT NULL DEFAULT '',
+  `content` longtext NOT NULL,
+  `content_zh` longtext NOT NULL,
+  `sequence` int(10) UNSIGNED NOT NULL DEFAULT '0',
+  `status` tinyint(1) UNSIGNED NOT NULL DEFAULT '0'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `equipment_category`
+--
+
+DROP TABLE IF EXISTS `equipment_category`;
+CREATE TABLE `equipment_category` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `user_id` int(10) NOT NULL,
+  `name` varchar(128) NOT NULL,
+  `name_zh` varchar(128) NOT NULL,
+  `sequence` int(10) UNSIGNED NOT NULL DEFAULT '0',
+  `status` tinyint(1) UNSIGNED NOT NULL DEFAULT '0'
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -890,6 +926,23 @@ ALTER TABLE `delegate`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `equipment`
+--
+ALTER TABLE `equipment`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `status_weight_date` (`status`,`sequence`),
+  ADD KEY `category_id` (`category_id`);
+
+--
+-- Indexes for table `equipment_category`
+--
+ALTER TABLE `equipment_category`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `status_weight_date` (`status`,`sequence`);
+
+--
 -- Indexes for table `faq`
 --
 ALTER TABLE `faq`
@@ -1157,6 +1210,18 @@ ALTER TABLE `competition_organizer`
 -- 使用表AUTO_INCREMENT `delegate`
 --
 ALTER TABLE `delegate`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- 使用表AUTO_INCREMENT `equipment`
+--
+ALTER TABLE `equipment`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- 使用表AUTO_INCREMENT `equipment_category`
+--
+ALTER TABLE `equipment_category`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --

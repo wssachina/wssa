@@ -4,5 +4,5 @@
     'Sponsor'
 ); ?>
 <div class="content-wrapper col-md-12">
-  <?php echo Config::getConfig('sponsor') ? Config::getConfig('sponsor')->getAttributes('content') : ''; ?>
+  <?php echo Config::getConfig('sponsor') ? Config::getConfig('sponsor')->getAttributeValue('content') : ''; ?>
 </div>

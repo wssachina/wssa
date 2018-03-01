@@ -4,5 +4,5 @@
     'Competitions'
 ); ?>
 <div class="content-wrapper col-md-12">
-  <?php echo Config::getConfig('competition') ? Config::getConfig('competition')->getAttributes('content') : ''; ?>
+  <?php echo Config::getConfig('competition') ? Config::getConfig('competition')->getAttributeValue('content') : ''; ?>
 </div>
