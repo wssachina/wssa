@@ -84,7 +84,7 @@ class Controller extends CController {
 			Yii::app()->clientScript->registerScript('wx.config', "wx.config({$config})");
 		}
 		if (isset($config['oauth'])) {
-			$scopes = $config['oauth']['scopes'] ?? ['snsapi_base'];
+			$scopes = isset($config['oauth']['scopes']) ? $config['oauth']['scopes'] : ['snsapi_base'];
 			$application->config->set('oauth.scopes', $scopes);
 			$application->config->set('oauth.callback', CHtml::normalizeUrl(['/site/wechatLogin']));
 			$session = Yii::app()->session;

@@ -8,7 +8,7 @@ class Env {
 	public static function get($name) {
 		$key = self::PREFIX . $name;
 		$envs = self::getEnvs();
-		return $_SERVER[$key] ?? $envs[$key] ?? '';
+		return isset($_SERVER[$key]) ? $_SERVER[$key] : (isset($envs[$key]) ? $envs[$key] : '');
 	}
 
 	public static function getEnvs() {

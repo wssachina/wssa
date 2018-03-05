@@ -534,22 +534,6 @@ class Competition extends ActiveRecord {
 		return $this->has_qualifying_time && time() >= $this->qualifying_end_time;
 	}
 
-	public function getUserUnmetEvents($user) {
-		$ranks = RanksSingle::model()->with('average')->findAllByAttributes([
-			'personId'=>$user->wcaid,
-		]);
-		foreach ($ranks as $rank) {
-			$temp[$rank->eventId] = $rank;
-		}
-		$unmetEvents = [];
-		foreach ($this->allEvents as $event) {
-			if (!$event->check($temp[$event->event] ?? null)) {
-				$unmetEvents[$event->event] = $event->getQualifyTime();
-			}
-		}
-		return $unmetEvents;
-	}
-
 	public function getSortedLocations() {
 		$locations = array_filter($this->location, function($location) {
 			return $location->status == CompetitionLocation::YES;
@@ -738,7 +722,7 @@ class Competition extends ActiveRecord {
 	}
 
 	public function getUrl($type = 'detail', $params = array(), $controller = null) {
-		$controller = $controller ?? $type === 'live' || $type === 'statistics' ? 'live' : 'competition';
+		$controller = $controller !== null ? $controller : ($type === 'live' || $type === 'statistics' ? 'live' : 'competition');
 		$url = array(
 			"/$controller/$type",
 			'alias'=>$this->getUrlName(),

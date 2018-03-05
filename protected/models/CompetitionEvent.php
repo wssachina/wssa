@@ -90,7 +90,7 @@ class CompetitionEvent extends ActiveRecord {
 			}
 			return $this->qualifying_average * 100 > $rank->average->best;
 		}
-		return $ret ?? true;
+		return isset($ret) ? $ret : true;
 	}
 
 	/**

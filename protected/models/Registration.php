@@ -199,7 +199,7 @@ class Registration extends ActiveRecord {
 
 	public function getPassportTypeText() {
 		$types = User::getPassportTypes();
-		$text = $types[$this->entourage_passport_type] ?? '';
+		$text = isset($types[$this->entourage_passport_type]) ? $types[$this->entourage_passport_type] : '';
 		if ($this->entourage_passport_type == User::PASSPORT_TYPE_OTHER) {
 			$text .= "($this->entourage_passport_name)";
 		}

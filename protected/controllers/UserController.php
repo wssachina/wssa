@@ -54,7 +54,7 @@ class UserController extends Controller {
 		$webUser = Yii::app()->user;
 		$sessionWechatUser = Yii::app()->session->get(Constant::WECHAT_SESSION_KEY);
 		if ($this->isInWechat) {
-			$action = $_POST['action'] ?? '';
+			$action = isset($_POST['action']) ? $_POST['action'] : '';
 			switch ($action) {
 				case 'bind':
 					if ($user->wechatUser === null) {
