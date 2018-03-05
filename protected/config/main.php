@@ -35,14 +35,6 @@ $config = [
 			// enable cookie-based authentication
 			'allowAutoLogin'=>true,
 		],
-		'session'=>[
-			'class'=>'SymfonyHttpSession',
-			'options'=>[
-				'lock_mode'=>Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler::LOCK_NONE,
-			],
-			'sessionName'=>'WSSACHINA_SID',
-			'timeout'=>86400 * 7,
-		],
 		'urlManager'=>[
 			'urlFormat'=>'path',
 			'rules'=>[
@@ -71,13 +63,13 @@ $config = [
 			'appendParams'=>false,
 			'showScriptName'=>false,
 		],
-		'cache'=>[
-			'class'=>'CustomCache',
-			// 'hashKey'=>false,
-			'hostname'=>'127.0.0.1',
-			'port'=>6379,
-			'database'=>1,
-		],
+		// 'cache'=>[
+		// 	'class'=>'CustomCache',
+		// 	// 'hashKey'=>false,
+		// 	'hostname'=>'127.0.0.1',
+		// 	'port'=>6379,
+		// 	'database'=>1,
+		// ],
 		'db'=>[
 			'connectionString'=>'mysql:host=localhost;dbname=wssa' . (DEV ? '_dev' : ''),
 			'pdoClass'=>'QueryCheckPdo',
