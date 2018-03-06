@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: 2018-03-02 00:30:07
+-- Generation Time: 2018-03-05 13:15:04
 -- 服务器版本： 5.7.20
 -- PHP Version: 7.1.14
 
@@ -27,8 +27,8 @@ SET time_zone = "+00:00";
 --
 
 DROP TABLE IF EXISTS `competition`;
-CREATE TABLE `competition` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `competition` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `type` char(10) NOT NULL DEFAULT '',
   `wca_competition_id` char(32) NOT NULL DEFAULT '',
   `old_competition_id` int(10) UNSIGNED NOT NULL DEFAULT '0',
@@ -94,7 +94,9 @@ CREATE TABLE `competition` (
   `staff` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `live_stream_url` varchar(256) NOT NULL DEFAULT '',
   `auto_accept` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
-  `podiums_num` tinyint(1) UNSIGNED NOT NULL DEFAULT '3'
+  `podiums_num` tinyint(1) UNSIGNED NOT NULL DEFAULT '3',
+  PRIMARY KEY (`id`),
+  KEY `type` (`type`,`date`,`status`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -104,8 +106,8 @@ CREATE TABLE `competition` (
 --
 
 DROP TABLE IF EXISTS `competition_application`;
-CREATE TABLE `competition_application` (
-  `id` int(11) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `competition_application` (
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `competition_id` int(11) UNSIGNED NOT NULL,
   `schedule` text NOT NULL,
   `organized_competition` text NOT NULL,
@@ -117,7 +119,9 @@ CREATE TABLE `competition_application` (
   `other` text NOT NULL,
   `reason` text,
   `create_time` int(11) UNSIGNED NOT NULL,
-  `update_time` int(11) UNSIGNED NOT NULL
+  `update_time` int(11) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `competition_id` (`competition_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -127,15 +131,19 @@ CREATE TABLE `competition_application` (
 --
 
 DROP TABLE IF EXISTS `competition_cert`;
-CREATE TABLE `competition_cert` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `competition_cert` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `competition_id` int(10) UNSIGNED NOT NULL,
   `user_id` int(10) UNSIGNED NOT NULL,
   `hash` varchar(32) NOT NULL DEFAULT '',
   `has_participations` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `status` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `create_time` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `update_time` int(10) UNSIGNED NOT NULL DEFAULT '0'
+  `update_time` int(10) UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `competition_id` (`competition_id`),
+  KEY `user_id` (`user_id`),
+  KEY `hash` (`hash`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -145,10 +153,11 @@ CREATE TABLE `competition_cert` (
 --
 
 DROP TABLE IF EXISTS `competition_delegate`;
-CREATE TABLE `competition_delegate` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `competition_delegate` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `competition_id` int(10) UNSIGNED NOT NULL,
-  `delegate_id` int(10) UNSIGNED NOT NULL
+  `delegate_id` int(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -158,8 +167,8 @@ CREATE TABLE `competition_delegate` (
 --
 
 DROP TABLE IF EXISTS `competition_event`;
-CREATE TABLE `competition_event` (
-  `id` int(11) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `competition_event` (
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `competition_id` int(11) UNSIGNED NOT NULL,
   `event` varchar(32) DEFAULT NULL,
   `round` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
@@ -169,7 +178,11 @@ CREATE TABLE `competition_event` (
   `qualifying_best` mediumint(6) UNSIGNED NOT NULL DEFAULT '0',
   `qualifying_average` mediumint(6) UNSIGNED NOT NULL DEFAULT '0',
   `create_time` int(11) UNSIGNED NOT NULL DEFAULT '0',
-  `update_time` int(11) UNSIGNED NOT NULL DEFAULT '0'
+  `update_time` int(11) UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `competition_event` (`competition_id`,`event`),
+  KEY `competition_id` (`competition_id`),
+  KEY `event` (`event`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -179,8 +192,8 @@ CREATE TABLE `competition_event` (
 --
 
 DROP TABLE IF EXISTS `competition_location`;
-CREATE TABLE `competition_location` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `competition_location` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `competition_id` int(10) UNSIGNED NOT NULL,
   `location_id` tinyint(3) UNSIGNED NOT NULL DEFAULT '0',
   `country_id` smallint(3) UNSIGNED NOT NULL DEFAULT '0',
@@ -195,7 +208,9 @@ CREATE TABLE `competition_location` (
   `fee` varchar(128) NOT NULL DEFAULT '',
   `longitude` decimal(12,9) NOT NULL DEFAULT '0.000000000',
   `latitude` decimal(12,9) NOT NULL DEFAULT '0.000000000',
-  `status` tinyint(1) UNSIGNED NOT NULL DEFAULT '1'
+  `status` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`),
+  KEY `competition_id` (`competition_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -205,10 +220,13 @@ CREATE TABLE `competition_location` (
 --
 
 DROP TABLE IF EXISTS `competition_organizer`;
-CREATE TABLE `competition_organizer` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `competition_organizer` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `competition_id` int(10) UNSIGNED NOT NULL,
-  `organizer_id` int(10) UNSIGNED NOT NULL
+  `organizer_id` int(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `competition_id` (`competition_id`),
+  KEY `organizer_id` (`organizer_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -218,13 +236,14 @@ CREATE TABLE `competition_organizer` (
 --
 
 DROP TABLE IF EXISTS `config`;
-CREATE TABLE `config` (
+CREATE TABLE IF NOT EXISTS `config` (
   `id` varchar(20) NOT NULL,
   `title` varchar(1024) NOT NULL,
   `title_zh` varchar(1024) NOT NULL,
   `content` longtext NOT NULL,
   `content_zh` longtext NOT NULL,
-  `status` tinyint(1) UNSIGNED NOT NULL DEFAULT '0'
+  `status` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -234,12 +253,13 @@ CREATE TABLE `config` (
 --
 
 DROP TABLE IF EXISTS `custom_event`;
-CREATE TABLE `custom_event` (
+CREATE TABLE IF NOT EXISTS `custom_event` (
   `id` varchar(32) NOT NULL,
   `name` varchar(32) NOT NULL,
   `name_zh` varchar(32) NOT NULL,
   `rank` int(11) NOT NULL DEFAULT '0',
-  `has_icon` tinyint(1) UNSIGNED NOT NULL DEFAULT '0'
+  `has_icon` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -249,11 +269,12 @@ CREATE TABLE `custom_event` (
 --
 
 DROP TABLE IF EXISTS `delegate`;
-CREATE TABLE `delegate` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `delegate` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` char(128) NOT NULL,
   `name_zh` char(128) NOT NULL,
-  `email` char(128) NOT NULL
+  `email` char(128) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -263,8 +284,8 @@ CREATE TABLE `delegate` (
 --
 
 DROP TABLE IF EXISTS `equipment`;
-CREATE TABLE `equipment` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `equipment` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_id` int(10) NOT NULL,
   `category_id` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `title` varchar(1024) NOT NULL,
@@ -273,7 +294,11 @@ CREATE TABLE `equipment` (
   `content` longtext NOT NULL,
   `content_zh` longtext NOT NULL,
   `sequence` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `status` tinyint(1) UNSIGNED NOT NULL DEFAULT '0'
+  `status` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `status_weight_date` (`status`,`sequence`),
+  KEY `category_id` (`category_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -283,13 +308,16 @@ CREATE TABLE `equipment` (
 --
 
 DROP TABLE IF EXISTS `equipment_category`;
-CREATE TABLE `equipment_category` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `equipment_category` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_id` int(10) NOT NULL,
   `name` varchar(128) NOT NULL,
   `name_zh` varchar(128) NOT NULL,
   `sequence` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `status` tinyint(1) UNSIGNED NOT NULL DEFAULT '0'
+  `status` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `status_weight_date` (`status`,`sequence`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -299,8 +327,8 @@ CREATE TABLE `equipment_category` (
 --
 
 DROP TABLE IF EXISTS `faq`;
-CREATE TABLE `faq` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `faq` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_id` int(10) NOT NULL,
   `category_id` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `title` varchar(1024) NOT NULL,
@@ -308,7 +336,11 @@ CREATE TABLE `faq` (
   `content` longtext NOT NULL,
   `content_zh` longtext NOT NULL,
   `date` int(10) UNSIGNED NOT NULL,
-  `status` tinyint(1) UNSIGNED NOT NULL DEFAULT '0'
+  `status` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `status_weight_date` (`status`,`date`),
+  KEY `category_id` (`category_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -318,13 +350,16 @@ CREATE TABLE `faq` (
 --
 
 DROP TABLE IF EXISTS `faq_category`;
-CREATE TABLE `faq_category` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `faq_category` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_id` int(10) NOT NULL,
   `name` varchar(128) NOT NULL,
   `name_zh` varchar(128) NOT NULL,
   `date` int(10) UNSIGNED NOT NULL,
-  `status` tinyint(1) UNSIGNED NOT NULL DEFAULT '0'
+  `status` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `status_weight_date` (`status`,`date`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -334,8 +369,8 @@ CREATE TABLE `faq_category` (
 --
 
 DROP TABLE IF EXISTS `group_schedule`;
-CREATE TABLE `group_schedule` (
-  `id` int(10) NOT NULL,
+CREATE TABLE IF NOT EXISTS `group_schedule` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
   `competition_id` int(10) NOT NULL,
   `day` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
   `stage` char(10) NOT NULL DEFAULT 'main',
@@ -348,7 +383,9 @@ CREATE TABLE `group_schedule` (
   `number` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `cut_off` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `time_limit` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `cumulative` tinyint(1) UNSIGNED NOT NULL DEFAULT '0'
+  `cumulative` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `competition_id` (`competition_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -358,8 +395,8 @@ CREATE TABLE `group_schedule` (
 --
 
 DROP TABLE IF EXISTS `live_event_round`;
-CREATE TABLE `live_event_round` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `live_event_round` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `competition_id` int(10) UNSIGNED NOT NULL,
   `event` varchar(32) DEFAULT NULL,
   `round` char(1) NOT NULL DEFAULT '',
@@ -370,7 +407,10 @@ CREATE TABLE `live_event_round` (
   `operator_id` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `status` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `create_time` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `update_time` int(10) UNSIGNED NOT NULL DEFAULT '0'
+  `update_time` int(10) UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `competition_id` (`competition_id`),
+  KEY `competition_event_round_average_best` (`competition_id`,`event`,`round`) USING BTREE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -380,14 +420,17 @@ CREATE TABLE `live_event_round` (
 --
 
 DROP TABLE IF EXISTS `live_message`;
-CREATE TABLE `live_message` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `live_message` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `competition_id` int(10) UNSIGNED NOT NULL,
   `user_id` int(10) UNSIGNED NOT NULL,
   `event` varchar(6) NOT NULL DEFAULT '',
   `round` char(1) NOT NULL DEFAULT '',
   `content` blob NOT NULL,
-  `create_time` int(10) UNSIGNED NOT NULL DEFAULT '0'
+  `create_time` int(10) UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `competition_id` (`competition_id`,`user_id`),
+  KEY `competition_event_round_average_best` (`competition_id`,`event`,`round`) USING BTREE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -397,8 +440,8 @@ CREATE TABLE `live_message` (
 --
 
 DROP TABLE IF EXISTS `live_registration`;
-CREATE TABLE `live_registration` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `live_registration` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `competition_id` int(10) UNSIGNED NOT NULL,
   `location_id` tinyint(3) UNSIGNED NOT NULL DEFAULT '0',
   `user_id` int(10) UNSIGNED NOT NULL,
@@ -408,7 +451,9 @@ CREATE TABLE `live_registration` (
   `paid` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `ip` char(15) NOT NULL DEFAULT '',
   `date` int(10) UNSIGNED NOT NULL,
-  `status` tinyint(1) UNSIGNED NOT NULL DEFAULT '0'
+  `status` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `competition_id` (`competition_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -418,8 +463,8 @@ CREATE TABLE `live_registration` (
 --
 
 DROP TABLE IF EXISTS `live_result`;
-CREATE TABLE `live_result` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `live_result` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `competition_id` int(10) UNSIGNED NOT NULL,
   `user_id` int(10) UNSIGNED NOT NULL,
   `user_type` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
@@ -439,7 +484,10 @@ CREATE TABLE `live_result` (
   `operator_id` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `status` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `create_time` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `update_time` int(10) UNSIGNED NOT NULL DEFAULT '0'
+  `update_time` int(10) UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `competition_id` (`competition_id`,`user_id`),
+  KEY `competition_event_round_average_best` (`competition_id`,`event`,`round`,`average`,`best`) USING BTREE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -449,8 +497,8 @@ CREATE TABLE `live_result` (
 --
 
 DROP TABLE IF EXISTS `live_user`;
-CREATE TABLE `live_user` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `live_user` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `wcaid` char(10) NOT NULL DEFAULT '',
   `name` char(128) NOT NULL,
   `name_zh` char(128) NOT NULL DEFAULT '',
@@ -459,7 +507,9 @@ CREATE TABLE `live_user` (
   `country_id` smallint(3) UNSIGNED NOT NULL DEFAULT '0',
   `province_id` smallint(3) UNSIGNED NOT NULL DEFAULT '0',
   `city_id` smallint(3) UNSIGNED NOT NULL DEFAULT '0',
-  `status` tinyint(4) UNSIGNED NOT NULL DEFAULT '0'
+  `status` tinyint(4) UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `wcaid` (`wcaid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -469,12 +519,14 @@ CREATE TABLE `live_user` (
 --
 
 DROP TABLE IF EXISTS `login_history`;
-CREATE TABLE `login_history` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `login_history` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_id` int(10) UNSIGNED NOT NULL,
   `ip` char(15) NOT NULL DEFAULT '',
   `date` int(10) UNSIGNED NOT NULL,
-  `from_cookie` tinyint(1) UNSIGNED NOT NULL DEFAULT '0'
+  `from_cookie` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -484,12 +536,13 @@ CREATE TABLE `login_history` (
 --
 
 DROP TABLE IF EXISTS `logs`;
-CREATE TABLE `logs` (
-  `id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `logs` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `level` varchar(128) CHARACTER SET utf8mb4 DEFAULT NULL,
   `category` varchar(128) CHARACTER SET utf8mb4 DEFAULT NULL,
   `logtime` int(11) DEFAULT NULL,
-  `message` text CHARACTER SET utf8mb4
+  `message` text CHARACTER SET utf8mb4,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -499,8 +552,8 @@ CREATE TABLE `logs` (
 --
 
 DROP TABLE IF EXISTS `mail`;
-CREATE TABLE `mail` (
-  `id` int(11) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `mail` (
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `to` text CHARACTER SET utf8mb4,
   `reply_to` text CHARACTER SET utf8mb4,
   `cc` text CHARACTER SET utf8mb4,
@@ -510,7 +563,9 @@ CREATE TABLE `mail` (
   `sent` tinyint(1) NOT NULL DEFAULT '0',
   `add_time` int(11) NOT NULL,
   `update_time` int(11) NOT NULL,
-  `sent_time` int(11) NOT NULL DEFAULT '0'
+  `sent_time` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `sent` (`sent`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -520,9 +575,10 @@ CREATE TABLE `mail` (
 --
 
 DROP TABLE IF EXISTS `migration`;
-CREATE TABLE `migration` (
+CREATE TABLE IF NOT EXISTS `migration` (
   `version` varchar(180) NOT NULL,
-  `apply_time` int(11) DEFAULT NULL
+  `apply_time` int(11) DEFAULT NULL,
+  PRIMARY KEY (`version`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -532,8 +588,8 @@ CREATE TABLE `migration` (
 --
 
 DROP TABLE IF EXISTS `news`;
-CREATE TABLE `news` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `news` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_id` int(10) NOT NULL,
   `title` varchar(1024) NOT NULL,
   `title_zh` varchar(1024) NOT NULL,
@@ -544,7 +600,10 @@ CREATE TABLE `news` (
   `status` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `description` longtext NOT NULL,
   `description_zh` longtext NOT NULL,
-  `alias` varchar(128) NOT NULL DEFAULT ''
+  `alias` varchar(128) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `status_weight_date` (`status`,`weight`,`date`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -554,13 +613,15 @@ CREATE TABLE `news` (
 --
 
 DROP TABLE IF EXISTS `news_template`;
-CREATE TABLE `news_template` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `news_template` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `title` varchar(1024) NOT NULL,
   `title_zh` varchar(1024) NOT NULL,
   `content` longtext NOT NULL,
-  `content_zh` longtext NOT NULL
+  `content_zh` longtext NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`name`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -570,12 +631,13 @@ CREATE TABLE `news_template` (
 --
 
 DROP TABLE IF EXISTS `old_competition`;
-CREATE TABLE `old_competition` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `old_competition` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `delegate` varchar(255) NOT NULL,
   `delegate_zh` varchar(255) NOT NULL,
   `organizer` varchar(255) NOT NULL,
-  `organizer_zh` varchar(255) NOT NULL
+  `organizer_zh` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -585,8 +647,8 @@ CREATE TABLE `old_competition` (
 --
 
 DROP TABLE IF EXISTS `pay`;
-CREATE TABLE `pay` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `pay` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_id` int(10) UNSIGNED NOT NULL,
   `channel` char(10) NOT NULL DEFAULT '',
   `type` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
@@ -605,7 +667,13 @@ CREATE TABLE `pay` (
   `update_time` int(11) UNSIGNED NOT NULL DEFAULT '0',
   `paid_time` int(11) UNSIGNED NOT NULL DEFAULT '0',
   `refund_amount` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `refund_time` int(11) UNSIGNED NOT NULL DEFAULT '0'
+  `refund_time` int(11) UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `type` (`type`,`type_id`),
+  KEY `status` (`status`,`update_time`),
+  KEY `order_id` (`order_no`),
+  KEY `pay_channel` (`pay_channel`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -615,10 +683,12 @@ CREATE TABLE `pay` (
 --
 
 DROP TABLE IF EXISTS `preferred_event`;
-CREATE TABLE `preferred_event` (
-  `id` int(11) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `preferred_event` (
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_id` int(11) UNSIGNED NOT NULL,
-  `event` varchar(32) DEFAULT NULL
+  `event` varchar(32) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -628,14 +698,16 @@ CREATE TABLE `preferred_event` (
 --
 
 DROP TABLE IF EXISTS `region`;
-CREATE TABLE `region` (
-  `id` int(10) NOT NULL,
+CREATE TABLE IF NOT EXISTS `region` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
   `name` char(128) NOT NULL,
   `name_zh` char(128) NOT NULL DEFAULT '',
   `pid` int(10) NOT NULL DEFAULT '0',
   `longitude` decimal(12,9) NOT NULL DEFAULT '0.000000000',
   `latitude` decimal(12,9) NOT NULL DEFAULT '0.000000000',
-  `second_offset` mediumint(6) NOT NULL DEFAULT '0'
+  `second_offset` mediumint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `pid` (`pid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -645,8 +717,8 @@ CREATE TABLE `region` (
 --
 
 DROP TABLE IF EXISTS `registration`;
-CREATE TABLE `registration` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `registration` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `competition_id` int(10) UNSIGNED NOT NULL,
   `location_id` tinyint(3) UNSIGNED NOT NULL DEFAULT '0',
   `user_id` int(10) UNSIGNED NOT NULL,
@@ -673,7 +745,11 @@ CREATE TABLE `registration` (
   `guest_paid` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `t_shirt_size` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `staff_type` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
-  `staff_statement` varchar(2048) DEFAULT ''
+  `staff_statement` varchar(2048) DEFAULT '',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `competition_user` (`competition_id`,`user_id`),
+  KEY `competition_id` (`competition_id`),
+  KEY `code` (`code`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -683,14 +759,17 @@ CREATE TABLE `registration` (
 --
 
 DROP TABLE IF EXISTS `review`;
-CREATE TABLE `review` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `review` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_id` int(10) NOT NULL,
   `organizer_id` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `competition_id` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `rank` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `comments` varchar(1024) NOT NULL DEFAULT '',
-  `date` int(10) UNSIGNED NOT NULL
+  `date` int(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `status_weight_date` (`date`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -700,10 +779,12 @@ CREATE TABLE `review` (
 --
 
 DROP TABLE IF EXISTS `scan_auth`;
-CREATE TABLE `scan_auth` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `scan_auth` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `competition_id` int(10) UNSIGNED NOT NULL,
-  `code` varchar(20) NOT NULL
+  `code` varchar(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `competition_id` (`competition_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -713,8 +794,8 @@ CREATE TABLE `scan_auth` (
 --
 
 DROP TABLE IF EXISTS `schedule`;
-CREATE TABLE `schedule` (
-  `id` int(10) NOT NULL,
+CREATE TABLE IF NOT EXISTS `schedule` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
   `competition_id` int(10) NOT NULL,
   `day` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
   `stage` char(10) NOT NULL DEFAULT 'main',
@@ -727,7 +808,9 @@ CREATE TABLE `schedule` (
   `number` int(10) UNSIGNED NOT NULL,
   `cut_off` int(10) UNSIGNED NOT NULL,
   `time_limit` int(10) UNSIGNED NOT NULL,
-  `cumulative` tinyint(1) UNSIGNED NOT NULL DEFAULT '0'
+  `cumulative` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `competition_id` (`competition_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -737,11 +820,12 @@ CREATE TABLE `schedule` (
 --
 
 DROP TABLE IF EXISTS `sessions`;
-CREATE TABLE `sessions` (
+CREATE TABLE IF NOT EXISTS `sessions` (
   `sess_id` varbinary(128) NOT NULL,
   `sess_data` blob NOT NULL,
   `sess_lifetime` mediumint(9) NOT NULL,
-  `sess_time` int(10) UNSIGNED NOT NULL
+  `sess_time` int(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (`sess_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -751,8 +835,8 @@ CREATE TABLE `sessions` (
 --
 
 DROP TABLE IF EXISTS `user`;
-CREATE TABLE `user` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `user` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `wcaid` char(10) NOT NULL DEFAULT '',
   `name` char(128) NOT NULL,
   `name_zh` char(128) NOT NULL DEFAULT '',
@@ -773,7 +857,10 @@ CREATE TABLE `user` (
   `passport_type` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   `passport_name` varchar(100) DEFAULT '',
   `passport_number` varchar(50) DEFAULT '',
-  `show_as_delegate` tinyint(1) UNSIGNED NOT NULL DEFAULT '0'
+  `show_as_delegate` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`),
+  KEY `wcaid` (`wcaid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -783,13 +870,17 @@ CREATE TABLE `user` (
 --
 
 DROP TABLE IF EXISTS `user_action`;
-CREATE TABLE `user_action` (
-  `id` int(11) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `user_action` (
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_id` int(11) UNSIGNED NOT NULL,
   `action` char(20) NOT NULL,
   `code` char(32) NOT NULL,
   `status` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
-  `date` int(11) UNSIGNED NOT NULL
+  `date` int(11) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `action` (`action`,`code`),
+  KEY `status` (`status`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -799,14 +890,16 @@ CREATE TABLE `user_action` (
 --
 
 DROP TABLE IF EXISTS `user_avatar`;
-CREATE TABLE `user_avatar` (
-  `id` int(10) UNSIGNED NOT NULL COMMENT '自增ID',
+CREATE TABLE IF NOT EXISTS `user_avatar` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
   `user_id` int(10) UNSIGNED NOT NULL COMMENT '用户ID',
   `md5` char(32) NOT NULL COMMENT '图片md5',
   `extension` char(10) NOT NULL COMMENT '扩展名',
   `width` mediumint(6) UNSIGNED NOT NULL COMMENT '宽度',
   `height` mediumint(6) UNSIGNED NOT NULL COMMENT '高度',
-  `add_time` int(10) UNSIGNED NOT NULL DEFAULT '0' COMMENT '上传时间'
+  `add_time` int(10) UNSIGNED NOT NULL DEFAULT '0' COMMENT '上传时间',
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -816,10 +909,12 @@ CREATE TABLE `user_avatar` (
 --
 
 DROP TABLE IF EXISTS `user_permission`;
-CREATE TABLE `user_permission` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `user_permission` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_id` int(10) UNSIGNED NOT NULL,
-  `permission` char(20) NOT NULL
+  `permission` char(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -829,11 +924,15 @@ CREATE TABLE `user_permission` (
 --
 
 DROP TABLE IF EXISTS `user_schedule`;
-CREATE TABLE `user_schedule` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `user_schedule` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `group_id` int(10) UNSIGNED NOT NULL,
   `user_id` int(10) UNSIGNED NOT NULL,
-  `competition_id` int(10) UNSIGNED NOT NULL
+  `competition_id` int(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `heat_id` (`group_id`),
+  KEY `competition_id` (`competition_id`),
+  KEY `user_id` (`user_id`,`competition_id`) USING BTREE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -843,542 +942,14 @@ CREATE TABLE `user_schedule` (
 --
 
 DROP TABLE IF EXISTS `wechat_user`;
-CREATE TABLE `wechat_user` (
+CREATE TABLE IF NOT EXISTS `wechat_user` (
   `id` varchar(32) NOT NULL,
   `nickname` varchar(128) NOT NULL,
   `avatar` varchar(256) NOT NULL,
-  `user_id` int(11) UNSIGNED NOT NULL DEFAULT '0'
+  `user_id` int(11) UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `competition`
---
-ALTER TABLE `competition`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `type` (`type`,`date`,`status`);
-
---
--- Indexes for table `competition_application`
---
-ALTER TABLE `competition_application`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `competition_id` (`competition_id`);
-
---
--- Indexes for table `competition_cert`
---
-ALTER TABLE `competition_cert`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `competition_id` (`competition_id`),
-  ADD KEY `user_id` (`user_id`),
-  ADD KEY `hash` (`hash`);
-
---
--- Indexes for table `competition_delegate`
---
-ALTER TABLE `competition_delegate`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `competition_event`
---
-ALTER TABLE `competition_event`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `competition_event` (`competition_id`,`event`),
-  ADD KEY `competition_id` (`competition_id`),
-  ADD KEY `event` (`event`);
-
---
--- Indexes for table `competition_location`
---
-ALTER TABLE `competition_location`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `competition_id` (`competition_id`);
-
---
--- Indexes for table `competition_organizer`
---
-ALTER TABLE `competition_organizer`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `competition_id` (`competition_id`),
-  ADD KEY `organizer_id` (`organizer_id`);
-
---
--- Indexes for table `config`
---
-ALTER TABLE `config`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `custom_event`
---
-ALTER TABLE `custom_event`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `delegate`
---
-ALTER TABLE `delegate`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `equipment`
---
-ALTER TABLE `equipment`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`),
-  ADD KEY `status_weight_date` (`status`,`sequence`),
-  ADD KEY `category_id` (`category_id`);
-
---
--- Indexes for table `equipment_category`
---
-ALTER TABLE `equipment_category`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`),
-  ADD KEY `status_weight_date` (`status`,`sequence`);
-
---
--- Indexes for table `faq`
---
-ALTER TABLE `faq`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`),
-  ADD KEY `status_weight_date` (`status`,`date`),
-  ADD KEY `category_id` (`category_id`);
-
---
--- Indexes for table `faq_category`
---
-ALTER TABLE `faq_category`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`),
-  ADD KEY `status_weight_date` (`status`,`date`);
-
---
--- Indexes for table `group_schedule`
---
-ALTER TABLE `group_schedule`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `competition_id` (`competition_id`);
-
---
--- Indexes for table `live_event_round`
---
-ALTER TABLE `live_event_round`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `competition_id` (`competition_id`),
-  ADD KEY `competition_event_round_average_best` (`competition_id`,`event`,`round`) USING BTREE;
-
---
--- Indexes for table `live_message`
---
-ALTER TABLE `live_message`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `competition_id` (`competition_id`,`user_id`),
-  ADD KEY `competition_event_round_average_best` (`competition_id`,`event`,`round`) USING BTREE;
-
---
--- Indexes for table `live_registration`
---
-ALTER TABLE `live_registration`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `competition_id` (`competition_id`);
-
---
--- Indexes for table `live_result`
---
-ALTER TABLE `live_result`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `competition_id` (`competition_id`,`user_id`),
-  ADD KEY `competition_event_round_average_best` (`competition_id`,`event`,`round`,`average`,`best`) USING BTREE;
-
---
--- Indexes for table `live_user`
---
-ALTER TABLE `live_user`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `wcaid` (`wcaid`);
-
---
--- Indexes for table `login_history`
---
-ALTER TABLE `login_history`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`);
-
---
--- Indexes for table `logs`
---
-ALTER TABLE `logs`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `mail`
---
-ALTER TABLE `mail`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `sent` (`sent`);
-
---
--- Indexes for table `migration`
---
-ALTER TABLE `migration`
-  ADD PRIMARY KEY (`version`);
-
---
--- Indexes for table `news`
---
-ALTER TABLE `news`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`),
-  ADD KEY `status_weight_date` (`status`,`weight`,`date`);
-
---
--- Indexes for table `news_template`
---
-ALTER TABLE `news_template`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`name`);
-
---
--- Indexes for table `old_competition`
---
-ALTER TABLE `old_competition`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `pay`
---
-ALTER TABLE `pay`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`),
-  ADD KEY `type` (`type`,`type_id`),
-  ADD KEY `status` (`status`,`update_time`),
-  ADD KEY `order_id` (`order_no`),
-  ADD KEY `pay_channel` (`pay_channel`);
-
---
--- Indexes for table `preferred_event`
---
-ALTER TABLE `preferred_event`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`);
-
---
--- Indexes for table `region`
---
-ALTER TABLE `region`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `pid` (`pid`);
-
---
--- Indexes for table `registration`
---
-ALTER TABLE `registration`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `competition_user` (`competition_id`,`user_id`),
-  ADD KEY `competition_id` (`competition_id`),
-  ADD KEY `code` (`code`);
-
---
--- Indexes for table `review`
---
-ALTER TABLE `review`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`),
-  ADD KEY `status_weight_date` (`date`);
-
---
--- Indexes for table `scan_auth`
---
-ALTER TABLE `scan_auth`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `competition_id` (`competition_id`);
-
---
--- Indexes for table `schedule`
---
-ALTER TABLE `schedule`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `competition_id` (`competition_id`);
-
---
--- Indexes for table `sessions`
---
-ALTER TABLE `sessions`
-  ADD PRIMARY KEY (`sess_id`);
-
---
--- Indexes for table `user`
---
-ALTER TABLE `user`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `email` (`email`),
-  ADD KEY `wcaid` (`wcaid`);
-
---
--- Indexes for table `user_action`
---
-ALTER TABLE `user_action`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`),
-  ADD KEY `action` (`action`,`code`),
-  ADD KEY `status` (`status`);
-
---
--- Indexes for table `user_avatar`
---
-ALTER TABLE `user_avatar`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`);
-
---
--- Indexes for table `user_permission`
---
-ALTER TABLE `user_permission`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`);
-
---
--- Indexes for table `user_schedule`
---
-ALTER TABLE `user_schedule`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `heat_id` (`group_id`),
-  ADD KEY `competition_id` (`competition_id`),
-  ADD KEY `user_id` (`user_id`,`competition_id`) USING BTREE;
-
---
--- Indexes for table `wechat_user`
---
-ALTER TABLE `wechat_user`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`);
-
---
--- 在导出的表使用AUTO_INCREMENT
---
-
---
--- 使用表AUTO_INCREMENT `competition`
---
-ALTER TABLE `competition`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- 使用表AUTO_INCREMENT `competition_application`
---
-ALTER TABLE `competition_application`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- 使用表AUTO_INCREMENT `competition_cert`
---
-ALTER TABLE `competition_cert`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- 使用表AUTO_INCREMENT `competition_delegate`
---
-ALTER TABLE `competition_delegate`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- 使用表AUTO_INCREMENT `competition_event`
---
-ALTER TABLE `competition_event`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- 使用表AUTO_INCREMENT `competition_location`
---
-ALTER TABLE `competition_location`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- 使用表AUTO_INCREMENT `competition_organizer`
---
-ALTER TABLE `competition_organizer`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- 使用表AUTO_INCREMENT `delegate`
---
-ALTER TABLE `delegate`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- 使用表AUTO_INCREMENT `equipment`
---
-ALTER TABLE `equipment`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- 使用表AUTO_INCREMENT `equipment_category`
---
-ALTER TABLE `equipment_category`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- 使用表AUTO_INCREMENT `faq`
---
-ALTER TABLE `faq`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- 使用表AUTO_INCREMENT `faq_category`
---
-ALTER TABLE `faq_category`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- 使用表AUTO_INCREMENT `group_schedule`
---
-ALTER TABLE `group_schedule`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT;
-
---
--- 使用表AUTO_INCREMENT `live_event_round`
---
-ALTER TABLE `live_event_round`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- 使用表AUTO_INCREMENT `live_message`
---
-ALTER TABLE `live_message`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- 使用表AUTO_INCREMENT `live_registration`
---
-ALTER TABLE `live_registration`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- 使用表AUTO_INCREMENT `live_result`
---
-ALTER TABLE `live_result`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- 使用表AUTO_INCREMENT `live_user`
---
-ALTER TABLE `live_user`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- 使用表AUTO_INCREMENT `login_history`
---
-ALTER TABLE `login_history`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- 使用表AUTO_INCREMENT `logs`
---
-ALTER TABLE `logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- 使用表AUTO_INCREMENT `mail`
---
-ALTER TABLE `mail`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- 使用表AUTO_INCREMENT `news`
---
-ALTER TABLE `news`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- 使用表AUTO_INCREMENT `news_template`
---
-ALTER TABLE `news_template`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- 使用表AUTO_INCREMENT `old_competition`
---
-ALTER TABLE `old_competition`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- 使用表AUTO_INCREMENT `pay`
---
-ALTER TABLE `pay`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- 使用表AUTO_INCREMENT `preferred_event`
---
-ALTER TABLE `preferred_event`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- 使用表AUTO_INCREMENT `region`
---
-ALTER TABLE `region`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT;
-
---
--- 使用表AUTO_INCREMENT `registration`
---
-ALTER TABLE `registration`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- 使用表AUTO_INCREMENT `review`
---
-ALTER TABLE `review`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- 使用表AUTO_INCREMENT `scan_auth`
---
-ALTER TABLE `scan_auth`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- 使用表AUTO_INCREMENT `schedule`
---
-ALTER TABLE `schedule`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT;
-
---
--- 使用表AUTO_INCREMENT `user`
---
-ALTER TABLE `user`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- 使用表AUTO_INCREMENT `user_action`
---
-ALTER TABLE `user_action`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- 使用表AUTO_INCREMENT `user_avatar`
---
-ALTER TABLE `user_avatar`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID';
-
---
--- 使用表AUTO_INCREMENT `user_permission`
---
-ALTER TABLE `user_permission`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- 使用表AUTO_INCREMENT `user_schedule`
---
-ALTER TABLE `user_schedule`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

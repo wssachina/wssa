@@ -8,6 +8,8 @@ define('PUBLIC_PATH', APP_PATH . '/public');
 define('ENV', isset($_SERVER['ENV']) ? $_SERVER['ENV'] : 'production');
 define('DEV', ENV === 'dev');
 
+date_default_timezone_set('Asia/Shanghai');
+
 if (is_file($autoload = BASE_PATH . '/vendor/autoload.php')) {
 	require $autoload;
 }
