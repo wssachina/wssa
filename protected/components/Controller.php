@@ -280,7 +280,7 @@ class Controller extends CController {
 					// ),
 					array(
 						'label'=>Yii::t('common', 'Board'),
-						'url'=>array('/board/competition/index'),
+						'url'=>array('/board/news/index'),
 						'visible'=>Yii::app()->user->checkRole(User::ROLE_ORGANIZER) || $applied,
 					),
 					array(
