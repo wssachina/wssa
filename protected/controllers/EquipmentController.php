@@ -13,7 +13,7 @@ class EquipmentController extends Controller {
 	}
 
 	public function actionIndex() {
-		$categoryId = $this->iGet('category_id', 1);
+		$categoryId = $this->iGet('category_id', null);
 		$model = new Equipment();
 		$model->unsetAttributes();
 		$model->category_id = $categoryId;

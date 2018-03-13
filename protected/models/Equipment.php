@@ -121,9 +121,9 @@ class Equipment extends ActiveRecord {
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id',$this->id,true);
+		$criteria->compare('id',$this->id);
 		$criteria->compare('user_id',$this->user_id);
-		$criteria->compare('category_id',$this->category_id,true);
+		$criteria->compare('category_id',$this->category_id);
 		$criteria->compare('title',$this->title,true);
 		$criteria->compare('title_zh',$this->title_zh,true);
 		$criteria->compare('cover',$this->cover,true);
