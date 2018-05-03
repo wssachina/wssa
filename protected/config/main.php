@@ -48,7 +48,7 @@ $config = [
 				''=>'site/index',
 				// 'register/<step:\d>'=>'site/register',
 				'<action:login|logout|banned>'=>'site/<action>',
-				'<view:about|contact|links|disclaimer|competition|record|club|sponsor|please-update-your-browser>'=>[
+				'<view:about|contact|links|disclaimer|competition|record|sponsor|please-update-your-browser>'=>[
 					'site/page',
 				],
 				// 'competition/<action:signin>'=>'competition/<action>',

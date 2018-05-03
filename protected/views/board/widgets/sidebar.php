@@ -236,6 +236,35 @@
           ),
         ),
         array(
+          'label'=>'<i class="fa fa-question-circle"></i> 俱乐部 <i class="fa fa-caret-down"></i>',
+          'url'=>'javascript:;',
+          'active'=>$this->controller->id == 'club',
+          'visible'=>Yii::app()->user->checkPermission('club'),
+          'linkOptions'=>array(
+            'data-parent'=>'#side',
+            'data-toggle'=>'collapse',
+            'class'=>'accordion-toggle',
+            'data-target'=>'#club',
+          ),
+          'itemOptions'=>array(
+            'class'=>'panel',
+          ),
+          'submenuOptions'=>array(
+            'class'=>'collapse nav in',
+            'id'=>'club',
+          ),
+          'items'=>array(
+            array(
+              'label'=>'<i class="fa fa-angle-double-right"></i> 俱乐部管理',
+              'url'=>array('/board/club/index'),
+            ),
+            array(
+              'label'=>'<i class="fa fa-angle-double-right"></i> 新增俱乐部',
+              'url'=>array('/board/club/add'),
+            ),
+          ),
+        ),
+        array(
           'label'=>'<i class="fa fa-question-circle"></i> FAQ <i class="fa fa-caret-down"></i>',
           'url'=>'javascript:;',
           'active'=>$this->controller->id == 'faq',
