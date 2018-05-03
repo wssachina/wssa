@@ -167,6 +167,7 @@ class Region extends ActiveRecord {
 		// class name for the relations automatically generated below.
 		return array(
 			'wcaCountry'=>[self::BELONGS_TO, 'Countries', ['name'=>'id']],
+			'parent'=>[self::BELONGS_TO, 'Region', 'pid'],
 		);
 	}
 

@@ -119,10 +119,10 @@ class Club extends ActiveRecord {
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
 	 */
-	public function search() {
+	public function search($isAdmin = false) {
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
-		$criteria=new CDbCriteria;
+		$criteria = new CDbCriteria;
 
 		$criteria->compare('id', $this->id);
 		$criteria->compare('name', $this->name, true);
@@ -135,12 +135,19 @@ class Club extends ActiveRecord {
 		$criteria->compare('create_time', $this->create_time);
 		$criteria->compare('update_time', $this->update_time);
 
-		return new CActiveDataProvider($this, array(
+		$criteria->with = ['province', 'city'];
+
+		$attributes = array(
 			'criteria'=>$criteria,
 			'sort'=>[
-				'defaultOrder'=>'province_id, city_id, name',
+				'defaultOrder'=>'t.province_id, t.city_id, t.name',
 			],
-		));
+		);
+		if (!$isAdmin) {
+			$attributes['pagination'] = false;
+		}
+
+		return new CActiveDataProvider($this, $attributes);
 	}
 
 	/**
