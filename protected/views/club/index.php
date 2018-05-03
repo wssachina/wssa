@@ -21,7 +21,7 @@
     'dataProvider'=>$model->search(),
     // 'filter'=>false,
     'template'=>'{items}{pager}',
-    'enableSorting'=>false,
+    'enableSorting'=>true,
     'front'=>true,
     'emptyText'=>'暂无俱乐部',
     'columns'=>array(
