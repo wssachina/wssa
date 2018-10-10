@@ -6,7 +6,7 @@ Yii::import('application.components.*');
 $wcaDb = file_exists(CONFIG_PATH . '/wcaDb') ? intval(file_get_contents(CONFIG_PATH . '/wcaDb')) : 0;
 $config = [
 	'basePath'=>BASE_PATH,
-	'name'=>'WSSA China',
+	'name'=>'世界竞技叠杯运动协会（中国）- World Sport Stacking Association(China)',
 	'language'=>'zh_cn',
 	// preloading 'log' component
 	'preload'=>[

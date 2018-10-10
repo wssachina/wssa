@@ -50,7 +50,7 @@
   <div class="bottom-bar">
     <div class="container">
       <div class="row">
-        <small class="copyright col-md-6 col-sm-12 col-xs-12">Copyright @ <?php echo date('Y'); ?> <?php echo Yii::t('common', Yii::app()->name); ?></small>
+        <small class="copyright col-md-6 col-sm-12 col-xs-12">Copyright @ <?php echo date('Y'); ?> World Sport Stacking Association(China) 京ICP备18011908号-1</small>
         <ul class="social pull-right col-md-6 col-sm-12 col-xs-12">
           <li class="row-end"><?php echo CHtml::link(Html::fontAwesome('rss'), array('/feed/index')); ?></li>
         </ul>
