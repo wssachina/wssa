@@ -39,19 +39,16 @@ $this->renderPartial('registerSide', $_data_);
     $form->error($model, 'repeatPassword', array('class'=>'text-danger'))
   );?>
   <?php echo Html::formGroup(
-    $model, 'country_id', array(),
-    $form->labelEx($model, 'country_id'),
-    $form->dropDownList($model, 'country_id', Region::getCountries(), array(
-      'class'=>'form-control',
-      'readonly'=>$model->wcaid != '',
-      'prompt'=>'',
-    )),
-    $form->error($model, 'country_id', array('class'=>'text-danger'))
+    $model, 'local_name', array('id'=>'local_name'),
+    $form->labelEx($model, 'local_name'),
+    Html::activeTextField($model, 'local_name'),
+    $form->error($model, 'local_name', array('class'=>'text-danger')),
+    '<div class="text-warning">请填写真实姓名。</div>'
   );?>
   <?php echo Html::formGroup(
     $model, 'name', array('id'=>'name'),
     $form->labelEx($model, 'name'),
-    Html::activeTextField($model, 'name', array('readonly'=>$model->wcaid != '')),
+    Html::activeTextField($model, 'name'),
     Html::tag('div', array(
       'class'=>'hide clearfix',
       'id'=>'name-help',
@@ -59,13 +56,6 @@ $this->renderPartial('registerSide', $_data_);
       'class'=>'text-info',
     ), Yii::t('common', 'Please choose the correct English name below'))),
     $form->error($model, 'name', array('class'=>'text-danger'))
-  );?>
-  <?php echo Html::formGroup(
-    $model, 'local_name', array('id'=>'local_name'),
-    $form->labelEx($model, 'local_name'),
-    Html::activeTextField($model, 'local_name', array('readonly'=>$model->wcaid != '' && $model->local_name != '')),
-    $form->error($model, 'local_name', array('class'=>'text-danger')),
-    Yii::app()->language === 'zh_cn' && ($model->wcaid == '' || $model->local_name == '') ? '<div class="text-warning">请使用真实姓名注册粗饼网并报名比赛。</div>' : ''
   );?>
   <div class="help-block text-info">
     <?php echo Yii::t('common', 'Your name will be displayed as '); ?><b id="final-name"></b>
@@ -77,8 +67,7 @@ $this->renderPartial('registerSide', $_data_);
       'class'=>'form-control',
       'prompt'=>'',
     )),
-    $form->error($model, 'gender', array('class'=>'text-danger')),
-    Yii::app()->language === 'zh_cn' ? '<div class="text-warning">请填写有效证件（身份证、户口簿等）上面的出生日期！</div>' : ''
+    $form->error($model, 'gender', array('class'=>'text-danger'))
   );?>
   <?php echo Html::formGroup(
     $model, 'birthday', array(),
@@ -88,7 +77,8 @@ $this->renderPartial('registerSide', $_data_);
       'data-date-format'=>'yyyy-mm-dd',
       'placeholder'=>Yii::t('common', 'The format is YYYY-MM-DD'),
     )),
-    $form->error($model, 'birthday', array('class'=>'text-danger'))
+    $form->error($model, 'birthday', array('class'=>'text-danger')),
+    '<div class="text-warning">请填写有效证件（身份证、户口簿等）上面的出生日期！</div>'
   );?>
   <?php echo Html::formGroup(
     $model, 'province_id', array(
@@ -141,10 +131,8 @@ $allCities = json_encode($allCities);
 Yii::app()->clientScript->registerScript('register2',
 <<<EOT
   $('.date-picker').datepicker();
-  $('[readonly]').prop('disabled', true);
   var allCities = {$allCities};
   $(document)
-    .on('change', '#RegisterForm_country_id', toggleCountry)
     .on('change', '#RegisterForm_province_id', function() {
       var city = $('#RegisterForm_city_id'),
         cities = allCities[$(this).val()] || [];
@@ -170,12 +158,7 @@ Yii::app()->clientScript->registerScript('register2',
           }
         }
       }
-      $('[readonly]').prop('disabled', false);
     });
-  $('label[for="RegisterForm_mobile"]').append('<span class="required">*</span>');
-  $('label[for="RegisterForm_local_name"]').append('<span class="required">*</span>');
-  $('label[for="RegisterForm_province_id"]').append('<span class="required hide">*</span>');
-  $('label[for="RegisterForm_city_id"]').append('<span class="required hide">*</span>');
   //$('#RegisterForm_province_id').trigger('change');
   var compoundSurname = /^(欧阳|太史|端木|上官|司马|东方|独孤|南宫|万俟|闻人|夏侯|诸葛|尉迟|公羊|赫连|澹台|皇甫|宗政|濮阳|公冶|太叔|申屠|公孙|慕容|仲孙|钟离|长孙|宇文|司徒|鲜于|司空|闾丘|子车|亓官|司寇|巫马|公西|颛孙|壤驷|公良|漆雕|乐正|宰父|谷梁|拓跋|夹谷|轩辕|令狐|段干|百里|呼延|东郭|南门|羊舌|微生|公户|公玉|公仪|梁丘|公仲|公上|公门|公山|公坚|左丘|公伯|西门|公祖|第五|公乘|贯丘|公皙|南荣|东里|东宫|仲长|子书|子桑|即墨|达奚|褚师)/;
   var surnamePinyin = {
@@ -203,23 +186,18 @@ Yii::app()->clientScript->registerScript('register2',
   nameDom.on('change keyup', showFinalName);
   localNameDom.on('change keyup', showFinalName).on('change keyup', generatePinyin).trigger('change');
   nameHelpDom.on('change', 'input', function() {
-    nameDom.val($(this).val());
+    nameDom.val($(this).val()).trigger('change');
   })
   String.prototype.ucfirst = function() {
     return this.charAt(0).toUpperCase() + this.substr(1);
   }
-  toggleCountry();
   function showFinalName() {
     var name = nameDom.val();
     var localName = localNameDom.val();
-    var finalName = name + (localName ? ' (' + localName + ')' : '');
+    var finalName = name ? name + (localName ? ' (' + localName + ')' : '') : '';
     finalNameDom.text(finalName).parent()[finalName ? 'show' : 'hide']();
   }
-  function toggleCountry() {
-    var countryId = $('#RegisterForm_country_id').val();
-    setPinyin(countryId == 1);
-    $('#province, #city, label[for="RegisterForm_mobile"] span, label[for="RegisterForm_local_name"] span, label[for="RegisterForm_province_id"] span, label[for="RegisterForm_city_id"] span')[countryId == 1 ? 'removeClass' : 'addClass']('hide');
-  }
+  setPinyin(true);
   function setPinyin(enable) {
     enablePinyin = enable
     nameDom.prop('readonly', enable);

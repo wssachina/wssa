@@ -142,11 +142,9 @@ class SiteController extends Controller {
 		}
 		if ($userStep < $step) {
 			$step = min($userStep, 1);
-			Yii::app()->session->remove(RegisterForm::REGISTER_WCAID);
 		}
 		$model = new RegisterForm('step' . $step);
 		$model->step = $step;
-		$model->loadData();
 
 		// collect user input data
 		if (isset($_POST['RegisterForm'])) {
@@ -159,13 +157,13 @@ class SiteController extends Controller {
 						throw new CHttpException(500, Yii::t('common', 'Something goes wrong'));
 					}
 				}
-				$this->redirect(array('/site/register', 'step'=>$step));
+				$this->redirect(['/site/register', 'step'=>$step]);
 			}
 			if (ctype_digit($model->birthday)) {
-				$model->birthday = date($model::$dateFormat, $model->birthday);
+				$model->birthday = date(RegisterForm::DATE_FORMAT, $model->birthday);
 			}
 		}
-		$this->pageTitle = array('Register');
+		$this->pageTitle = ['Register'];
 		$model->verifyCode = '';
 		$this->title = 'Register';
 		$this->render('register' . $step, array(

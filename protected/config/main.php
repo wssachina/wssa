@@ -47,7 +47,7 @@ $config = [
 				'equipment/item/<id:\d+>'=>'equipment/item',
 				''=>'site/index',
 				// 'register/<step:\d>'=>'site/register',
-				'<action:login|logout|banned>'=>'site/<action>',
+				'<action:login|logout|banned|register>'=>'site/<action>',
 				'<view:about|contact|links|disclaimer|competition|record|sponsor|please-update-your-browser>'=>[
 					'site/page',
 				],
@@ -268,7 +268,7 @@ $config = [
 	'params'=>[
 		// this is used in contact page
 		'adminEmail'=>'admin@cubingchina.com',
-		'baseUrl'=>'https://cubingchina.com',
+		'baseUrl'=>'http://thewssa.org.cn',
 		'languages'=>['en', 'zh_cn', 'zh_tw'],
 		'author'=>'Baiqiang Dong',
 		'description'=>'The Chinese WSSA website.',
