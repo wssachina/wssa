@@ -472,6 +472,20 @@ class Controller extends CController {
 		return $this->_weiboSharePic;
 	}
 
+	public function setMetaInfo($model) {
+		if (!$model) {
+			return;
+		}
+		foreach (['title', 'description', 'keywords'] as $name) {
+			$attribute = 'meta_' . $name;
+			$content = $model->$attribute;
+			$siteAttribute = $name === 'title' ? 'pageTitle' : $name;
+			if ($content) {
+				$this->$siteAttribute = $content;
+			}
+		}
+	}
+
 	public function setDescription($description) {
 		$description = strip_tags($description);
 		$description = preg_replace('{[\r\n]+}', ' ', $description);

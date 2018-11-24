@@ -12,6 +12,7 @@ class PostController extends Controller {
 		$this->breadcrumbs = [
 			$this->title,
 		];
+		$this->setMetaInfo($news);
 		if ($news === null) {
 			throw new CHttpException(404, 'Error');
 		}

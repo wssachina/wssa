@@ -17,6 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'WSSA China'=>'WSSA中国',
   'Fee' => '',
   'WCA ID' => '',
   'more' => '',

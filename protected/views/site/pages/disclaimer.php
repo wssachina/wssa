@@ -1,6 +1,7 @@
 <?php $config = Config::getConfig('disclaimer'); ?>
 <?php $this->setPageTitle(array($config->getAttributeValue('title'))); ?>
 <?php $this->setTitle($config->getAttributeValue('title')); ?>
+<?php $this->setMetaInfo($config); ?>
 <?php $this->breadcrumbs = array(
   $config->getAttributeValue('title'),
 ); ?>

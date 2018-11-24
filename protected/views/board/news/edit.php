@@ -142,6 +142,42 @@
               )),
               $form->error($model, 'description', array('class'=>'text-danger'))
             );?>
+            <div class="clearfix"></div>
+            <?php echo Html::formGroup(
+              $model, 'meta_title', array(
+                'class'=>'col-lg-12',
+              ),
+              $form->labelEx($model, 'meta_title', array(
+                'label'=>'SEO标题',
+              )),
+              Html::activeTextField($model, 'meta_title'),
+              $form->error($model, 'meta_title', array('class'=>'text-danger'))
+            );?>
+            <div class="clearfix"></div>
+            <?php echo Html::formGroup(
+              $model, 'meta_keywords', array(
+                'class'=>'col-lg-12',
+              ),
+              $form->labelEx($model, 'meta_keywords', array(
+                'label'=>'SEO关键字',
+              )),
+              Html::activeTextField($model, 'meta_keywords'),
+              $form->error($model, 'meta_keywords', array('class'=>'text-danger'))
+            );?>
+            <div class="clearfix"></div>
+            <?php echo Html::formGroup(
+              $model, 'meta_description', array(
+                'class'=>'col-lg-12',
+              ),
+              $form->labelEx($model, 'meta_description', array(
+                'label'=>'SEO描述',
+              )),
+              $form->textArea($model, 'meta_description', array(
+                'class'=>'form-control',
+                'rows'=>10,
+              )),
+              $form->error($model, 'meta_description', array('class'=>'text-danger'))
+            );?>
             <div class="col-lg-12">
               <button type="submit" class="btn btn-default btn-square"><?php echo Yii::t('common', 'Submit'); ?></button>
             </div>

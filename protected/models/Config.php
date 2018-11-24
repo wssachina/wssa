@@ -87,15 +87,16 @@ class Config extends ActiveRecord {
 	public function rules() {
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
-		return array(
-			array('id', 'required'),
-			array('status', 'numerical', 'integerOnly'=>true),
-			array('id', 'length', 'max'=>20),
-			array('title, title_zh', 'length', 'max'=>1024),
+		return [
+			['id', 'required'],
+			['status', 'numerical', 'integerOnly'=>true],
+			['id', 'length', 'max'=>20],
+			['title, title_zh, meta_description', 'length', 'max'=>1024],
+			['meta_title, meta_keywords', 'length', 'max'=>256],
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, title, title_zh, content, content_zh, status', 'safe'),
-		);
+			['id, title, title_zh, content, content_zh, status', 'safe'],
+		];
 	}
 
 	/**
