@@ -13,14 +13,6 @@ $this->renderPartial('side', $_data_);
       'role'=>'form',
     ),
   )); ?>
-  <?php if ($user->wcaid == ''): ?>
-  <?php echo Html::formGroup(
-    $model, 'wcaid', array(),
-    $form->labelEx($model, 'wcaid'),
-    Html::activeTextField($model, 'wcaid'),
-    $form->error($model, 'wcaid', array('class'=>'text-danger'))
-  );?>
-  <?php endif; ?>
   <?php if ($user->canChangePassport()): ?>
   <p class="help-text text-danger"><?php echo Yii::t('Registration', 'All the information collected will ONLY be used for identity confirmation, insurance and government information backup of the competition. You may choose to delete it after competition or keep it in the database for the use of future competition.') ;?></p>
   <?php echo Html::formGroup(
@@ -45,7 +37,7 @@ $this->renderPartial('side', $_data_);
   <?php echo Html::formGroup(
     $model, 'passport_number', array(),
     $form->labelEx($model, 'passport_number'),
-    Yii::app()->language == 'zh_cn' ? '<div class="help-text">如果您提供的身份证件为个人身份证，请注意身份证上的<b class="text-danger">出生日期必须与您在粗饼网注册的信息一致</b>，否则会提示输入错误。需要修改生日信息，请联系admin@cubingchina.com。</div>' : '',
+    Yii::app()->language == 'zh_cn' ? '<div class="help-text">如果您提供的身份证件为个人身份证，请注意身份证上的<b class="text-danger">出生日期必须与您在网站上注册的信息一致</b>，否则会提示输入错误。需要修改生日信息，请联系管理员。</div>' : '',
     Html::activeTextField($model, 'passport_number', array(
       'class'=>'form-control',
     )),
