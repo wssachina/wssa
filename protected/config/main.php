@@ -267,7 +267,7 @@ $config = [
 	// using Yii::app()->params['paramName']
 	'params'=>[
 		// this is used in contact page
-		'adminEmail'=>'admin@cubingchina.com',
+		'adminEmail'=>'wssachina@jinseyulin.cn',
 		'baseUrl'=>'http://thewssa.org.cn',
 		'languages'=>['en', 'zh_cn', 'zh_tw'],
 		'author'=>'Baiqiang Dong',
