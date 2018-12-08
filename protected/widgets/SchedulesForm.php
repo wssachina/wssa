@@ -26,15 +26,10 @@ class SchedulesForm extends Widget {
 		echo CHtml::openTag('thead');
 		echo CHtml::openTag('tr');
 		echo CHtml::tag('th', [], '第几天');
-		echo CHtml::tag('th', [], '赛区');
 		echo CHtml::tag('th', [], '开始时间');
 		echo CHtml::tag('th', [], '结束时间');
 		echo CHtml::tag('th', [], '项目');
-		echo CHtml::tag('th', [], '分组');
 		echo CHtml::tag('th', [], '轮次');
-		echo CHtml::tag('th', [], '赛制');
-		echo CHtml::tag('th', [], '及格线(秒)');
-		echo CHtml::tag('th', [], '还原时限(秒)<br>打勾表示累计');
 		echo CHtml::tag('th', [], '人数');
 		echo CHtml::closeTag('tr');
 		echo CHtml::closeTag('thead');
@@ -45,17 +40,7 @@ class SchedulesForm extends Widget {
 		foreach ($events as $key=>$value) {
 			$events[$key] = Yii::t('event', $value);
 		}
-		$formats = Formats::getAllFormats();
-		foreach ($formats as $key=>$value) {
-			$formats[$key] = Yii::t('common', $value);
-		}
-		$rounds = RoundTypes::getAllRoundTypes();
-		unset($rounds['0']);
-		unset($rounds['h']);
-		unset($rounds['b']);
-		foreach ($rounds as $key=>$value) {
-			$rounds[$key] = Yii::t('RoundTypes', $value);
-		}
+		$rounds = Competition::getRounds();
 		$stages = Schedule::getStages();
 		echo CHtml::openTag('tbody');
 		// CVarDumper::dump($schedules, 10, 1);exit;
@@ -67,7 +52,6 @@ class SchedulesForm extends Widget {
 				'min'=>1,
 				'max'=>4,
 			]));
-			echo CHtml::tag('td', [], CHtml::dropDownList(CHtml::activeName($model, "{$name}[stage][$key]"), $stage, $stages));
 			echo CHtml::tag('td', [], CHtml::activeTextField($model, "{$name}[start_time][$key]", [
 				'value'=>$start_time ? date('H:i', $start_time) : '',
 				'class'=>'datetime-picker',
@@ -86,27 +70,10 @@ class SchedulesForm extends Widget {
 				'prompt'=>'',
 				'class'=>'schedule-event',
 			]));
-			echo CHtml::tag('td', [], CHtml::activeTextField($model, "{$name}[group][$key]", [
-				'value'=>$group,
-			]));
 			echo CHtml::tag('td', [], CHtml::dropDownList(CHtml::activeName($model, "{$name}[round][$key]"), $round, $rounds, [
 				'prompt'=>'',
 				'class'=>'schedule-round',
 			]));
-			echo CHtml::tag('td', [], CHtml::dropDownList(CHtml::activeName($model, "{$name}[format][$key]"), $format, $formats, ['prompt'=>'']));
-			echo CHtml::tag('td', [], CHtml::activeNumberField($model, "{$name}[cut_off][$key]", [
-				'value'=>$cut_off,
-				// 'max'=>3600,
-			]));
-			echo CHtml::openTag('td');
-			echo CHtml::activeNumberField($model, "{$name}[time_limit][$key]", [
-				'value'=>$time_limit,
-				// 'max'=>3600,
-			]);
-			echo CHtml::activeCheckBox($model, "{$name}[cumulative][$key]", [
-				'checked'=>$cumulative == Schedule::YES,
-			]);
-			echo CHtml::closeTag('td');
 			echo CHtml::tag('td', [], CHtml::activeNumberField($model, "{$name}[number][$key]", [
 				'value'=>$number,
 			]));

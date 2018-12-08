@@ -91,54 +91,35 @@
     <?php endif; ?>
     <?php if ($competition->tba == Competition::NO): ?>
     <?php if (!$competition->multi_countries): ?>
-    <dt><?php echo Yii::t('Competition', 'Entry Fee'); ?>
-      <?php if ($competition->tba == Competition::NO): ?>
-      <?php echo CHtml::tag('span', array(
-        'class'=>'btn btn-xs btn-primary',
-        'id'=>'expand-fee',
-      ), Html::fontAwesome('plus') . 'more'); ?>
-      <?php endif; ?>
-    </dt>
-    <dd style="height:104px;overflow:hidden">
+    <dt><?php echo Yii::t('Competition', 'Entry Fee'); ?></dt>
+    <dd>
       <div class="row">
-        <div class="col-md-6 col-sm-8">
-          <div class="table-responsive">
+        <div class="col-md-3 col-sm-8">
+          <div>
             <table>
               <thead>
                 <tr>
-                  <th><?php echo Yii::t('Competition', 'Events'); ?></th>
-                  <th><?php echo $competition->firstStage; ?></th>
-                  <?php if ($competition->hasSecondStage): ?>
-                  <th><?php echo $competition->secondStage; ?></th>
-                  <?php endif; ?>
-                  <?php if ($competition->hasThirdStage): ?>
-                  <th><?php echo $competition->thirdStage; ?></th>
-                  <?php endif; ?>
+                  <th>报名时间</th>
+                  <th>费用</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td><?php echo Yii::t('Competition', 'Base Entry Fee'); ?></td>
-                  <td>　<i class="fa fa-rmb"></i><?php echo $competition->entry_fee; ?></td>
-                  <?php if ($competition->hasSecondStage): ?>
-                  <td>　<i class="fa fa-rmb"></i><?php echo $competition->getEventFee('entry', Competition::STAGE_SECOND); ?></td>
-                  <?php endif; ?>
-                  <?php if ($competition->hasThirdStage): ?>
-                  <td>　<i class="fa fa-rmb"></i><?php echo $competition->getEventFee('entry', Competition::STAGE_THIRD); ?></td>
-                  <?php endif; ?>
+                  <th><?php echo $competition->firstStage; ?></th>
+                  <td><i class="fa fa-rmb"></i><?php echo $competition->entry_fee; ?></td>
                 </tr>
-                <?php foreach ($competition->associatedEvents as $key=>$value): ?>
+                <?php if ($competition->hasSecondStage): ?>
                 <tr>
-                  <td><?php echo Events::getFullEventNameWithIcon($key); ?></td>
-                  <td>&nbsp;+<i class="fa fa-rmb"></i><?php echo $value['fee']; ?></td>
-                  <?php if ($competition->hasSecondStage): ?>
-                  <td>&nbsp;+<i class="fa fa-rmb"></i><?php echo $competition->getEventFee($key, Competition::STAGE_SECOND); ?></td>
-                  <?php endif; ?>
-                  <?php if ($competition->hasThirdStage): ?>
-                  <td>&nbsp;+<i class="fa fa-rmb"></i><?php echo $competition->getEventFee($key, Competition::STAGE_THIRD); ?></td>
-                  <?php endif; ?>
+                  <th><?php echo $competition->secondStage; ?></th>
+                  <td><i class="fa fa-rmb"></i><?php echo $competition->getEventFee('entry', Competition::STAGE_SECOND); ?></td>
                 </tr>
-                <?php endforeach; ?>
+                <?php endif; ?>
+                <?php if ($competition->hasThirdStage): ?>
+                <tr>
+                  <th><?php echo $competition->thirdStage; ?></th>
+                  <td><i class="fa fa-rmb"></i><?php echo $competition->getEventFee('entry', Competition::STAGE_THIRD); ?></td>
+                </tr>
+                <?php endif; ?>
               </tbody>
             </table>
         </div>

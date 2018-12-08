@@ -7,11 +7,7 @@
       <div class="checkbox">
         <label>
           <input type="checkbox" data-event="<?php echo $event; ?>">
-          <?php echo Events::getEventIcon($event); ?>
-          - <?php echo $value['round']; ?><?php echo Yii::t('Competition', $value['round'] > 1 ? ' rounds' : ' round'); ?>
-          <?php if ($value['fee'] > 0): ?>
-          (<i class="fa fa-rmb"></i><?php echo $competition->getEventFee($event); ?>)
-          <?php endif; ?>
+          <?php echo Events::getEventName($event); ?>
         </label>
       </div>
     </div>

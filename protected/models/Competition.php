@@ -139,6 +139,18 @@ class Competition extends ActiveRecord {
 		];
 	}
 
+	public static function getRounds() {
+		return [
+			'1'=>'预赛',
+			'f'=>'决赛',
+		];
+	}
+
+	public static function getRoundName($round) {
+		$rounds = self::getRounds();
+		return isset($rounds[$round]) ? $rounds[$round] : $round;
+	}
+
 	public static function getAppliedCount($user) {
 		$with = [
 			'organizer'=>[
@@ -325,7 +337,10 @@ class Competition extends ActiveRecord {
 			'order'=>'date DESC',
 			'select'=>'date',
 		));
-		for ($year = intval(date('Y', $lastCompetition->date)); $year >= 2006; $year--) {
+		if ($lastCompetition === null) {
+			return [];
+		}
+		for ($year = intval(date('Y', $lastCompetition->date)); $year >= 2019; $year--) {
 			$years[$year] = $year;
 		}
 		return $years;
@@ -663,7 +678,7 @@ class Competition extends ActiveRecord {
 	}
 
 	public function getWcaUrl() {
-		return Competitions::getWcaUrl($this->wca_competition_id);
+		// return Competitions::getWcaUrl($this->wca_competition_id);
 	}
 
 	public function getHasResults() {
@@ -741,7 +756,19 @@ class Competition extends ActiveRecord {
 		if ($this->tba == self::YES) {
 			return Yii::t('common', 'To be announced');
 		}
-		return Competitions::getDisplayDate($this->date, $this->end_date);
+		$date = $this->date;
+		$endDate = $this->end_date;
+		$displayDate = date("Y-m-d", $date);
+		if ($endDate > 0) {
+			if (date('Y', $endDate) != date('Y', $date)) {
+				$displayDate .= date('~Y-m-d', $endDate);
+			} elseif (date('m', $endDate) != date('m', $date)) {
+				$displayDate .= date('~m-d', $endDate);
+			} elseif (date('d', $endDate) != date('d', $date)) {
+				$displayDate .= date('~d', $endDate);
+			}
+		}
+		return $displayDate;
 	}
 
 	public function getFirstStage() {
@@ -766,12 +793,12 @@ class Competition extends ActiveRecord {
 
 	public function formatStageDate($dates) {
 		$dates = array_map(function($date) {
-			return date('Y-m-d H:i:s', $date);
+			return date('m-d H:i', $date);
 		}, $dates);
 		if (!isset($dates[1])) {
 			array_unshift($dates, Yii::t('Competition', 'Now'));
 		}
-		return implode('<br> ~ <br>', $dates);
+		return implode(' ~ ', $dates);
 	}
 
 	public function getHasSecondStage() {
@@ -967,8 +994,8 @@ class Competition extends ActiveRecord {
 				'End Time'=>date('H:i', $schedule->end_time),
 				'Event'=>$event,
 				'Group'=>$schedule->group,
-				'Round'=>Yii::t('RoundTypes', RoundTypes::getFullRoundName($schedule->round)),
-				'Format'=>Yii::t('common', Formats::getFullFormatName($schedule->format)),
+				'Round'=>self::getRoundName($schedule->round),
+				// 'Format'=>Yii::t('common', Formats::getFullFormatName($schedule->format)),
 				'Cut Off'=>self::formatTime($schedule->cut_off),
 				'Time Limit'=>self::formatTime($schedule->time_limit),
 				'Competitors'=>$schedule->number,
@@ -1061,8 +1088,7 @@ class Competition extends ActiveRecord {
 				'End Time'=>date('H:i', $schedule->end_time),
 				'Event'=>$event,
 				'Group'=>$schedule->group,
-				'Round'=>Yii::t('RoundTypes', RoundTypes::getFullRoundName($schedule->round)),
-				'Format'=>Yii::t('common', Formats::getFullFormatName($schedule->format)),
+				'Round'=>self::getRoundName($schedule->round),
 				'Cut Off'=>self::formatTime($schedule->cut_off),
 				'Time Limit'=>self::formatTime($schedule->time_limit),
 				'Competitors'=>$schedule->number,
@@ -1294,19 +1320,11 @@ class Competition extends ActiveRecord {
 	}
 
 	public function getEventsColumns($headerText = false) {
-		$region = 'Yii::t("Region", $data->user->country->getAttributeValue("name"))';
+		$region = '';
 		if (Yii::app()->language == 'zh_cn') {
-			$region .= '.$data->user->getRegionName($data->user->province). (in_array($data->user->province_id, array(215, 525, 567, 642)) ? "" : $data->user->getRegionName($data->user->city))';
+			$region .= '$data->user->getRegionName($data->user->province). (in_array($data->user->province_id, array(215, 525, 567, 642)) ? "" : $data->user->getRegionName($data->user->city))';
 		}
 		$columns = array(
-			array(
-				'headerHtmlOptions'=>array(
-					'class'=>'battle-checkbox',
-				),
-				'header'=>Yii::t('common', 'Battle'),
-				'value'=>'Persons::getBattleCheckBox($data->user->getCompetitionName(), $data->user->wcaid)',
-				'type'=>'raw',
-			),
 			array(
 				'name'=>'number',
 				'header'=>'No.',
@@ -1354,10 +1372,11 @@ class Competition extends ActiveRecord {
 		foreach ($this->associatedEvents as $event=>$value) {
 			$columns[] = array(
 				'name'=>(string)$event,
-				'header'=>Events::getEventIcon($event) . ($headerText ? $event : ''),
+				'header'=>Events::getEventName($event),
 				'headerHtmlOptions'=>array(
 					'class'=>'header-event',
 				),
+				'sortable'=>false,
 				'htmlOptions'=>Yii::app()->controller->sGet('sort') === "$event" ? array(
 					'class'=>'hover',
 				) : array(),
@@ -2248,7 +2267,7 @@ class Competition extends ActiveRecord {
 				'delegate_id'=>$this->multi_countries ? $locations['delegate_id'][$key] : 0,
 				'delegate_text'=>$this->multi_countries ? $locations['delegate_text'][$key] : '',
 				'fee'=>$this->multi_countries ? $locations['fee'][$key] : '',
-				'status'=>intval($locations['status'][$key]),
+				// 'status'=>intval($locations['status'][$key]),
 			);
 			$index++;
 		}
@@ -2281,38 +2300,38 @@ class Competition extends ActiveRecord {
 					return false;
 				}
 				if (isset($onlyScheculeEvents[$event])) {
-					if (!empty($group) || !empty($round) || !empty($format) || !empty($number) || !empty($cutOff) || !empty($timeLimit)) {
-						$this->addError($errorKey, '非比赛项目不能设置分组、轮次、赛制、人数、及格线、还原时限等！');
-						return false;
-					}
+					// if (!empty($group) || !empty($round) || !empty($format) || !empty($number) || !empty($cutOff) || !empty($timeLimit)) {
+					// 	$this->addError($errorKey, '非比赛项目不能设置分组、轮次、赛制、人数、及格线、还原时限等！');
+					// 	return false;
+					// }
 				} else {
 					if ($round == '') {
 						$this->addError($errorKey, '请选择轮次！');
 						return false;
 					}
-					if ($format == '') {
-						$this->addError($errorKey, '请选择赛制！');
-						return false;
-					}
-					if (in_array($round, $combinedRoundTypes)) {
-						if ($format != '2/a' && $format != '1/m') {
-							$this->addError($errorKey, '请正确选择组合制轮次的赛制！');
-							return false;
-						}
-						if (empty($cutOff)) {
-							$this->addError($errorKey, '组合制轮次请设置及格线！');
-							return false;
-						}
-					} else {
-						if ($format == '2/a' || $format == '1/m') {
-							$this->addError($errorKey, '请正确选择非组合制轮次的赛制！');
-							return false;
-						}
-						if (!empty($cutOff)) {
-							$this->addError($errorKey, '非组合制轮次请勿设置及格线！');
-							return false;
-						}
-					}
+					// if ($format == '') {
+					// 	$this->addError($errorKey, '请选择赛制！');
+					// 	return false;
+					// }
+					// if (in_array($round, $combinedRoundTypes)) {
+					// 	if ($format != '2/a' && $format != '1/m') {
+					// 		$this->addError($errorKey, '请正确选择组合制轮次的赛制！');
+					// 		return false;
+					// 	}
+					// 	if (empty($cutOff)) {
+					// 		$this->addError($errorKey, '组合制轮次请设置及格线！');
+					// 		return false;
+					// 	}
+					// } else {
+					// 	if ($format == '2/a' || $format == '1/m') {
+					// 		$this->addError($errorKey, '请正确选择非组合制轮次的赛制！');
+					// 		return false;
+					// 	}
+					// 	if (!empty($cutOff)) {
+					// 		$this->addError($errorKey, '非组合制轮次请勿设置及格线！');
+					// 		return false;
+					// 	}
+					// }
 				}
 			}
 		}

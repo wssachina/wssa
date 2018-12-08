@@ -48,11 +48,11 @@ $config = [
 				''=>'site/index',
 				// 'register/<step:\d>'=>'site/register',
 				'<action:login|logout|banned|register>'=>'site/<action>',
-				'<view:about|contact|links|disclaimer|competition|record|sponsor|please-update-your-browser>'=>[
+				'<view:about|contact|links|disclaimer|record|sponsor|please-update-your-browser>'=>[
 					'site/page',
 				],
-				// 'competition/<action:signin>'=>'competition/<action>',
-				// 'competition/<alias:[-A-z0-9]+>/<action:schedule|travel|regulations|competitors|registration|scan>'=>'competition/<action>',
+				'competition/<action:signin>'=>'competition/<action>',
+				'competition/<alias:[-A-z0-9]+>/<action:schedule|travel|regulations|competitors|registration|scan>'=>'competition/<action>',
 				'<controller:competition|post>/<alias:[-A-z0-9]+>'=>'<controller>/detail',
 				'pay/<action:notify|frontNotify>/<channel:\w+>'=>'pay/<action>',
 				'qrCode/<action:\w+>/<code:[\w-]+>'=>'qrCode/<action>',
@@ -63,13 +63,9 @@ $config = [
 			'appendParams'=>false,
 			'showScriptName'=>false,
 		],
-		// 'cache'=>[
-		// 	'class'=>'CustomCache',
-		// 	// 'hashKey'=>false,
-		// 	'hostname'=>'127.0.0.1',
-		// 	'port'=>6379,
-		// 	'database'=>1,
-		// ],
+		'cache'=>[
+			'class'=>'CFileCache',
+		],
 		'db'=>[
 			'connectionString'=>'mysql:host=localhost;dbname=wssa' . (DEV ? '_dev' : ''),
 			'pdoClass'=>'QueryCheckPdo',
@@ -281,6 +277,15 @@ $config = [
 			'size'=>2097152,
 			'height'=>1200,
 			'width'=>1200,
+		],
+		'payments'=>[
+			'alipay'=>[
+				'gateway'=>'https://openapi.alipay.com/gateway.do?charset=UTF-8',
+				'app_id'=>'2016062701556602',
+				'private_key_path'=>Env::get('PAYMENT_ALIPAY_PRIVATE_KEY'),
+				'alipay_public_key_path'=>Env::get('PAYMENT_ALIPAY_PUBLIC_KEY'),
+				'img'=>'/f/images/pay/alipay.png',
+			],
 		],
 	],
 ];

@@ -7,14 +7,17 @@
     'method'=>'get',
     'action'=>array('/competition/index'),
   )); ?>
+  <?php $years = Competition::getYears(); ?>
+  <?php if ($years != []): ?>
   <?php echo Html::formGroup(
     $model, 'year', array(),
     $form->labelEx($model, 'year'),
-    CHtml::dropDownList('year', $model->year, Competition::getYears(), array(
+    CHtml::dropDownList('year', $model->year, $years, array(
       'class'=>'form-control',
       'prompt'=>Yii::t('common', 'All'),
     ))
   );?>
+  <?php endif; ?>
   <?php echo Html::formGroup(
     $model, 'type', array(),
     $form->labelEx($model, 'type'),
@@ -27,14 +30,6 @@
     $model, 'province', array(),
     $form->labelEx($model, 'province'),
     CHtml::dropDownList('province', $model->province, Region::getProvinces(false), array(
-      'class'=>'form-control',
-      'prompt'=>Yii::t('common', 'All'),
-    ))
-  );?>
-  <?php echo Html::formGroup(
-    $model, 'event', array(),
-    $form->labelEx($model, 'event'),
-    CHtml::dropDownList('event', $model->event, Events::getNormalTranslatedEvents(), array(
       'class'=>'form-control',
       'prompt'=>Yii::t('common', 'All'),
     ))

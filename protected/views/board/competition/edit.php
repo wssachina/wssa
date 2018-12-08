@@ -123,30 +123,6 @@
                 Html::activeTextField($model, 'entry_fee'),
                 $form->error($model, 'entry_fee', array('class'=>'text-danger'))
               );?>
-              <?php echo Html::formGroup(
-                $model, 'auto_accept', array(
-                  'class'=>'col-md-4',
-                ),
-                $form->labelEx($model, 'auto_accept', array(
-                  'label'=>'报名自动审核' . Html::fontAwesome('question-circle', 'b'),
-                  'data-toggle'=>'tooltip',
-                  'title'=>'若选是，在未开启在线支付的状态下，选手报名后将会立刻通过审核，而不是进入待审列表',
-                )),
-                Html::activeSwitch($model, 'auto_accept'),
-                $form->error($model, 'auto_accept', array('class'=>'text-danger'))
-              );?>
-              <?php echo Html::formGroup(
-                $model, 'online_pay', array(
-                  'class'=>'col-md-4',
-                ),
-                $form->labelEx($model, 'online_pay', array(
-                  'label'=>'在线支付' . Html::fontAwesome('question-circle', 'b'),
-                  'data-toggle'=>'tooltip',
-                  'title'=>'在线支付极大程度方便主办方的审核工作，手续费率大约是1.5%，详情请联系管理员',
-                )),
-                Html::activeSwitch($model, 'online_pay'),
-                $form->error($model, 'online_pay', array('class'=>'text-danger'))
-              );?>
               <div class="clearfix"></div>
               <?php echo Html::formGroup(
                 $model, 'second_stage_date', array(
