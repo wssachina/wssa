@@ -93,19 +93,24 @@
               'visible'=>Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR),
             ),
             array(
-              'label'=>'<i class="fa fa-angle-double-right"></i> 重复用户',
-              'url'=>array('/board/user/repeat'),
+              'label'=>'<i class="fa fa-angle-double-right"></i> 注册码管理',
+              'url'=>array('/board/user/code'),
               'visible'=>Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR),
             ),
-            array(
-              'label'=>'<i class="fa fa-angle-double-right"></i> 合并用户',
-              'url'=>array('/board/user/merge'),
-              'visible'=>Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR),
-            ),
-            array(
-              'label'=>'<i class="fa fa-angle-double-right"></i> 数据统计',
-              'url'=>array('/board/user/statistics'),
-            ),
+            // array(
+            //   'label'=>'<i class="fa fa-angle-double-right"></i> 重复用户',
+            //   'url'=>array('/board/user/repeat'),
+            //   'visible'=>Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR),
+            // ),
+            // array(
+            //   'label'=>'<i class="fa fa-angle-double-right"></i> 合并用户',
+            //   'url'=>array('/board/user/merge'),
+            //   'visible'=>Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR),
+            // ),
+            // array(
+            //   'label'=>'<i class="fa fa-angle-double-right"></i> 数据统计',
+            //   'url'=>array('/board/user/statistics'),
+            // ),
             // array(
             //  'label'=>'<i class="fa fa-angle-double-right"></i> 新增用户',
             //  'url'=>array('/board/user/add'),
