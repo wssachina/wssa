@@ -255,10 +255,10 @@ $config = [
 		],
 		'mailer'=>[
 			'class'=>'Mailer',
-			'from'=>'noreply@cubingchina.com',
+			'from'=>'noreply@thewssa.org.cn',
 			'fromname'=>'请勿回复DO NOT REPLY',
 			'api'=>[
-				'user'=>'cubingchina',
+				'user'=>'thewssa',
 				'key'=>Env::get('MAILER_KEY'),
 			],
 		],
