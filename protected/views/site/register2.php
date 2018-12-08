@@ -82,7 +82,6 @@ $this->renderPartial('registerSide', $_data_);
   );?>
   <?php echo Html::formGroup(
     $model, 'province_id', array(
-      'class'=>'hide',
       'id'=>'province',
     ),
     $form->labelEx($model, 'province_id'),
@@ -94,7 +93,6 @@ $this->renderPartial('registerSide', $_data_);
   );?>
   <?php echo Html::formGroup(
     $model, 'city_id', array(
-      'class'=>'hide',
       'id'=>'city',
     ),
     $form->labelEx($model, 'city_id'),
