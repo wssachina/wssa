@@ -149,11 +149,7 @@ class RegisterForm extends CFormModel {
 		$user->role = User::ROLE_UNCHECKED;
 		$user->reg_time = time();
 		$user->reg_ip = Yii::app()->request->getUserHostAddress();
-		$recentUserCount = User::model()->countByAttributes(array(
-			'reg_ip'=>$user->reg_ip,
-		), 'reg_time > :reg_time', array(
-			'reg_time'=>time() - 86400 * 7,
-		));
+		$user->invitation_code = $this->invitation_code;
 		if ($user->save()) {
 			$identity = new UserIdentity($this->email,$this->password);
 			$identity->id = $user->id;
@@ -162,8 +158,8 @@ class RegisterForm extends CFormModel {
 			$invitationCode = InvitationCode::model()->findByAttributes([
 				'code'=>$this->invitation_code,
 			]);
-			if ($invitationCode) {
-				$invitationCode->status = 1;
+			if ($invitationCode && $invitationCode->isOneTime()) {
+				$invitationCode->status = InvitationCode::STATUS_USED;
 				$invitationCode->save();
 			}
 			return true;

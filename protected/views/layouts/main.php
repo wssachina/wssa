@@ -12,6 +12,17 @@
             <?php echo CHtml::link($link->getAttributeValue('content'), $link->getAttributeValue('title'), ['target'=>'_blank']); ?>
           </li>
         <?php endforeach; ?>
+        </ul>
+        <br />
+        <div class="contact pull-right">
+          <?php if (Yii::app()->user->isGuest): ?>
+          <p class="phone"><?php echo CHtml::link(Html::fontAwesome('sign-in') . Yii::t('common', 'Login'), array('/site/login')); ?></p>
+          <p class="email"><?php echo CHtml::link(Html::fontAwesome('user') . Yii::t('common', 'Register'), array('/site/register')); ?></p>
+          <?php else: ?>
+          <p class="phone"><?php echo CHtml::link(Html::fontAwesome('user') . $this->user->getAttributeValue('name', true), array('/user/profile')); ?></p>
+          <p class="email"><?php echo CHtml::link(Html::fontAwesome('sign-out') . Yii::t('common', 'Logout'), array('/site/logout')); ?></p>
+          <?php endif; ?>
+        </div>
       </div><!--//info-->
     </div><!--//header-main-->
   </header><!--//header-->

@@ -12,11 +12,21 @@
  */
 class InvitationCode extends ActiveRecord {
 
+	const TYPE_ONE_TIME = 0;
+	const TYPE_PERMENENT = 1;
+
+	const STATUS_NORMAL = 0;
+	const STATUS_USED = 1;
+
 	protected function beforeValidate() {
 		if ($this->isNewRecord) {
 			$this->generateCode();
 		}
 		return parent::beforeValidate();
+	}
+
+	public function isOneTime() {
+		return $this->type == self::TYPE_ONE_TIME;
 	}
 
 	public function generateCode($length = 6) {
