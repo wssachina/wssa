@@ -46,51 +46,24 @@
       <?php echo OldCompetition::formatInfo($competition->old->getAttributeValue('delegate')); ?>
     </dd>
     <?php endif; ?>
-    <?php if ($competition->has_qualifying_time): ?>
-    <dt><?php echo Yii::t('Competition', 'Events and Qualifying Times'); ?></dt>
-    <dd>
-      <div class="row">
-        <?php if ($competition->tba == Competition::NO): ?>
-        <div class="col-lg-12">
-          <?php echo Yii::t('Competition', 'Competitors have to meet the QUALIFYING TIMES of the competition events as below, by {date}.', [
-            '{date}'=>date('Y-m-d H:i:s', $competition->qualifying_end_time),
-          ]); ?>
-        </div>
-        <?php endif; ?>
-        <div class="col-md-4 col-sm-6">
-          <?php $this->widget('GridView', [
-            'dataProvider'=>new CArrayDataProvider($competition->allEvents, [
-              'pagination'=>false,
-            ]),
-            'enableSorting'=>false,
-            'front'=>true,
-            'columns'=>[
-              [
-                'header'=>Yii::t('common', 'Event'),
-                'value'=>'Events::getFullEventNameWithIcon($data->event)',
-                'type'=>'raw',
-              ],
-              [
-                'header'=>Yii::t('Competition', 'Qualifying Time'),
-                'value'=>'$data->getQualifyTime()',
-                'type'=>'raw',
-              ],
-            ],
-          ]);
-          ?>
-        </div>
-      </div>
-    </dd>
-    <?php else: ?>
     <dt><?php echo Yii::t('Competition', 'Events'); ?></dt>
     <dd>
-      <?php echo implode(Yii::t('common', ', '), array_map(function($event) use ($competition) {
-        return Yii::t('event', $competition->getFullEventName($event));
-      }, array_keys($competition->getRegistrationEvents()))); ?>
+      <ul class="main-event list-unstyled">
+      <?php foreach ($competition->getMainEvents() as $competitionEvent): ?>
+        <li>
+          <b><?php echo $competitionEvent->e->name; ?></b>
+          <?php if ($competitionEvent->children !== []): ?>
+          <ul class="child-events list-unstyled">
+            <?php foreach ($competitionEvent->children as $child): ?>
+            <li><?php echo $child->e->name; ?></li>
+            <?php endforeach; ?>
+          </ul>
+          <?php endif; ?>
+        </li>
+      <?php endforeach; ?>
+      </ul>
     </dd>
-    <?php endif; ?>
     <?php if ($competition->tba == Competition::NO): ?>
-    <?php if (!$competition->multi_countries): ?>
     <dt><?php echo Yii::t('Competition', 'Entry Fee'); ?></dt>
     <dd>
       <div class="row">
@@ -125,7 +98,6 @@
         </div>
       </div>
     </dd>
-    <?php endif; ?>
     <?php endif; ?>
     <?php if ($competition->person_num > 0): ?>
     <dt><?php echo Yii::t('Competition', 'Limited Number of Competitor'); ?></dt>

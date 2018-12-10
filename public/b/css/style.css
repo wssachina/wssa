@@ -2266,3 +2266,16 @@ body img {
   text-transform: uppercase
 }
 
+.main-event {
+  border: 1px solid #eee;
+  padding: 15px 15px 5px;
+  margin-bottom: 15px;
+}
+
+.main-event .child-events {
+  padding-left: 15px;
+}
+
+.main-event .checkbox {
+  margin-top: 0;
+}

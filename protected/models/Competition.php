@@ -545,6 +545,10 @@ class Competition extends ActiveRecord {
 		return $this->_events = $events;
 	}
 
+	public function containsEvent($id) {
+		return array_key_exists($id, $this->associatedEvents);
+	}
+
 	public function getShouldDisableUnmetEvents() {
 		return $this->has_qualifying_time && time() >= $this->qualifying_end_time;
 	}
@@ -1309,14 +1313,13 @@ class Competition extends ActiveRecord {
 	}
 
 	public function getRegistrationEvents() {
-		$events = Events::getAllEvents();
-		$registrationEvents = array();
-		foreach ($this->associatedEvents as $key=>$value) {
-			if (isset($events[$key])) {
-				$registrationEvents[$key] = $events[$key];
-			}
-		}
-		return $registrationEvents;
+		return $this->associatedEvents;
+	}
+
+	public function getMainEvents() {
+		return array_filter($this->allEvents, function($event) {
+			return $event->e->isMainEvent();
+		});
 	}
 
 	public function getEventsColumns($headerText = false) {
@@ -1995,16 +1998,11 @@ class Competition extends ActiveRecord {
 
 	public function updateEvents($events) {
 		CompetitionEvent::model()->deleteAllByAttributes(['competition_id'=>$this->id]);
-		foreach ($events as $event=>$attributes) {
-			if ($attributes['round'] > 0) {
-				$competitionEvent = new CompetitionEvent();
-				$competitionEvent->competition_id = $this->id;
-				$competitionEvent->event = "$event";
-				foreach ($attributes as $key=>$value) {
-					$competitionEvent->{$key} = intval($value);
-				}
-				$competitionEvent->save();
-			}
+		foreach ($events as $event) {
+			$competitionEvent = new CompetitionEvent();
+			$competitionEvent->competition_id = $this->id;
+			$competitionEvent->event = "$event";
+			$competitionEvent->save();
 		}
 		return true;
 	}

@@ -105,4 +105,14 @@ $(function() {
   }
   adjustTableContainer();
   $(window).on('resize', adjustTableContainer);
+  $('.registration-events').on('change', function() {
+    var that = $(this);
+    var children = that.closest('.checkbox').siblings('.child-events')
+    if (children.length > 0) {
+      children[this.checked ? 'removeClass' : 'addClass']('hide')
+    }
+    if (!this.checked) {
+      children.find('input').prop('checked', false)
+    }
+  }).trigger('change')
 })

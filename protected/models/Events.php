@@ -150,7 +150,7 @@ class Events extends ActiveRecord {
 	}
 
 	public static function getScheduleEvents() {
-		return self::getAllEvents() + self::getOnlyScheduleEvents();
+		return CHtml::listData(self::getAllEvents(), 'id', 'name') + self::getOnlyScheduleEvents();
 	}
 
 	public static function getOnlyScheduleEvents() {
@@ -161,21 +161,11 @@ class Events extends ActiveRecord {
 			'break'=>'Break',
 			'lucky'=>'Lucky Draw',
 			'ceremony'=>'Award Ceremony',
-			// 'submission'=>'3x3x3 Multi-Blind Puzzle Submission',
 		);
 	}
 
 	public static function getAllEvents() {
 		return self::getNormalEvents();// + self::getOtherEvents();
-	}
-
-	public static function getOtherEvents() {
-		return [
-			'magic'=>'Magic',
-			'mmagic'=>'Master Magic',
-			'stack'=>'Sport Stacking',
-			'funny'=>'Funny Event',
-		] + self::getCustomEvents();
 	}
 
 	public static function getCustomEvents() {
@@ -188,10 +178,24 @@ class Events extends ActiveRecord {
 		}
 		$events = self::model()->cache(86500 * 7)->findAll(array(
 			'condition'=>'rank<900',
-			'order'=>'rank',
+			'order'=>'parent_id, rank',
 		));
-		$events = CHtml::listData($events, 'id', 'name');
-		return self::$_normalEvents = $events;
+		$temp = [];
+		foreach ($events as $event) {
+			if ($event->isMainEvent()) {
+				$temp[$event->id] = [
+					'id'=>$event->id,
+					'name'=>$event->name,
+					'children'=>[],
+				];
+			} elseif (isset($temp[$event->parent_id])) {
+				$temp[$event->parent_id]['children'][$event->id] = [
+					'id'=>$event->id,
+					'name'=>$event->name,
+				];
+			}
+		}
+		return self::$_normalEvents = $temp;
 	}
 
 	public static function getNormalTranslatedEvents() {
@@ -216,6 +220,10 @@ class Events extends ActiveRecord {
 
 	public static function isCustomEvent($event) {
 		return array_key_exists($event, self::getCustomEvents());
+	}
+
+	public function isMainEvent() {
+		return $this->parent_id == '';
 	}
 
 	/**
@@ -248,6 +256,8 @@ class Events extends ActiveRecord {
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'parent'=>[self::BELONGS_TO, 'Events', 'parent_id'],
+			'children'=>[self::HAS_MANY, 'Events', 'parent_id'],
 		);
 	}
 
