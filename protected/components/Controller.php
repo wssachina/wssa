@@ -187,13 +187,13 @@ class Controller extends CController {
 						'class'=>'nav-item',
 					),
 				),
-				array(
-					'label'=>Html::fontAwesome('star', 'a') . Yii::t('common', 'Sponsor'),
-					'url'=>array('/site/page', 'view'=>'sponsor'),
-					'itemOptions'=>array(
-						'class'=>'nav-item',
-					),
-				),
+				// array(
+				// 	'label'=>Html::fontAwesome('star', 'a') . Yii::t('common', 'Sponsor'),
+				// 	'url'=>array('/site/page', 'view'=>'sponsor'),
+				// 	'itemOptions'=>array(
+				// 		'class'=>'nav-item',
+				// 	),
+				// ),
 				array(
 					'label'=>Html::fontAwesome('map-marker', 'a') . Yii::t('common', 'Club'),
 					'url'=>array('/site/page', 'view'=>'club'),
