@@ -1,4 +1,4 @@
-<?php if ($this->iGet('page') == 1): ?>
+<?php if ($this->iGet('page') <= 1): ?>
 <div class="col-md-12">
   <?php $this->widget('Carousel', [
     'items'=>$sliders,
