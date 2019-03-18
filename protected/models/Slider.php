@@ -30,30 +30,26 @@ class Slider extends ActiveRecord {
 			'limit'=>$num,
 		]);
 		$sliders = array_merge($sliders, array_map(function($news) {
-			$slider = [
+			return [
 				'url'=>$news->getUrl(),
 				'image'=>$news->cover,
 				'title'=>$news->title_zh,
 				'create_time'=>$news->date,
+				'weight'=>$news->weight,
 			];
-			if ($news->weight > 0) {
-				$slider['weight'] = $news->weight;
-			}
-			return $slider;
 		}, $news));
 		usort($sliders, function($sliderA, $sliderB) {
-			if (isset($sliderA['weight']) && $sliderB['weight']) {
-				$temp = $sliderB['create_time'] - $sliderA['create_time'];
-			} elseif (isset($sliderA['weight'])) {
-				return -1;
-			} elseif (isset($sliderB['weight'])) {
-				return 1;
-			} else {
+			$temp = $sliderB['weight'] - $sliderA['weight'];
+			if ($temp == 0) {
 				$temp = $sliderB['create_time'] - $sliderA['create_time'];
 			}
 			return $temp;
 		});
 		return array_splice($sliders, 0, $num);
+	}
+
+	public function getWeight() {
+		return 0;
 	}
 
 	public function handleDate() {
