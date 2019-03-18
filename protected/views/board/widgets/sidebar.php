@@ -177,6 +177,35 @@
           ),
         ),
         array(
+          'label'=>'<i class="fa fa-bullhorn"></i> Slider <i class="fa fa-caret-down"></i>',
+          'url'=>'javascript:;',
+          'active'=>$this->controller->id == 'slider',
+          'visible'=>Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR),
+          'linkOptions'=>array(
+            'data-parent'=>'#side',
+            'data-toggle'=>'collapse',
+            'class'=>'accordion-toggle',
+            'data-target'=>'#slider',
+          ),
+          'itemOptions'=>array(
+            'class'=>'panel',
+          ),
+          'submenuOptions'=>array(
+            'class'=>'collapse nav in',
+            'id'=>'slider',
+          ),
+          'items'=>array(
+            array(
+              'label'=>'<i class="fa fa-angle-double-right"></i> Slider管理',
+              'url'=>array('/board/slider/index'),
+            ),
+            array(
+              'label'=>'<i class="fa fa-angle-double-right"></i> 新增Slider',
+              'url'=>array('/board/slider/add'),
+            ),
+          ),
+        ),
+        array(
           'label'=>'<i class="fa fa-bullhorn"></i> 配置 <i class="fa fa-caret-down"></i>',
           'url'=>'javascript:;',
           'active'=>$this->controller->id == 'config',

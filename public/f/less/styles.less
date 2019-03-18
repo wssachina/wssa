@@ -1253,3 +1253,29 @@ body.live.disconnected {
     border-color: darken(@color, 10%);
   }
 }
+
+.slider-wrapper {
+  a {
+    outline: none;
+  }
+
+  .slider-item {
+    position: relative;
+    img {
+      width: 100%;
+    }
+  }
+
+  .slider-title {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.35);
+    color: #fff;
+    padding: 5px 15px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

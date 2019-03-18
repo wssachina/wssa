@@ -27,6 +27,7 @@ class ImageTextInput extends Widget {
 			CHtml::label('请选择图片', $uploadId),
 			CHtml::fileField('dummy' . $this->_id, '', [
 				'id'=>$uploadId,
+				'accept'=>'image/*',
 			]),
 		]));
 		$clientScript = Yii::app()->clientScript;
