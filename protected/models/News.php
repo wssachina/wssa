@@ -126,7 +126,7 @@ class News extends ActiveRecord {
 			['user_id, title, title_zh, content, content_zh, date', 'required'],
 			['user_id, weight, status', 'numerical', 'integerOnly'=>true],
 			['title, title_zh, meta_description', 'length', 'max'=>1024],
-			['meta_title, meta_keywords', 'length', 'max'=>256],
+			['meta_title, meta_keywords, cover', 'length', 'max'=>256],
 			['description_zh, description', 'safe'],
 			['id, user_id, title, title_zh, content, content_zh, weight, date, status', 'safe', 'on'=>'search'],
 		];

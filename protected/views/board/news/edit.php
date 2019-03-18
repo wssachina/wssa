@@ -144,6 +144,20 @@
             );?>
             <div class="clearfix"></div>
             <?php echo Html::formGroup(
+              $model, 'cover', array(
+                'class'=>'col-lg-12',
+              ),
+              $form->labelEx($model, 'cover', array(
+                'label'=>'封面',
+              )),
+              $this->widget('ImageTextInput', [
+                'model'=>$model,
+                'name'=>'cover',
+              ], true),
+              $form->error($model, 'cover', array('class'=>'text-danger'))
+            );?>
+            <div class="clearfix"></div>
+            <?php echo Html::formGroup(
               $model, 'meta_title', array(
                 'class'=>'col-lg-12',
               ),
