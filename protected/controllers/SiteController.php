@@ -58,7 +58,7 @@ class SiteController extends Controller {
 	public function actionIndex() {
 		$news = new News('search');
 		$news->status = News::STATUS_SHOW;
-		$sliders = Slider::getSliders(10);
+		$sliders = Slider::getSliders(5);
 		$this->render('index', array(
 			'news'=>$news,
 			'sliders'=>$sliders,
