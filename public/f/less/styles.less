@@ -1271,6 +1271,20 @@ header {
     outline: none;
   }
 
+  .slick-arrow {
+    z-index: 999;
+    &:before {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 24px;
+    }
+    &.slick-next {
+      right: 25px;
+    }
+    &.slick-prev {
+      left: 25px;
+    }
+  }
+
   .slider-item {
     position: relative;
     img {
