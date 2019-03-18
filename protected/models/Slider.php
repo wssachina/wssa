@@ -16,11 +16,44 @@
 class Slider extends ActiveRecord {
 
 	public static function getSliders($num) {
-		return self::model()->findAllByAttributes([
+		$sliders = self::model()->findAllByAttributes([
 			'status'=>self::STATUS_SHOW,
 		], [
 			'order'=>'create_time DESC',
+			'limit'=>$num,
 		]);
+		$news = News::model()->findAllByAttributes([
+			'status'=>News::STATUS_SHOW,
+		], [
+			'condition'=>'cover!=""',
+			'order'=>'weight DESC, date DESC',
+			'limit'=>$num,
+		]);
+		$sliders = array_merge($sliders, array_map(function($news) {
+			$slider = [
+				'url'=>$news->getUrl(),
+				'image'=>$news->cover,
+				'title'=>$news->title_zh,
+				'create_time'=>$news->date,
+			];
+			if ($news->weight > 0) {
+				$slider['weight'] = $news->weight;
+			}
+			return $slider;
+		}, $news));
+		usort($sliders, function($sliderA, $sliderB) {
+			if (isset($sliderA['weight']) && $sliderB['weight']) {
+				$temp = $sliderB['create_time'] - $sliderA['create_time'];
+			} elseif (isset($sliderA['weight'])) {
+				return -1;
+			} elseif (isset($sliderB['weight'])) {
+				return 1;
+			} else {
+				$temp = $sliderB['create_time'] - $sliderA['create_time'];
+			}
+			return $temp;
+		});
+		return array_splice($sliders, 0, $num);
 	}
 
 	public function handleDate() {
