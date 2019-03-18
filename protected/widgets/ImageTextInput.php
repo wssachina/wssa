@@ -37,6 +37,14 @@ class ImageTextInput extends Widget {
 $('.image-preview').each(function() {
   var that = $(this)
   var id = that.data('id');
+  var url = $('#image-input-' + id).val()
+  if (url) {
+    that.css({
+      backgroundImage: 'url(' +  + ')',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center center'
+    })
+  }
   $.uploadPreview({
     input_field: that.find('input'),
     preview_box: that,
