@@ -4,6 +4,10 @@ class ActiveRecord extends CActiveRecord {
 	const YES = 1;
 	const NO = 0;
 
+	const STATUS_HIDE = 0;
+	const STATUS_SHOW = 1;
+	const STATUS_DELETE = 2;
+
 	public function getAttributeValue($name, $forceValue = false) {
 		return self::getModelAttributeValue($this, $name, $forceValue);
 	}
@@ -68,5 +72,18 @@ class ActiveRecord extends CActiveRecord {
 	protected function afterSave() {
 		// Yii::app()->cache->flush();
 		parent::afterSave();
+	}
+
+	public static function getAllStatus() {
+		return array(
+			self::STATUS_HIDE=>'隐藏',
+			self::STATUS_SHOW=>'发布',
+			// self::STATUS_DELETE=>'删除',
+		);
+	}
+
+	public function getStatusText() {
+		$status = self::getAllStatus();
+		return isset($status[$this->status]) ? $status[$this->status] : $this->status;
 	}
 }
