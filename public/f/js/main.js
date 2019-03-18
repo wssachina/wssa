@@ -1,5 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.css'
 import 'font-awesome/css/font-awesome.css'
+import 'slick-carousel/slick/slick.css'
+import 'slick-carousel/slick/slick-theme.css'
 import '../less/styles.less'
 
 import 'jquery-cookie'
@@ -8,6 +10,7 @@ import ProgressBar from 'progressbar.js'
 import '../plugins/back-to-top/back-to-top'
 import '../plugins/jquery-placeholder/jquery.placeholder'
 import 'bootstrap-hover-dropdown'
+import 'slick-carousel'
 import utils from '../utils'
 
 window.jQuery = window.$ = jQuery
@@ -18,6 +21,12 @@ window.CubingChina = {
 $(function() {
   $('input, textarea').placeholder();
   $('.wrapper table:not(.table)').addClass('table table-bordered table-condensed').parent().addClass('table-responsive');
+  $('.slider-wrapper').slick({
+    autoplay: true,
+    dots: true,
+    mobileFirst: true,
+    adaptiveHeight: true
+  });
   if (!('ontouchstart' in window)) {
     (function() {
       var win = $(window);
