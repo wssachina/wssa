@@ -40,7 +40,7 @@ $('.image-preview').each(function() {
   var url = $('#image-input-' + id).val()
   if (url) {
     that.css({
-      backgroundImage: 'url(' +  + ')',
+      backgroundImage: 'url(' + url + ')',
       backgroundSize: 'cover',
       backgroundPosition: 'center center'
     })
