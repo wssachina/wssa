@@ -125,7 +125,7 @@ class SiteController extends Controller {
 			$session = Yii::app()->session;
 			$session->add(Constant::WECHAT_SESSION_KEY, $user);
 			if ($wechatUser->user) {
-				$userIdentify = new UserIdentity($wechatUser->user->email, $wechatUser->user->password);
+				$userIdentify = new MyUserIdentity($wechatUser->user->email, $wechatUser->user->password);
 				$userIdentify->ID = $wechatUser->user->id;
 				Yii::app()->user->login($userIdentify, 30 * 86400);
 			}
