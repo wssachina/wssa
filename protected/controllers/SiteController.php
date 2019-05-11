@@ -166,9 +166,20 @@ class SiteController extends Controller {
 		$this->pageTitle = ['Register'];
 		$model->verifyCode = '';
 		$this->title = 'Register';
+		$accouncement = Config::getConfig('code.announcement');
+		if ($accouncement) {
+			$invitationCodeAnnouncement = CHtml::tag('div', array(
+				'class'=>'help',
+			), CHtml::link('如何获取注册码？', $accouncement->content_zh, array(
+				'target'=>'_blank',
+			)));
+		} else {
+			$invitationCodeAnnouncement = '';
+		}
 		$this->render('register' . $step, array(
 			'model'=>$model,
 			'step'=>$step,
+			'invitationCodeAnnouncement'=>$invitationCodeAnnouncement,
 		));
 	}
 

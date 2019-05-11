@@ -130,7 +130,7 @@ class RegisterForm extends CFormModel {
 			'password'=>Yii::t('common', 'Password'),
 			'repeatPassword'=>Yii::t('common', 'Repeat Password'),
 			'verifyCode'=>Yii::t('common', 'Verify Code'),
-			'invitation_code'=>'邀请码',
+			'invitation_code'=>'注册码',
 		);
 	}
 
