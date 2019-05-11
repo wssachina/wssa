@@ -31,12 +31,7 @@ class User extends ActiveRecord {
 	const ROLE_UNCHECKED = 0;
 	const ROLE_CHECKED = 1;
 	const ROLE_ORGANIZER = 2;
-	const ROLE_DELEGATE = 3;
 	const ROLE_ADMINISTRATOR = 4;
-
-	const IDENTITY_NONE = 0;
-	const IDENTITY_WCA_DELEGATE = 1;
-	const IDENTITY_CCA_DELEGATE = 2;
 
 	const STATUS_NORMAL = 0;
 	const STATUS_BANNED = 1;
@@ -48,6 +43,8 @@ class User extends ActiveRecord {
 
 	private $_hasCerts;
 	private $_preferredEvents;
+
+	public $identity;
 
 	public static function getDailyUser() {
 		$data = Yii::app()->db->createCommand()
@@ -145,40 +142,12 @@ class User extends ActiveRecord {
 		return self::model()->findAllByAttributes($attributes);
 	}
 
-	public static function getDelegates($identity = null) {
-		if ($identity === null) {
-			$identity = array(
-				self::IDENTITY_WCA_DELEGATE,
-				self::IDENTITY_CCA_DELEGATE,
-			);
-		}
-		return self::model()->findAllByAttributes(array(
-			'identity'=>$identity,
-		));
-	}
-
-	public static function getShowDelegates() {
-		return self::model()->findAllByAttributes([
-			'identity'=>self::IDENTITY_WCA_DELEGATE,
-			'show_as_delegate'=>self::YES,
-		]);
-	}
-
 	public static function getRoles() {
 		return array(
 			self::ROLE_UNCHECKED=>Yii::t('common', 'Inactive User'),
 			self::ROLE_CHECKED=>Yii::t('common', 'Normal User'),
 			self::ROLE_ORGANIZER=>Yii::t('common', 'Organizer'),
-			self::ROLE_DELEGATE=>Yii::t('common', 'Delegate'),
 			self::ROLE_ADMINISTRATOR=>Yii::t('common', 'Administrator'),
-		);
-	}
-
-	public static function getIdentities() {
-		return array(
-			self::IDENTITY_NONE=>Yii::t('common', 'None'),
-			self::IDENTITY_WCA_DELEGATE=>Yii::t('common', 'WCA Delegate'),
-			self::IDENTITY_CCA_DELEGATE=>Yii::t('common', 'CCA Delegate'),
 		);
 	}
 
@@ -248,14 +217,6 @@ class User extends ActiveRecord {
 		return $this->role == self::ROLE_ADMINISTRATOR;
 	}
 
-	public function isDelegate() {
-		return $this->identity != self::IDENTITY_NONE;
-	}
-
-	public function isWCADelegate() {
-		return $this->identity == self::IDENTITY_WCA_DELEGATE;
-	}
-
 	public function isBanned() {
 		return $this->status != self::STATUS_NORMAL;
 	}
@@ -315,8 +276,10 @@ class User extends ActiveRecord {
 	}
 
 	public function getIdentityName() {
-		$identities = self::getIdentities();
-		return isset($identities[$this->identity]) ? $identities[$this->identity] : Yii::t('common', 'Unknown');
+		$identities = $this->allIdentities;
+		return implode("、", array_map(function($identity) {
+			return $identity->name;
+		}, $identities));
 	}
 
 	public function getCompetitionName() {
@@ -458,7 +421,7 @@ class User extends ActiveRecord {
 		// will receive user inputs.
 		return array(
 			array('name, country_id, birthday, email, password, gender', 'required'),
-			array('gender, country_id, province_id, city_id, role, identity, status, passport_type, show_as_delegate', 'numerical', 'integerOnly'=>true),
+			array('gender, country_id, province_id, city_id, role, status, passport_type, show_as_delegate', 'numerical', 'integerOnly'=>true),
 			array('wcaid, avatar_id', 'length', 'max'=>10),
 			array('name, name_zh, email, password, passport_name, passport_number', 'length', 'max'=>128),
 			array('birthday, mobile', 'length', 'max'=>20),
@@ -467,7 +430,7 @@ class User extends ActiveRecord {
 			['preferredEvents', 'safe'],
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, wcaid, name, name_zh, email, password, avatar_id, birthday, gender, mobile, country_id, province_id, city_id, role, identity, reg_time, reg_ip, status', 'safe', 'on'=>'search'),
+			array('id, wcaid, name, name_zh, email, password, avatar_id, birthday, gender, mobile, country_id, province_id, city_id, role, reg_time, reg_ip, status, identity', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -485,6 +448,8 @@ class User extends ActiveRecord {
 			'avatars'=>[self::HAS_MANY, 'UserAvatar', 'user_id'],
 			'permissions'=>[self::HAS_MANY, 'UserPermission', 'user_id'],
 			'wechatUser'=>[self::HAS_ONE, 'WechatUser', 'user_id'],
+			'identities'=>[self::HAS_MANY, 'UserIdentity', 'user_id'],
+			'allIdentities'=>[self::HAS_MANY, 'UserIdentity', 'user_id'],
 		];
 	}
 
@@ -512,6 +477,7 @@ class User extends ActiveRecord {
 			'reg_ip' => Yii::t('User', 'Reg Ip'),
 			'status' => Yii::t('User', 'Status'),
 			'preferredEvents' => Yii::t('common', 'Preferred Events'),
+			'identity'=>'身份',
 		);
 	}
 
@@ -532,7 +498,12 @@ class User extends ActiveRecord {
 
 		$criteria = new CDbCriteria;
 
-		$criteria->with = array('country', 'province', 'city');
+		$criteria->with = array(
+			'country', 'province', 'city',
+			'identities'=>array(
+				'together'=>true
+			),
+		);
 
 		$criteria->compare('t.id', $this->id);
 		$criteria->compare('t.wcaid', $this->wcaid, true);
@@ -547,10 +518,10 @@ class User extends ActiveRecord {
 		$criteria->compare('t.province_id', $this->province_id);
 		$criteria->compare('t.city_id', $this->city_id);
 		$criteria->compare('t.role', $this->role);
-		$criteria->compare('t.identity', $this->identity);
 		$criteria->compare('t.reg_time', $this->reg_time, true);
 		$criteria->compare('t.reg_ip', $this->reg_ip, true);
 		$criteria->compare('t.status', $this->status);
+		$criteria->compare('identities.identity', $this->identity);
 		foreach (['reg_time', 'birthday'] as $attribute) {
 			$value = $this->$attribute;
 			if (is_array($value)) {

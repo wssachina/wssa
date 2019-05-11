@@ -290,22 +290,22 @@ class Controller extends CController {
 				),
 				'visible'=>!$isGuest,
 			),
-			// array(
-			// 	'label'=>Yii::t('common', 'Login'),
-			// 	'url'=>array('/site/login'),
-			// 	'itemOptions'=>array(
-			// 		'class'=>'nav-item visible-xs',
-			// 	),
-			// 	'visible'=>$isGuest,
-			// ),
-			// array(
-			// 	'label'=>Yii::t('common', 'Register'),
-			// 	'url'=>array('/site/register'),
-			// 	'itemOptions'=>array(
-			// 		'class'=>'nav-item visible-xs',
-			// 	),
-			// 	'visible'=>$isGuest,
-			// ),
+			array(
+				'label'=>Yii::t('common', 'Login'),
+				'url'=>array('/site/login'),
+				'itemOptions'=>array(
+					'class'=>'nav-item visible-xs',
+				),
+				'visible'=>$isGuest,
+			),
+			array(
+				'label'=>Yii::t('common', 'Register'),
+				'url'=>array('/site/register'),
+				'itemOptions'=>array(
+					'class'=>'nav-item visible-xs',
+				),
+				'visible'=>$isGuest,
+			),
 			// array(
 			// 	'label'=>'Language' . Html::fontAwesome('angle-down', 'b'),
 			// 	'url'=>'#',

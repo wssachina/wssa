@@ -9,7 +9,7 @@
     </div>
   </div>
   <div class="box box-theme">
-    <?php echo Yii::t('common', 'Welcome to Cubing China!'); ?>
+    感谢注册WSSA中国！
     <?php if ($this->user && $this->user->isUnchecked()): ?>
     <br>
     <?php echo Yii::t('common', 'An activation mail was sent to your email address, please follow the description to activate your account.'); ?>

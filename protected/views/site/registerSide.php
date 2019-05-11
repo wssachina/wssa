@@ -7,7 +7,7 @@
       'items'=>array(
         array(
           'url'=>$step > 1 ? array('/site/register', 'step'=>1) : 'javascript:;',
-          'label'=>Yii::t('common', 'Enter WCA ID'),
+          'label'=>'邀请码',
           'active'=>$step == 1,
         ),
         array(

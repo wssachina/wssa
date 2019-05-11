@@ -51,7 +51,7 @@
             <div role="tabpanel" class="tab-pane active" id="baseinfo">
               <?php if ($this->user->isOrganizer() && $model->isPublic()): ?>
               <div class="col-lg-12">
-                <div class="alert alert-danger">该比赛已公示，基本信息不能修改，如需修改请联系<a href="mailto:admin@cubingchina.com"><i class="fa fa-envelope"></i>管理员</a></div>
+                <div class="alert alert-danger">该比赛已公示，基本信息不能修改，如需修改请联系<a href="mailto:<?php echo Yii::app()->params->adminEmail; ?>"><i class="fa fa-envelope"></i>管理员</a></div>
               </div>
               <?php endif; ?>
               <div class="col-lg-12">

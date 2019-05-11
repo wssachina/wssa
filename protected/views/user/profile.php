@@ -22,30 +22,22 @@
         <?php echo $user->avatar ? $user->avatar->img : CHtml::link(CHtml::image('', '', array('class'=>'user-avatar')), ''); ?>
       </div>
     </dd>
-    <dt><?php echo Yii::t('common', 'CubingChina ID'); ?></dt>
-    <dd><?php echo $user->id ?: '&nbsp;'; ?></dd>
     <dt><?php echo Yii::t('common', 'Name'); ?></dt>
     <dd><?php echo CHtml::encode($user->name); ?></dd>
     <dt><?php echo Yii::t('common', 'Name in Local Characters'); ?></dt>
     <dd><?php echo CHtml::encode($user->name_zh) ?: '&nbsp;'; ?></dd>
     <dt><?php echo Yii::t('common', 'Email'); ?></dt>
     <dd><?php echo $user->email; ?></dd>
-    <dt><?php echo Yii::t('common', 'WCA ID'); ?></dt>
-    <dd><?php echo $user->wcaid ? Persons::getWCAIconLinkByNameNId($user->getCompetitionName(), $user->wcaid) : '&nbsp;'; ?></dd>
     <dt><?php echo Yii::t('common', 'Birthday'); ?></dt>
     <dd><?php echo date('Y-m-d', $user->birthday); ?></dd>
     <dt><?php echo Yii::t('common', 'Gender'); ?></dt>
     <dd><?php echo $user->getGenderText(); ?></dd>
     <dt><?php echo Yii::t('common', 'Mobile Number'); ?></dt>
     <dd><?php echo $user->mobile ?: '&nbsp;'; ?></dd>
-    <dt><?php echo Yii::t('common', 'Region'); ?></dt>
-    <dd><?php echo $user->getRegionName($user->country); ?></dd>
-    <?php if ($user->country_id == 1): ?>
     <dt><?php echo Yii::t('common', 'Province'); ?></dt>
     <dd><?php echo $user->getRegionName($user->province); ?></dd>
     <dt><?php echo Yii::t('common', 'City'); ?></dt>
     <dd><?php echo $user->getRegionName($user->city); ?></dd>
-    <?php endif; ?>
     <dt><?php echo Yii::t('Registration', 'Type of Identity'); ?></dt>
     <dd><?php echo $user->getPassportTypeText(); ?></dd>
     <?php if ($user->passport_type == User::PASSPORT_TYPE_OTHER): ?>

@@ -50,7 +50,7 @@ class AdminController extends Controller {
 		);
 	}
 
-	protected function exportToExcel($excel, $path = 'php://output', $filename = 'CubingChina', $xlsx = true, $preCalculateFormulas = false) {
+	protected function exportToExcel($excel, $path = 'php://output', $filename = 'WSSA', $xlsx = true, $preCalculateFormulas = false) {
 		$download = $path === 'php://output';
 		$excel->setActiveSheetIndex(0);
 		Yii::app()->controller->setIsAjaxRequest(true);

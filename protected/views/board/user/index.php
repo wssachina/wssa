@@ -145,8 +145,8 @@
                 'headerHtmlOptions'=>array(
                   'class'=>'header-role',
                 ),
-                'filter'=>User::getIdentities(),
                 'name'=>'identity',
+                'filter'=>UserIdentity::getAllIdentities(),
                 'type'=>'raw',
                 'value'=>'$data->getIdentityName()',
               ),

@@ -2,12 +2,11 @@
 
 class RegisterForm extends CFormModel {
 	public $step = 1;
-	public $wcaid;
+	public $invitation_code;
 	public $name;
 	public $local_name;
 	public $gender;
 	public $birthday;
-	public $country_id;
 	public $province_id = 0;
 	public $city_id = 0;
 	public $mobile = '';
@@ -16,9 +15,8 @@ class RegisterForm extends CFormModel {
 	public $repeatPassword;
 	public $verifyCode;
 
-	public static $dateFormat = 'Y-m-d';
-
-	const REGISTER_WCAID = 'registerWCAID';
+	const DATE_FORMAT = 'Y-m-d';
+	const INVITATION_CODE_KEY = 'registration_invitation_code';
 
 	/**
 	 * Declares the validation rules.
@@ -26,105 +24,62 @@ class RegisterForm extends CFormModel {
 	 * and password needs to be authenticated.
 	 */
 	public function rules() {
-		return array(
-			array('gender, country_id, birthday, name, email, password, repeatPassword, verifyCode', 'required', 'on'=>'step2'),
-			array('local_name, province_id, city_id', 'safe', 'on'=>'step2'),
-			array('email', 'email'),
-			array('email', 'match', 'pattern'=>'{^www\..+@.+$}i', 'not'=>true),
-			array('email', 'match', 'pattern'=>'{@pp\.com$}i', 'not'=>true),
-			array('email', 'match', 'pattern'=>'{\.con$}i', 'not'=>true),
-			array('email', 'match', 'pattern'=>'{qq\.com\.cn$}i', 'not'=>true),
-			array('wcaid', 'checkWcaId'),
-			array('birthday', 'checkBirthday', 'on'=>'step2'),
-			array('name', 'checkName', 'on'=>'step2'),
-			array('country_id', 'checkRegion', 'on'=>'step2'),
-			array('mobile', 'checkMobile', 'on'=>'step2'),
-			array('gender', 'checkGender', 'on'=>'step2'),
-			array('email', 'unique', 'className'=>'User', 'attributeName'=>'email'),
-			array('password', 'length', 'min'=>6),
-			array('repeatPassword', 'compare', 'compareAttribute'=>'password'),
-			array('verifyCode', 'captcha', 'on'=>'step2'),
-		);
+		return [
+			['invitation_code', 'required', 'on'=>'step1'],
+			['invitation_code', 'checkInvitationCode'],
+			['gender, birthday, local_name, email, password, repeatPassword, verifyCode, province_id, city_id, mobile', 'required', 'on'=>'step2'],
+			['name', 'safe', 'on'=>'step2'],
+			['email', 'email'],
+			['email', 'match', 'pattern'=>'{^www\..+@.+$}i', 'not'=>true],
+			['email', 'match', 'pattern'=>'{@pp\.com$}i', 'not'=>true],
+			['email', 'match', 'pattern'=>'{\.con$}i', 'not'=>true],
+			['email', 'match', 'pattern'=>'{qq\.com\.cn$}i', 'not'=>true],
+			[
+				'invitation_code',
+				'exist',
+				'className'=>'InvitationCode',
+				'attributeName'=>'code',
+				'criteria'=>[
+					'condition'=>'status=0',
+				],
+			],
+			['birthday', 'checkBirthday', 'on'=>'step2'],
+			['name', 'checkName', 'on'=>'step2'],
+			['mobile', 'checkMobile', 'on'=>'step2'],
+			['gender', 'checkGender', 'on'=>'step2'],
+			['email', 'unique', 'className'=>'User', 'attributeName'=>'email'],
+			['password', 'length', 'min'=>6],
+			['repeatPassword', 'compare', 'compareAttribute'=>'password'],
+			['verifyCode', 'captcha', 'on'=>'step2'],
+		];
 	}
 
 	public function isLastStep() {
 		return $this->step === 2;
 	}
 
-	public function loadData() {
+	public function checkInvitationCode() {
 		$session = Yii::app()->session;
 		switch ($this->step) {
 			case 1:
+				$session->add(self::INVITATION_CODE_KEY, $this->invitation_code);
 				break;
 			case 2:
-				$wcaid = $session->get(self::REGISTER_WCAID, '');
-				if ($wcaid !== '') {
-					$this->wcaid = $wcaid;
-					$person = Persons::model()->findByAttributes(array(
-						'id'=>$wcaid,
-					));
-					preg_match('{^([^(]+)(.*\(([^)]+)\))?$}iu', $person->name, $matches);
-					if ($matches !== array()) {
-						$this->name = trim($matches[1]);
-						$this->local_name = isset($matches[3]) ? trim($matches[3]) : '';
-					} else {
-						$this->name = $person->name;
-					}
-					$genders = array(
-						''=>'',
-						'm'=>User::GENDER_MALE,
-						'f'=>User::GENDER_FEMALE,
-					);
-					$this->gender = $genders[strtolower($person->gender)];
-					$this->country_id = Region::getRegionIdByName($person->countryId);
-				}
-				break;
-			case 3:
+				$this->invitation_code = $session->get(self::INVITATION_CODE_KEY);
 				break;
 		}
 	}
 
 	public function checkName() {
-		if ($this->country_id == 1) {
-			$user = User::model()->findByAttributes(array(
-				'name_zh'=>$this->local_name,
-				'birthday'=>$this->birthday,
-				'status'=>User::STATUS_NORMAL,
-			), array(
-				'condition'=>'role!=' . User::ROLE_UNCHECKED,
-			));
-			if ($user !== null) {
-				$this->addError('local_name', Yii::t('common', 'Please <b>DO NOT</b> repeat registration!'));
-			}
-		}
-	}
-
-	public function checkWcaId() {
-		$this->wcaid = strtoupper($this->wcaid);
-		if ($this->wcaid !== '') {
-			switch ($this->step) {
-				case 1:
-					$person = Persons::model()->findByAttributes(array(
-						'id'=>$this->wcaid,
-					));
-					if ($person === null) {
-						$this->addError('wcaid', Yii::t('common', 'Wrong WCA ID'));
-						return false;
-					}
-					Yii::app()->session->add(self::REGISTER_WCAID, $this->wcaid);
-				case 2:
-					$user = User::model()->findByAttributes(array(
-						'wcaid'=>$this->wcaid,
-						'status'=>User::STATUS_NORMAL,
-					));
-					if ($user !== null) {
-						$this->addError('wcaid', Yii::t('common', 'The WCA ID {wcaid} has been registered.', array(
-							'{wcaid}'=>$this->wcaid,
-						)));
-						return false;
-					}
-					break;
-			}
+		$user = User::model()->findByAttributes(array(
+			'name_zh'=>$this->local_name,
+			'birthday'=>$this->birthday,
+			'status'=>User::STATUS_NORMAL,
+		), array(
+			'condition'=>'role!=' . User::ROLE_UNCHECKED,
+		));
+		if ($user !== null) {
+			$this->addError('local_name', Yii::t('common', 'Please <b>DO NOT</b> repeat registration!'));
 		}
 	}
 
@@ -144,30 +99,6 @@ class RegisterForm extends CFormModel {
 		}
 	}
 
-	public function checkRegion() {
-		$region = Region::getRegionById($this->country_id);
-		if ($region === null) {
-			$this->addError('country_id', Yii::t('common', 'Invalid region.'));
-			return false;
-		}
-		if ($this->country_id == 1) {
-			if (!preg_match('{^[\x{4e00}-\x{9fc0}]+$}u', $this->local_name)) {
-				$this->addError('local_name', Yii::t('common', 'Invalid local name.'));
-				return false;
-			}
-			$province = Region::getRegionById($this->province_id);
-			if ($province === null || $province->pid != $this->country_id) {
-				$this->addError('province_id', Yii::t('common', 'Invalid province.'));
-				return false;
-			}
-			$city = Region::getRegionById($this->city_id);
-			if ($city === null || $city->pid != $this->province_id) {
-				$this->addError('city_id', Yii::t('common', 'Invalid city.'));
-				return false;
-			}
-		}
-	}
-
 	public function checkGender() {
 		$genders = User::getGenders();
 		if (!array_key_exists($this->gender, $genders)) {
@@ -176,7 +107,7 @@ class RegisterForm extends CFormModel {
 	}
 
 	public function checkMobile() {
-		if ($this->country_id == 1 && !preg_match('{^1[34578]\d{9}$}', $this->mobile)) {
+		if (!preg_match('{^1[34578]\d{9}$}', $this->mobile)) {
 			$this->addError('mobile', Yii::t('common', 'Invalid mobile.'));
 		}
 	}
@@ -199,12 +130,12 @@ class RegisterForm extends CFormModel {
 			'password'=>Yii::t('common', 'Password'),
 			'repeatPassword'=>Yii::t('common', 'Repeat Password'),
 			'verifyCode'=>Yii::t('common', 'Verify Code'),
+			'invitation_code'=>'注册码',
 		);
 	}
 
 	public function register() {
 		$user = new User();
-		$user->wcaid = strtoupper($this->wcaid);
 		$user->email = strtolower($this->email);
 		$user->password = CPasswordHelper::hashPassword($this->password);
 		$user->name = trim(strip_tags($this->name));
@@ -212,22 +143,25 @@ class RegisterForm extends CFormModel {
 		$user->gender = $this->gender;
 		$user->mobile = $this->mobile;
 		$user->birthday = $this->birthday;
-		$user->country_id = $this->country_id;
+		$user->country_id = 1;
 		$user->province_id = $this->province_id;
 		$user->city_id = $this->city_id;
 		$user->role = User::ROLE_UNCHECKED;
 		$user->reg_time = time();
 		$user->reg_ip = Yii::app()->request->getUserHostAddress();
-		$recentUserCount = User::model()->countByAttributes(array(
-			'reg_ip'=>$user->reg_ip,
-		), 'reg_time > :reg_time', array(
-			'reg_time'=>time() - 86400 * 7,
-		));
+		$user->invitation_code = $this->invitation_code;
 		if ($user->save()) {
 			$identity = new UserIdentity($this->email,$this->password);
 			$identity->id = $user->id;
 			Yii::app()->user->login($identity);
 			Yii::app()->mailer->sendActivate($user);
+			$invitationCode = InvitationCode::model()->findByAttributes([
+				'code'=>$this->invitation_code,
+			]);
+			if ($invitationCode && $invitationCode->isOneTime()) {
+				$invitationCode->status = InvitationCode::STATUS_USED;
+				$invitationCode->save();
+			}
 			return true;
 		} else {
 			return false;

@@ -47,7 +47,7 @@ $config = [
 				'equipment/item/<id:\d+>'=>'equipment/item',
 				''=>'site/index',
 				// 'register/<step:\d>'=>'site/register',
-				'<action:login|logout|banned>'=>'site/<action>',
+				'<action:login|logout|banned|register>'=>'site/<action>',
 				'<view:about|contact|links|disclaimer|competition|record|sponsor|please-update-your-browser>'=>[
 					'site/page',
 				],
@@ -255,10 +255,10 @@ $config = [
 		],
 		'mailer'=>[
 			'class'=>'Mailer',
-			'from'=>'noreply@cubingchina.com',
+			'from'=>'noreply@thewssa.org.cn',
 			'fromname'=>'请勿回复DO NOT REPLY',
 			'api'=>[
-				'user'=>'cubingchina',
+				'user'=>'thewssa',
 				'key'=>Env::get('MAILER_KEY'),
 			],
 		],
@@ -267,8 +267,8 @@ $config = [
 	// using Yii::app()->params['paramName']
 	'params'=>[
 		// this is used in contact page
-		'adminEmail'=>'admin@cubingchina.com',
-		'baseUrl'=>'https://cubingchina.com',
+		'adminEmail'=>'wssachina@jinseyulin.cn',
+		'baseUrl'=>'http://thewssa.org.cn',
 		'languages'=>['en', 'zh_cn', 'zh_tw'],
 		'author'=>'Baiqiang Dong',
 		'description'=>'The Chinese WSSA website.',
