@@ -1,7 +1,7 @@
 <?php $this->renderPartial('registerSide', $_data_); ?>
 <div class="content-wrapper col-md-10 col-sm-9">
   <h3 class="has-divider text-highlight">
-    第一步，请输入注册邀请码
+    第一步，请输入注册码
   </h3>
   <div class="progress progress-striped active">
     <div class="progress-bar progress-bar-theme" style="width: 33%">
@@ -22,7 +22,7 @@
           $form->labelEx($model, 'invitation_code'),
           Html::activeTextField($model, 'invitation_code', array('type'=>'invitation_code')),
           $form->error($model, 'invitation_code', array('class'=>'text-danger')),
-          '<div class="help">此处需要加入一个获取验证码渠道？</div>'
+          $invitationCodeAnnouncement
         );?>
       </div>
       <div class="clearfix"></div>
