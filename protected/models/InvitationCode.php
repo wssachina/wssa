@@ -25,6 +25,43 @@ class InvitationCode extends ActiveRecord {
 		return parent::beforeValidate();
 	}
 
+	public static function getTypes() {
+		return array(
+			self::TYPE_ONE_TIME=>'单次使用',
+			self::TYPE_PERMENENT=>'无限制使用',
+		);
+	}
+
+	public static function getAllStatus() {
+		return array(
+			self::STATUS_NORMAL=>'未使用',
+			self::STATUS_USED=>'已使用',
+		);
+	}
+
+	public function getOperationButton() {
+		$buttons = array();
+		switch ($this->status) {
+			case self::STATUS_USED:
+				$buttons[] = CHtml::link('启用',  array('/board/user/enableCode',  'id'=>$this->id), array('class'=>'btn btn-xs btn-green btn-square'));
+				break;
+			case self::STATUS_NORMAL:
+				$buttons[] = CHtml::link('停用',  array('/board/user/disableCode',  'id'=>$this->id), array('class'=>'btn btn-xs btn-red btn-square'));
+				break;
+		}
+		return implode(' ',  $buttons);
+	}
+
+	public function getTypeText() {
+		$types = self::getTypes();
+		return isset($types[$this->type]) ? $types[$this->type] : $this->type;
+	}
+
+	public function getStatusText() {
+		$status = self::getAllStatus();
+		return isset($status[$this->status]) ? $status[$this->status] : $this->status;
+	}
+
 	public function isOneTime() {
 		return $this->type == self::TYPE_ONE_TIME;
 	}
@@ -54,7 +91,7 @@ class InvitationCode extends ActiveRecord {
 		return array(
 			['code', 'required'],
 			['code', 'unique'],
-			['status', 'numerical', 'integerOnly'=>true],
+			['status, type', 'numerical', 'integerOnly'=>true],
 			['code', 'length', 'max'=>10],
 			['create_time, update_time', 'length', 'max'=>11],
 			// The following rule is used by search().
@@ -106,11 +143,18 @@ class InvitationCode extends ActiveRecord {
 		$criteria->compare('id', $this->id, true);
 		$criteria->compare('code', $this->code, true);
 		$criteria->compare('status', $this->status);
+		$criteria->compare('type', $this->type);
 		$criteria->compare('create_time', $this->create_time, true);
 		$criteria->compare('update_time', $this->update_time, true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+			'pagination'=>array(
+				'pageSize'=>100,
+			),
+			'sort'=>array(
+				'defaultOrder'=>'id DESC',
+			)
 		));
 	}
 
