@@ -151,7 +151,7 @@ class RegisterForm extends CFormModel {
 		$user->reg_ip = Yii::app()->request->getUserHostAddress();
 		$user->invitation_code = $this->invitation_code;
 		if ($user->save()) {
-			$identity = new UserIdentity($this->email,$this->password);
+			$identity = new MyUserIdentity($this->email,$this->password);
 			$identity->id = $user->id;
 			Yii::app()->user->login($identity);
 			Yii::app()->mailer->sendActivate($user);

@@ -47,8 +47,8 @@ class UserController extends AdminController {
 
 	public function actionMerge() {
 		if (isset($_POST['users'])) {
-			$user1 = User::model()->findByPk($_POST['users'][0] ?? 0);
-			$user2 = User::model()->findByPk($_POST['users'][1] ?? 0);
+			$user1 = User::model()->findByPk($_POST['users'][0]);
+			$user2 = User::model()->findByPk($_POST['users'][1]);
 			if ($user1 === null || $user2 === null) {
 				$this->ajaxError(404, 'Unnknown user ID');
 			}
