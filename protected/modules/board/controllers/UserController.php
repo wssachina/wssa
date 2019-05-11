@@ -134,6 +134,33 @@ class UserController extends AdminController {
 		));
 	}
 
+	public function actionAddCode() {
+		$model = new InvitationCode();
+		$model->unsetAttributes();
+		if (isset($_POST['InvitationCode'])) {
+			$model->attributes = $_POST['InvitationCode'];
+			if ($model->createCode()) {
+				Yii::app()->user->setFlash('success', '新增注册码成功');
+				$this->redirect(array('/board/user/code'));
+			}
+		}
+		$this->render('addCode', array(
+			'model'=>$model,
+		));
+	}
+
+	public function actionExportCode() {
+		$model = new InvitationCode();
+		$model->unsetAttributes();
+		if (isset($_POST['InvitationCode'])) {
+			$model->attributes = $_POST['InvitationCode'];
+			$model->exportCode();
+		}
+		$this->render('exportCode', array(
+			'model'=>$model,
+		));
+	}
+
 	public function actionDisableCode() {
 		$id = $this->iGet('id');
 		$model = InvitationCode::model()->findByPk($id);

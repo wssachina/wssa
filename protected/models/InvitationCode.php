@@ -18,8 +18,10 @@ class InvitationCode extends ActiveRecord {
 	const STATUS_NORMAL = 0;
 	const STATUS_USED = 1;
 
+	public $number;
+
 	protected function beforeValidate() {
-		if ($this->isNewRecord) {
+		if (!$this->code) {
 			$this->generateCode();
 		}
 		return parent::beforeValidate();
@@ -37,6 +39,24 @@ class InvitationCode extends ActiveRecord {
 			self::STATUS_NORMAL=>'未使用',
 			self::STATUS_USED=>'已使用',
 		);
+	}
+
+	public static function getCreateTimes() {
+		$times = Yii::app()->db->createCommand()
+			->select(array(
+				'create_time',
+				'FROM_UNIXTIME(create_time) as time',
+				'COUNT(code) AS count',
+			))
+			->from('invitation_code')
+			->group('create_time')
+			->order('create_time DESC')
+			->queryAll();
+		$createTimes = array();
+		foreach ($times as $time) {
+			$createTimes[$time['create_time']] = $time['time'] . ' (' . $time['count'] . ')';
+		}
+		return $createTimes;
 	}
 
 	public function getOperationButton() {
@@ -60,6 +80,75 @@ class InvitationCode extends ActiveRecord {
 	public function getStatusText() {
 		$status = self::getAllStatus();
 		return isset($status[$this->status]) ? $status[$this->status] : $this->status;
+	}
+
+	public function createCode() {
+		switch ($this->type) {
+			case self::TYPE_ONE_TIME:
+				if ($this->number > 10000) {
+					$this->addError('number', '请输入不超过10000的数量');
+					return false;
+				}
+				$now = time();
+				for ($i = 0; $i < $this->number; $i++) {
+					$invitationCode = new InvitationCode();
+					$invitationCode->create_time = $now;
+					$invitationCode->save();
+				}
+				return true;
+				break;
+			case self::TYPE_PERMENENT:
+				return $this->save();
+		}
+	}
+
+	public function exportCode() {
+		$filename = array('注册码');
+		if ($this->type !== "") {
+			$filename[] = $this->getTypeText();
+		}
+		if ($this->status !== "") {
+			$filename[] = $this->getStatusText();
+		}
+		$criteria = new CDbCriteria;
+		$criteria->compare('status', $this->status);
+		$criteria->compare('type', $this->type);
+		if (is_array($this->create_time)) {
+			if (isset($this->create_time[0])) {
+				$time = strtotime($this->create_time[0]);
+				if ($time !== false) {
+					$filename[] = $this->create_time[0];
+					$criteria->compare('create_time', '>=' . $time);
+				}
+			}
+			if (isset($this->create_time[1])) {
+				$time = strtotime($this->create_time[1]);
+				if ($time !== false) {
+					$filename[] = $this->create_time[1];
+					$criteria->compare('create_time', '<=' . $time);
+				}
+			}
+		}
+		$codes = $this->findAll($criteria);
+		Yii::app()->controller->setIsAjaxRequest();
+		header('Content-Type: text/csv');
+		header('Content-Disposition: attachment;filename="' . urlencode(implode('-', $filename)) . '.csv"');
+		echo implode(",", array(
+			'注册码',
+			'类型',
+			'状态',
+			'生成时间',
+		));
+		echo "\n";
+		foreach ($codes as $code) {
+			echo implode(",", array(
+				$code->code,
+				$code->getTypeText(),
+				$code->getStatusText(),
+				date('Y-m-d H:i:s', $code->create_time),
+			)), "\n";
+		}
+		exit;
 	}
 
 	public function isOneTime() {
@@ -89,9 +178,9 @@ class InvitationCode extends ActiveRecord {
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			['code', 'required'],
+			// ['code', 'required'],
 			['code', 'unique'],
-			['status, type', 'numerical', 'integerOnly'=>true],
+			['status, type, number', 'numerical', 'integerOnly'=>true],
 			['code', 'length', 'max'=>10],
 			['create_time, update_time', 'length', 'max'=>11],
 			// The following rule is used by search().
@@ -116,7 +205,8 @@ class InvitationCode extends ActiveRecord {
 	public function attributeLabels() {
 		return array(
 			'id' => 'ID',
-			'code' => 'Code',
+			'code' => '注册码',
+			'number' => '数量',
 			'status' => 'Status',
 			'create_time' => 'Create Time',
 			'update_time' => 'Update Time',
