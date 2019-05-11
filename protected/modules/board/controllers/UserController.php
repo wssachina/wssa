@@ -125,6 +125,39 @@ class UserController extends AdminController {
 		));
 	}
 
+	public function actionCode() {
+		$model = new InvitationCode('search');
+		$model->unsetAttributes();
+		$model->attributes = $this->aRequest('InvitationCode');
+		$this->render('code', array(
+			'model'=>$model,
+		));
+	}
+
+	public function actionDisableCode() {
+		$id = $this->iGet('id');
+		$model = InvitationCode::model()->findByPk($id);
+		if ($model === null) {
+			$this->redirect(Yii::app()->request->urlReferrer);
+		}
+		$model->status = InvitationCode::STATUS_USED;
+		$model->save();
+		Yii::app()->user->setFlash('success', '停用注册码成功');
+		$this->redirect(Yii::app()->request->urlReferrer);
+	}
+
+	public function actionEnableCode() {
+		$id = $this->iGet('id');
+		$model = InvitationCode::model()->findByPk($id);
+		if ($model === null) {
+			$this->redirect(Yii::app()->request->urlReferrer);
+		}
+		$model->status = InvitationCode::STATUS_NORMAL;
+		$model->save();
+		Yii::app()->user->setFlash('success', '启用注册码成功');
+		$this->redirect(Yii::app()->request->urlReferrer);
+	}
+
 	public function actionStatistics() {
 		$totalUser = User::model()->countByAttributes(array(
 			'status'=>User::STATUS_NORMAL,
