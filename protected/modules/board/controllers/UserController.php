@@ -313,13 +313,14 @@ class UserController extends AdminController {
 			$model->attributes = $_POST['User'];
 			$model->handleDate();
 			if ($model->save()) {
+				$model->updateIdentity();
 				Yii::app()->user->setFlash('success', '编辑用户成功');
 				$this->redirect($this->getReferrer());
 			}
 		}
 		$model->formatDate();
 		$roles = User::getRoles();
-		$identities = User::getIdentities();
+		$identities = UserIdentity::getAllIdentities();
 		$genders = User::getGenders();
 		$cities = Region::getAllCities();
 		$this->render('edit', array(

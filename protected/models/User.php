@@ -43,8 +43,7 @@ class User extends ActiveRecord {
 
 	private $_hasCerts;
 	private $_preferredEvents;
-
-	public $identity;
+	private $_identity;
 
 	public static function getDailyUser() {
 		$data = Yii::app()->db->createCommand()
@@ -282,6 +281,34 @@ class User extends ActiveRecord {
 		}, $identities));
 	}
 
+	public function getIdentity() {
+		if ($this->_identity === null) {
+			$this->_identity = CHtml::listData($this->allIdentities, 'identity', 'identity');
+		}
+		return $this->_identity;
+	}
+
+	public function setIdentity($identity) {
+		$this->_identity = $identity;
+	}
+
+	public function updateIdentity() {
+		$savedIdentities = array();
+		foreach ($this->allIdentities as $identity) {
+			if (!in_array($identity->identity, (array)$this->identity)) {
+				$identity->delete();
+			} else {
+				$savedIdentities[] = $identity->identity;
+			}
+		}
+		foreach (array_diff((array)$this->identity, $savedIdentities) as $identity) {
+			$userIdentity = new UserIdentity();
+			$userIdentity->user_id = $this->id;
+			$userIdentity->identity = $identity;
+			$userIdentity->save();
+		}
+	}
+
 	public function getCompetitionName() {
 		$name = $this->name;
 		if ($this->name_zh != '') {
@@ -427,10 +454,10 @@ class User extends ActiveRecord {
 			array('birthday, mobile', 'length', 'max'=>20),
 			array('reg_time', 'length', 'max'=>11),
 			array('reg_ip', 'length', 'max'=>15),
-			['preferredEvents', 'safe'],
+			['preferredEvents, identity', 'safe'],
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, wcaid, name, name_zh, email, password, avatar_id, birthday, gender, mobile, country_id, province_id, city_id, role, reg_time, reg_ip, status, identity', 'safe', 'on'=>'search'),
+			array('id, wcaid, name, name_zh, email, password, avatar_id, birthday, gender, mobile, country_id, province_id, city_id, role, reg_time, reg_ip, status', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -477,7 +504,6 @@ class User extends ActiveRecord {
 			'reg_ip' => Yii::t('User', 'Reg Ip'),
 			'status' => Yii::t('User', 'Status'),
 			'preferredEvents' => Yii::t('common', 'Preferred Events'),
-			'identity'=>'身份',
 		);
 	}
 

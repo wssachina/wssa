@@ -151,8 +151,9 @@
             $form->labelEx($model, 'identity', [
               'label'=>'身份',
             ]),
-            $form->dropDownList($model, 'identity', $identities, [
+            $form->listBox($model, 'identity', $identities, [
               'class'=>'form-control',
+              'multiple'=>true,
             ]),
             $form->error($model, 'identity', ['class'=>'text-danger'])
           );?>
