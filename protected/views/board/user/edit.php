@@ -66,16 +66,6 @@
           );?>
           <div class="clearfix"></div>
           <?php echo Html::formGroup(
-            $model, 'wcaid', [
-              'class'=>'col-lg-3 col-md-6',
-            ],
-            $form->labelEx($model, 'wcaid', [
-              'label'=>'WCA ID',
-            ]),
-            Html::activeTextField($model, 'wcaid'),
-            $form->error($model, 'wcaid', ['class'=>'text-danger'])
-          );?>
-          <?php echo Html::formGroup(
             $model, 'country_id', [
               'class'=>'col-lg-3 col-md-6',
             ],
@@ -88,7 +78,6 @@
             ]),
             $form->error($model, 'country_id', ['class'=>'text-danger'])
           );?>
-          <div class="clearfix hidden-lg"></div>
           <?php echo Html::formGroup(
             $model, 'province_id', [
               'class'=>'col-lg-3 col-md-6',
@@ -143,7 +132,7 @@
             ]),
             $form->error($model, 'birthday', ['class'=>'text-danger'])
           );?>
-          <div class="clearfix hidden-lg"></div>
+          <div class="clearfix"></div>
           <?php echo Html::formGroup(
             $model, 'identity', [
               'class'=>'col-lg-3 col-md-6',
@@ -202,16 +191,6 @@
             ]),
             $form->error($model, 'passport_number', ['class'=>'text-danger'])
           ); ?>
-          <?php echo Html::formGroup(
-            $model, 'show_as_delegate', [
-              'class'=>'col-lg-3 col-md-6',
-            ],
-            $form->labelEx($model, 'show_as_delegate', [
-              'label'=>'在代表页展示',
-            ]),
-            Html::activeSwitch($model, 'show_as_delegate'),
-            $form->error($model, 'show_as_delegate', ['class'=>'text-danger'])
-          );?>
           <div class="clearfix"></div>
           <?php echo Html::formGroup(
             $model, 'avatar_id', [
