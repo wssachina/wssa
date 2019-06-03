@@ -125,11 +125,10 @@ class User extends ActiveRecord {
 	}
 
 	public static function getOrganizers() {
-		if (Yii::app()->user->checkRole(self::ROLE_DELEGATE)) {
+		if (Yii::app()->user->checkRole(self::ROLE_ADMINISTRATOR)) {
 			$attributes = array(
 				'role'=>array(
 					self::ROLE_ORGANIZER,
-					self::ROLE_DELEGATE,
 					self::ROLE_ADMINISTRATOR,
 				),
 			);

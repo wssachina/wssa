@@ -103,39 +103,6 @@ class Competition extends ActiveRecord {
 			'fill_passport'=>[
 				'label'=>'选手证件号',
 			],
-			'show_regulations'=>[
-				'label'=>'报名规则提醒',
-			],
-			'show_qrcode'=>[
-				'label'=>'二维码签到',
-			],
-			't_shirt'=>[
-				'label'=>'T恤尺码',
-			],
-			'staff'=>[
-				'label'=>'工作人员报名',
-			],
-			'podiums_children'=>[
-				'label'=>'少儿组',
-			],
-			'podiums_females'=>[
-				'label'=>'女子组',
-			],
-			'podiums_new_comers'=>[
-				'label'=>'新人组',
-			],
-			'podiums_greater_china'=>[
-				'label'=>'中华组',
-			],
-			'podiums_u8'=>[
-				'label'=>'U8少儿组',
-			],
-			'podiums_u10'=>[
-				'label'=>'U10少儿组',
-			],
-			'podiums_u12'=>[
-				'label'=>'U12少儿组',
-			],
 		];
 	}
 
@@ -1313,7 +1280,7 @@ class Competition extends ActiveRecord {
 	}
 
 	public function getRegistrationEvents() {
-		return $this->associatedEvents;
+		return array_intersect_key(Events::getNormalEvents(), $this->associatedEvents);
 	}
 
 	public function getMainEvents() {
@@ -1945,7 +1912,7 @@ class Competition extends ActiveRecord {
 		if (Yii::app() instanceof CConsoleApplication) {
 			return;
 		}
-		$isAdmin = Yii::app()->user->checkRole(User::ROLE_DELEGATE);
+		$isAdmin = Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR);
 		//处理代表和主办
 		foreach (array('organizer', 'delegate') as $attribute) {
 			$attributeId = $attribute . '_id';

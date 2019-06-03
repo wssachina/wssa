@@ -166,11 +166,11 @@ class Controller extends CController {
 				),
 				array(
 					'label'=>Html::fontAwesome('cubes', 'a') . Yii::t('common', 'Competitions'),
-					// 'url'=>array('/competition/index'),
-					'url'=>array('/site/page', 'view'=>'competition'),
+					'url'=>array('/competition/index'),
 					'itemOptions'=>array(
 						'class'=>'nav-item',
 					),
+					'active'=>$this->id === 'competition',
 				),
 				array(
 					'label'=>Html::fontAwesome('flag-checkered', 'a') . Yii::t('common', 'Records'),

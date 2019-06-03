@@ -48,7 +48,7 @@ class EventsForm extends Widget {
 			'value'=>$event['id'],
 		];
 		echo CHtml::checkBox(CHtml::activeName($model, $name . '[]'), $model->containsEvent($event['id']), $options);
-		echo $event['name'];
+		echo Events::getFullEventNameWithIcon($event['id']);
 		echo CHtml::closeTag('label');
 		echo CHtml::closeTag('div');
 	}

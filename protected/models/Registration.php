@@ -456,10 +456,14 @@ class Registration extends ActiveRecord {
 		$events = array();
 		foreach ($this->events as $event) {
 			if (isset($competitionEvents[$event])) {
-				$events[] = Yii::t('event', $competitionEvents[$event]);
+				$events[] = Events::getFullEventName($event);
 			}
 		}
 		return implode(Yii::t('common', ', '), $events);
+	}
+
+	public function containsEvent($event) {
+		return in_array("$event", $this->events);
 	}
 
 	public function getRegistrationFee() {

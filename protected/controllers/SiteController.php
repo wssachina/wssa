@@ -59,9 +59,11 @@ class SiteController extends Controller {
 		$news = new News('search');
 		$news->status = News::STATUS_SHOW;
 		$sliders = Slider::getSliders(5);
+		$upcomingCompetitions = Competition::getUpcomingCompetitions(8);
 		$this->render('index', array(
 			'news'=>$news,
 			'sliders'=>$sliders,
+			'upcomingCompetitions'=>$upcomingCompetitions,
 		));
 	}
 

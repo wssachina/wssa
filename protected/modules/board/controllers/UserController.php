@@ -192,7 +192,6 @@ class UserController extends AdminController {
 		$advancedUser = User::model()->countByAttributes(array(
 			'status'=>User::STATUS_NORMAL,
 			'role'=>array(
-				User::ROLE_DELEGATE,
 				User::ROLE_ORGANIZER,
 				User::ROLE_ADMINISTRATOR,
 			),

@@ -76,15 +76,13 @@ class Slider extends ActiveRecord {
 	public function getOperationButton() {
 		$buttons = array();
 		$buttons[] = CHtml::link('编辑',  array('/board/slider/edit',  'id'=>$this->id), array('class'=>'btn btn-xs btn-blue btn-square'));
-		if (Yii::app()->user->checkRole(User::ROLE_DELEGATE)) {
-			switch ($this->status) {
-				case self::STATUS_HIDE:
-					$buttons[] = CHtml::link('发布',  array('/board/slider/show',  'id'=>$this->id), array('class'=>'btn btn-xs btn-green btn-square'));
-					break;
-				case self::STATUS_SHOW:
-					$buttons[] = CHtml::link('隐藏',  array('/board/slider/hide',  'id'=>$this->id), array('class'=>'btn btn-xs btn-red btn-square'));
-					break;
-			}
+		switch ($this->status) {
+			case self::STATUS_HIDE:
+				$buttons[] = CHtml::link('发布',  array('/board/slider/show',  'id'=>$this->id), array('class'=>'btn btn-xs btn-green btn-square'));
+				break;
+			case self::STATUS_SHOW:
+				$buttons[] = CHtml::link('隐藏',  array('/board/slider/hide',  'id'=>$this->id), array('class'=>'btn btn-xs btn-red btn-square'));
+				break;
 		}
 		return implode(' ',  $buttons);
 	}
