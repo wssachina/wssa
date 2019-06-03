@@ -1879,6 +1879,9 @@ class Competition extends ActiveRecord {
 	}
 
 	public function checkPermission($user) {
+		if ($user === null) {
+			return false;
+		}
 		if ($user->isAdministrator()) {
 			return true;
 		}

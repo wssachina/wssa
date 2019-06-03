@@ -337,7 +337,7 @@
           <?php $this->renderPartial('editorTips'); ?>
           <?php echo Html::formGroup(
             $model, 'information_zh', array(
-              'class'=>'col-lg-6',
+              'class'=>'col-lg-12',
             ),
             $form->labelEx($model, 'information_zh', array(
               'label'=>'比赛信息',

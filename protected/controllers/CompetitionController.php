@@ -442,6 +442,35 @@ class CompetitionController extends Controller {
 				'visible'=>(!$showResults && !$showLive) || $competition->show_qrcode,
 			),
 		);
+		if ($competition->checkPermission($this->user)) {
+			switch ($this->action->id) {
+				case 'regulations':
+				case 'travel':
+				case 'schedule':
+					$action = $this->action->id;
+					$url = ['/board/competition/' . $action, 'id'=>$competition->id];
+					break;
+				case 'competitors':
+					$url = ['/board/registration/index', 'Registration'=>['competition_id'=>$competition->id]];
+					break;
+				case 'tab':
+					$url = ['/board/competition/tab', 'id'=>$this->iGet('id')];
+					break;
+				default:
+					$url = ['/board/competition/edit', 'id'=>$competition->id];
+					break;
+			}
+			$navibar[] = [
+				'label'=>Html::fontAwesome('edit', 'a') . '编辑',
+				'url'=>$url,
+				'itemOptions'=>array(
+					'class'=>'nav-item cube-white',
+				),
+				'linkOptions'=>[
+					'target'=>'_blank',
+				]
+			];
+		}
 		return $navibar;
 	}
 }
