@@ -402,42 +402,42 @@ class CompetitionController extends Controller {
 				'label'=>Html::fontAwesome('info-circle', 'a') . Yii::t('Competition', 'Main Page'),
 				'url'=>$competition->getUrl('detail'),
 				'itemOptions'=>array(
-					'class'=>'nav-item cube-red',
+					'class'=>'nav-item',
 				),
 			),
 			array(
 				'label'=>Html::fontAwesome('tasks', 'a') . Yii::t('Competition', 'Regulations'),
 				'url'=>$competition->getUrl('regulations'),
 				'itemOptions'=>array(
-					'class'=>'nav-item cube-orange',
+					'class'=>'nav-item',
 				),
 			),
 			array(
 				'label'=>Html::fontAwesome('calendar', 'a') . Yii::t('Competition', 'Schedule'),
 				'url'=>$competition->getUrl('schedule'),
 				'itemOptions'=>array(
-					'class'=>'nav-item cube-yellow',
+					'class'=>'nav-item',
 				),
 			),
 			array(
 				'label'=>Html::fontAwesome('taxi', 'a') . Yii::t('Competition', 'Travel'),
 				'url'=>$competition->getUrl('travel'),
 				'itemOptions'=>array(
-					'class'=>'nav-item cube-green',
+					'class'=>'nav-item',
 				),
 			),
 			array(
 				'label'=>Html::fontAwesome('users', 'a') . Yii::t('Competition', 'Competitors'),
 				'url'=>$competition->getUrl('competitors'),
 				'itemOptions'=>array(
-					'class'=>'nav-item cube-blue',
+					'class'=>'nav-item',
 				),
 			),
 			array(
 				'label'=>Html::fontAwesome('sign-in', 'a') . Yii::t('Competition', 'Registration'),
 				'url'=>$competition->getUrl('registration'),
 				'itemOptions'=>array(
-					'class'=>'nav-item cube-white',
+					'class'=>'nav-item',
 				),
 				'visible'=>(!$showResults && !$showLive) || $competition->show_qrcode,
 			),

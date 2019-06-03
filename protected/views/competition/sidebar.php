@@ -1,4 +1,4 @@
-<aside class="col-sm-12 col-md-3 col-lg-2">
+<aside class="page-sidebar col-sm-12 col-md-3 col-lg-2">
   <?php $items = $this->getCompetitionNavibar($this->competition); ?>
   <section class="widget hidden-xs">
     <?php $this->widget('zii.widgets.CMenu', array(
