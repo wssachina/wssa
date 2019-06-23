@@ -15,9 +15,6 @@
       'competition'=>$competition,
       'name'=>'events',
       'events'=>$competition->getRegistrationEvents(),
-      'unmetEvents'=>$unmetEvents,
-      'shouldDisableUnmetEvents'=>$competition->shouldDisableUnmetEvents,
-      'type'=>'checkbox',
     ), true)
     // $form->error($model, 'events', array('class'=>'text-danger'))
   );?>

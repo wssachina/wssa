@@ -262,20 +262,13 @@ class CompetitionController extends Controller {
 		$model->competition = $competition;
 		$model->competition_id = $competition->id;
 		$model->events = array_values(PreferredEvent::getUserEvents($user));
-		if ($competition->shouldDisableUnmetEvents) {
-			$model->events = array_diff($model->events, array_keys($unmetEvents));
-		}
-		if ($competition->isMultiLocation()) {
-			$model->location_id = null;
-		}
 		if (isset($_POST['Registration'])) {
 			if (!$competition->fill_passport || $this->user->passport_type != User::NO) {
 				$model->attributes = $_POST['Registration'];
 				if (!isset($_POST['Registration']['events'])) {
 					$model->events = null;
-				}
-				if ($competition->shouldDisableUnmetEvents) {
-					$model->events = array_diff($model->events, array_keys($unmetEvents));
+				} else {
+					$model->events = array_keys($model->events);
 				}
 				$model->user_id = $this->user->id;
 				$model->total_fee = $model->getTotalFee(true);
@@ -283,14 +276,6 @@ class CompetitionController extends Controller {
 				$model->date = time();
 				$model->status = Registration::STATUS_PENDING;
 				if ($competition->auto_accept == Competition::YES && $competition->online_pay != Competition::ONLINE_PAY) {
-					$model->status = Registration::STATUS_ACCEPTED;
-				}
-				// for FMC Asia
-				if ($competition->multi_countries && $model->location->country_id != 1) {
-					$model->status = Registration::STATUS_ACCEPTED;
-				}
-				// for oversea users
-				if ($this->user->country_id > 1 && $this->user->hasSuccessfulRegistration()) {
 					$model->status = Registration::STATUS_ACCEPTED;
 				}
 				if ($model->save()) {
