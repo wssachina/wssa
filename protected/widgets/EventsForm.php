@@ -5,13 +5,8 @@ class EventsForm extends Widget {
 	public $competition;
 	public $name = 'events';
 	public $events = [];
-	public $unmetEvents = [];
-	public $shouldDisableUnmetEvents = false;
-	public $type = 'checkbox';
 	public $htmlOptions = [];
-	public $labelOptions = [];
-	public $numberOptions = [];
-	public $feeOptions = [];
+	public $isAdmin = false;
 	public function run() {
 		$events = $this->events;
 		$model = $this->model;
@@ -47,9 +42,13 @@ class EventsForm extends Widget {
 			'class'=>'registration-events',
 			'value'=>$event['id'],
 		];
-		echo CHtml::checkBox(CHtml::activeName($model, $name . '[]'), $model->containsEvent($event['id']), $options);
-		echo Events::getFullEventNameWithIcon($event['id']);
+		echo CHtml::checkBox(CHtml::activeName($model, "{$name}[{$event['id']}][id]"), $model->containsEvent($event['id']), $options);
+		echo Events::getFullEventName($event['id']);
 		echo CHtml::closeTag('label');
+		if ($this->isAdmin) {
+			echo CHtml::label('领奖台', '');
+			echo CHtml::numberField(CHtml::activeName($model, "{$name}[{$event['id']}][podiums]"), $model->getEventPodiums($event['id']));
+		}
 		echo CHtml::closeTag('div');
 	}
 }

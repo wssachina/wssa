@@ -100,10 +100,8 @@ class Events extends ActiveRecord {
 	}
 
 	public static function getEventName($event) {
-		if (self::$_allEvents === null) {
-			self::$_allEvents = self::getScheduleEvents() + self::getDeprecatedEvents();
-		}
-		return isset(self::$_allEvents[$event]) ? self::$_allEvents[$event] : $event;
+		$allEvents = self::getAllEvents();
+		return isset($allEvents[$event]) ? $allEvents[$event] : $event;
 	}
 
 	public static function getFullEventName($event) {
@@ -165,7 +163,12 @@ class Events extends ActiveRecord {
 	}
 
 	public static function getAllEvents() {
-		return self::getNormalEvents();// + self::getOtherEvents();
+		if (self::$_allEvents === null) {
+			self::$_allEvents = self::model()->findAll([
+				'order'=>'rank',
+			]);
+		}
+		return self::$_allEvents;
 	}
 
 	public static function getCustomEvents() {
@@ -196,6 +199,10 @@ class Events extends ActiveRecord {
 			}
 		}
 		return self::$_normalEvents = $temp;
+	}
+
+	public static function getParent($event) {
+
 	}
 
 	public static function getNormalTranslatedEvents() {

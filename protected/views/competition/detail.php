@@ -46,20 +46,22 @@
   <?php endif; ?>
   <dt><?php echo Yii::t('Competition', 'Events'); ?></dt>
   <dd>
-    <ul class="main-event list-unstyled">
-    <?php foreach ($competition->getMainEvents() as $competitionEvent): ?>
-      <li>
-        <b><?php echo $competitionEvent->e->name; ?></b>
-        <?php if ($competitionEvent->children !== []): ?>
-        <ul class="child-events list-unstyled">
-          <?php foreach ($competitionEvent->children as $child): ?>
-          <li><?php echo $child->e->name; ?></li>
-          <?php endforeach; ?>
-        </ul>
-        <?php endif; ?>
-      </li>
-    <?php endforeach; ?>
-    </ul>
+    <table class="table fee-table table-bordered table-condensed">
+      <thead>
+        <tr>
+          <th>项目</th>
+          <th>领奖台</th>
+        </tr>
+      </thead>
+      <tbody>
+      <?php foreach ($competition->getMainEvents() as $competitionEvent): ?>
+        <tr>
+          <td><?php echo $competitionEvent->e->name; ?></td>
+          <td><?php echo $competitionEvent->podiums ?: '待定'; ?></td>
+        </tr>
+      <?php endforeach; ?>
+      </tbody>
+    </table>
   </dd>
   <?php if ($competition->tba == Competition::NO): ?>
   <dt><?php echo Yii::t('Competition', 'Entry Fee'); ?></dt>

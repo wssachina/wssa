@@ -35,14 +35,7 @@
               'model'=>$model,
               'name'=>'associatedEvents',
               'events'=>Events::getNormalEvents(),
-              'type'=>'b',
-              'numberOptions'=>array(
-                'min'=>0,
-                'max'=>4,
-              ),
-              'feeOptions'=>array(
-                'min'=>0,
-              ),
+              'isAdmin'=>true,
             ), true),
             $form->error($model, 'events', array('class'=>'text-danger'))
           );?>

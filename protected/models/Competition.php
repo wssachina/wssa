@@ -516,6 +516,10 @@ class Competition extends ActiveRecord {
 		return array_key_exists($id, $this->associatedEvents);
 	}
 
+	public function getEventPodiums($id) {
+		return isset($this->associatedEvents[$id]['podiums']) ? $this->associatedEvents[$id]['podiums'] : 0;
+	}
+
 	public function getShouldDisableUnmetEvents() {
 		return $this->has_qualifying_time && time() >= $this->qualifying_end_time;
 	}
@@ -1969,9 +1973,13 @@ class Competition extends ActiveRecord {
 	public function updateEvents($events) {
 		CompetitionEvent::model()->deleteAllByAttributes(['competition_id'=>$this->id]);
 		foreach ($events as $event) {
+			if (!isset($event['id'])) {
+				continue;
+			}
 			$competitionEvent = new CompetitionEvent();
 			$competitionEvent->competition_id = $this->id;
-			$competitionEvent->event = "$event";
+			$competitionEvent->event = $event['id'];
+			$competitionEvent->podiums = isset($event['podiums']) ? $event['podiums'] : 0;
 			$competitionEvent->save();
 		}
 		return true;
