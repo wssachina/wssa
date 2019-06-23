@@ -1343,7 +1343,10 @@ class Competition extends ActiveRecord {
 				'value'=>'$data->location->getFullAddress(false)',
 			);
 		}
-		foreach ($this->associatedEvents as $event=>$value) {
+		foreach (['individual', 'age-division', 'child-parent', 'relay'] as $event) {
+			if (!$this->containsEvent($event)) {
+				continue;
+			}
 			$columns[] = array(
 				'name'=>(string)$event,
 				'header'=>Events::getEventName($event),

@@ -443,10 +443,6 @@ class Registration extends ActiveRecord {
 		$str = '';
 		if (in_array($event, $this->events)) {
 			$str = '<span class="fa fa-check"></span>';
-			if ($this->best > 0 && self::$sortAttribute === $event && self::$sortDesc !== true) {
-				$str = self::$sortDesc === true ? '' : '[' . $this->pos . ']' . $str;
-				$str .= Results::formatTime($this->best, $event);
-			}
 		}
 		return $str;
 	}
