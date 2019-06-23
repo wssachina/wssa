@@ -45,8 +45,8 @@ class EventsForm extends Widget {
 		echo CHtml::checkBox(CHtml::activeName($model, "{$name}[{$event['id']}][id]"), $model->containsEvent($event['id']), $options);
 		echo Events::getFullEventName($event['id']);
 		echo CHtml::closeTag('label');
-		if ($this->isAdmin) {
-			echo CHtml::label('领奖台', '');
+		if ($this->isAdmin && $isChild) {
+			echo CHtml::label('&nbsp;&nbsp;&nbsp;&nbsp;<b>领奖台</b>&nbsp;&nbsp;&nbsp;&nbsp;', '');
 			echo CHtml::numberField(CHtml::activeName($model, "{$name}[{$event['id']}][podiums]"), $model->getEventPodiums($event['id']));
 		}
 		echo CHtml::closeTag('div');

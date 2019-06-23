@@ -1207,4 +1207,18 @@ header {
 }
 .competition-detail .fee-table {
   width: auto;
+  min-width: 500px;
+  max-width: 100%;
+  th {
+    border-bottom: 1px;
+    &:first-child {
+      width: 60%;
+    }
+    &:last-child {
+      width: 40%;
+    }
+  }
+  td, th {
+    padding: 8px 15px;
+  }
 }

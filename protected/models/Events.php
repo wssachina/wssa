@@ -105,10 +105,8 @@ class Events extends ActiveRecord {
 	}
 
 	public static function getFullEventName($event) {
-		if (self::isCustomEvent($event)) {
-			return CustomEvent::getFullEventName($event);
-		}
-		return Yii::t('event', self::getEventName($event));
+		$allEvents = self::getAllEvents();
+		return isset($allEvents[$event]) ? $allEvents[$event] : $event;
 	}
 
 	public static function getFullEventNameWithIcon($event, $name = null) {
@@ -148,7 +146,7 @@ class Events extends ActiveRecord {
 	}
 
 	public static function getScheduleEvents() {
-		return CHtml::listData(self::getAllEvents(), 'id', 'name') + self::getOnlyScheduleEvents();
+		return self::getAllEvents() + self::getOnlyScheduleEvents();
 	}
 
 	public static function getOnlyScheduleEvents() {
@@ -164,9 +162,9 @@ class Events extends ActiveRecord {
 
 	public static function getAllEvents() {
 		if (self::$_allEvents === null) {
-			self::$_allEvents = self::model()->findAll([
+			self::$_allEvents = CHtml::listData(self::model()->findAll([
 				'order'=>'rank',
-			]);
+			]), 'id', 'name');
 		}
 		return self::$_allEvents;
 	}
