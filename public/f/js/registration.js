@@ -7,11 +7,9 @@ $(function() {
     $('#submit-button').prop('disabled', !this.checked);
   }).on('change', '.registration-events', function() {
     updateFee()
-    const childEvents = $(this).parent().parent().siblings('.child-events')
-    childEvents[this.checked ? 'removeClass' : 'addClass']('hide')
-    if (!this.checked) {
-      childEvents.find('input').prop('checked', false)
-    }
+    const extra = $(this).parent().parent().parent().parent().find('.extra-info')
+    console.log(extra)
+    extra[this.checked ? 'addClass' : 'removeClass']('show')
   });
   function updateFee() {
     var totalFee = options.basicFee;

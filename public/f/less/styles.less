@@ -1223,3 +1223,67 @@ header {
     padding: 8px 15px;
   }
 }
+.register-events {
+  .register-event {
+    margin-bottom: 15px;
+    .event-info {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      border-bottom: 1px solid #efefef;
+      label {
+        cursor: pointer;
+        margin-bottom: 0;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+      }
+    }
+    .extra-info {
+      padding: 0;
+      max-height: 0;
+      overflow: hidden;
+      transition: all 0.3s ease-in-out;
+      &.show {
+        padding: 15px;
+        max-height: 500px;
+      }
+      .extra-description {
+        background-color: #dedede;
+        padding: 10px 15px;
+        margin-bottom: 15px;
+        border-left: 2px solid @baseColor;
+      }
+      label {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        height: 30px;
+        .extra-input-label {
+          margin-right: 15px;
+          cursor: pointer;
+        }
+        input {
+          outline: none;
+          border: none;
+          border-bottom: 1px solid #ddd;
+        }
+      }
+    }
+  }
+  .checkbox-wrapper {
+    padding: 10px 20px;
+    background-color: #dddddd;
+    border: 1px solid #cccccc;
+    cursor: pointer;
+  }
+  .event-name {
+    margin-left: 10px;
+  }
+  input {
+
+  }
+  .has-tooltip {
+    cursor: pointer;
+  }
+}

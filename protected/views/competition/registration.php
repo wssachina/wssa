@@ -10,11 +10,10 @@
   <?php echo Html::formGroup(
     $model, 'events', array(),
     $form->labelEx($model, 'events'),
-    $this->widget('EventsForm', array(
+    $this->widget('CompetitionRegisterForm', array(
       'model'=>$model,
       'competition'=>$competition,
       'name'=>'events',
-      'events'=>$competition->getRegistrationEvents(),
     ), true)
     // $form->error($model, 'events', array('class'=>'text-danger'))
   );?>

@@ -44,6 +44,19 @@ class Events extends ActiveRecord {
 		'default'=>'average5s',
 	);
 
+	public static $descriptions = [
+		'individual'=>'参赛选手被默认为参加所有个人项目，包括3-3-3、3-6-3和Cycle。如果参赛选手无法或不希望参加某一个单项，可以在预赛中主动选择跳过。',
+		'age-division'=>'大多数参赛选手与他们接力队伍中的一员组成双人组合。双人项目可男女混合。',
+		'child-parent'=>'除了年龄组双人项目比赛以外，参赛选手亦可与“家长”组合参加亲子双人项目比赛。孩子可以与他们的父母、祖父母或法定监护人进行组合，而“父母”则可以与他们直系“子女”进行组合。',
+		'relay'=>'每个接力队伍由4至6名选手和1名教练组成。',
+	];
+
+	public static $extraDescriptions = [
+		'age-division'=>'如果您需要寻求搭档，请在下面输入“<span class="auto-fill">需要搭档</span>”。',
+		'child-parent'=>'除了年龄组双人项目比赛以外，参赛选手亦可与“家长”组合参加亲子双人项目比赛。孩子可以与他们的父母、祖父母或法定监护人进行组合，而“父母”则可以与他们直系“子女”进行组合。',
+		'relay'=>'如果需要寻找队伍，请在下面输入“<span class="auto-fill">需要组队</span>”。',
+	];
+
 	public static function getAllExportFormats() {
 		$formats = array(
 			'average5s',
@@ -104,17 +117,21 @@ class Events extends ActiveRecord {
 		return isset($allEvents[$event]) ? $allEvents[$event] : $event;
 	}
 
+	public static function getEventDescription($event) {
+		return isset(self::$descriptions[$event]) ? self::$descriptions[$event] : '';
+	}
+
+	public static function getExtraEventDescription($event) {
+		return isset(self::$extraDescriptions[$event]) ? self::$extraDescriptions[$event] : '';
+	}
+
 	public static function getFullEventName($event) {
-		$allEvents = self::getAllEvents();
-		return isset($allEvents[$event]) ? $allEvents[$event] : $event;
+		return self::getEventName($event);
 	}
 
 	public static function getFullEventNameWithIcon($event, $name = null) {
 		if ($name === null) {
 			$name = self::getFullEventName($event);
-		}
-		if (self::isCustomEvent($event) && !CustomEvent::hasIcon($event)) {
-			return CustomEvent::getFullEventName($event);
 		}
 		return self::getEventIcon($event) . ' ' . $name;
 	}
@@ -147,6 +164,15 @@ class Events extends ActiveRecord {
 
 	public static function getScheduleEvents() {
 		return self::getAllEvents() + self::getOnlyScheduleEvents();
+	}
+
+	public static function getRegisterEvents() {
+		$events = [];
+		$allEvents = self::getAllEvents();
+		foreach (['individual', 'age-division', 'child-parent', 'relay'] as $event) {
+			$events[$event] = $allEvents[$event];
+		}
+		return $events;
 	}
 
 	public static function getOnlyScheduleEvents() {

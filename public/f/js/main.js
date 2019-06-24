@@ -27,6 +27,7 @@ $(function() {
     mobileFirst: true,
     adaptiveHeight: true
   });
+  $('[data-toggle="tooltip"]').tooltip()
   if (!('ontouchstart' in window)) {
     (function() {
       var win = $(window);
