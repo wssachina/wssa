@@ -245,6 +245,14 @@ class CompetitionController extends Controller {
 					Yii::app()->user->setFlash('success', Yii::t('Registration', 'Your registration has been cancelled.'));
 				}
 			}
+
+			if (isset($_POST['Registration']) && $registration->isEditable()) {
+				$registration->events = isset($_POST['Registration']['events']) ? $_POST['Registration']['events'] : null;
+				$registration->comments = isset($_POST['Registration']['comments']) ? $_POST['Registration']['comments'] : null;
+				if ($registration->save()) {
+					Yii::app()->user->setFlash('success', '编辑报名信息成功！');
+				}
+			}
 			$registration->formatEvents();
 			$this->render('registrationDone', array(
 				'user'=>$user,
@@ -263,35 +271,33 @@ class CompetitionController extends Controller {
 		$model->competition_id = $competition->id;
 		$model->events = array_values(PreferredEvent::getUserEvents($user));
 		if (isset($_POST['Registration'])) {
-			if (!$competition->fill_passport || $this->user->passport_type != User::NO) {
-				$model->attributes = $_POST['Registration'];
-				if (!isset($_POST['Registration']['events'])) {
-					$model->events = null;
-				}
-				$model->user_id = $this->user->id;
-				$model->total_fee = $model->getTotalFee(true);
-				$model->ip = Yii::app()->request->getUserHostAddress();
-				$model->date = time();
-				$model->status = Registration::STATUS_PENDING;
-				if ($competition->auto_accept == Competition::YES && $competition->online_pay != Competition::ONLINE_PAY) {
-					$model->status = Registration::STATUS_ACCEPTED;
-				}
-				if ($model->save()) {
-					Yii::app()->mailer->sendRegistrationNotice($model);
-					$this->setWeiboShareDefaultText($competition->getRegistrationDoneWeiboText(), false);
+			$model->attributes = $_POST['Registration'];
+			if (!isset($_POST['Registration']['events'])) {
+				$model->events = null;
+			}
+			$model->user_id = $this->user->id;
+			$model->total_fee = $model->getTotalFee(true);
+			$model->ip = Yii::app()->request->getUserHostAddress();
+			$model->date = time();
+			$model->status = Registration::STATUS_PENDING;
+			if ($competition->auto_accept == Competition::YES && $competition->online_pay != Competition::ONLINE_PAY) {
+				$model->status = Registration::STATUS_ACCEPTED;
+			}
+			if ($model->save()) {
+				Yii::app()->mailer->sendRegistrationNotice($model);
+				$this->setWeiboShareDefaultText($competition->getRegistrationDoneWeiboText(), false);
+				$model->formatEvents();
+				if ($model->isAccepted()) {
+					$model->accept();
 					$model->formatEvents();
-					if ($model->isAccepted()) {
-						$model->accept();
-						$model->formatEvents();
-					}
-					$this->render('registrationDone', array(
-						'user'=>$user,
-						'accepted'=>$model->isAccepted(),
-						'competition'=>$competition,
-						'registration'=>$model,
-					));
-					Yii::app()->end();
 				}
+				$this->render('registrationDone', array(
+					'user'=>$user,
+					'accepted'=>$model->isAccepted(),
+					'competition'=>$competition,
+					'registration'=>$model,
+				));
+				Yii::app()->end();
 			}
 		}
 		$model->formatEvents();

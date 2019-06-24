@@ -15,7 +15,7 @@
 </div>
 <?php endif; ?>
 <div class="row">
-  <div class="col-md-8 col-md-push-2 col-lg-6 col-lg-push-3">
+  <div class="col-sm-12">
     <div class="panel panel-info">
       <div class="panel-heading"><?php echo Yii::t('Registration', 'Registration Detail'); ?></div>
       <div class="panel-body">
@@ -109,9 +109,39 @@
     </div>
   </div>
 </div>
+<?php if ($registration->isEditable()): ?>
+<div class="row">
+  <div class="col-sm-12">
+    <div class="panel panel-success">
+      <div class="panel-heading">
+        <a data-toggle="collapse" href="#edit">编辑报名信息</a>
+      </div>
+      <div class="panel-body collapse" id="edit">
+        <?php $form = $this->beginWidget('ActiveForm', array(
+          'id'=>'registration-form',
+          'htmlOptions'=>array(
+          ),
+        )); ?>
+          <?php $this->renderPartial('registrationForm', [
+            'model'=>$registration,
+            'competition'=>$competition,
+            'form'=>$form,
+          ]); ?>
+          <?php echo CHtml::tag('button', [
+            'type'=>'submit',
+            'class'=>'btn btn-theme',
+            'id'=>'submit-button',
+            'disabled'=>$competition->fill_passport && $this->user->passport_type == User::NO,
+          ], Yii::t('common', 'Submit')); ?>
+        <?php $this->endWidget(); ?>
+      </div>
+    </div>
+  </div>
+</div>
+<?php endif; ?>
 <?php if ($registration->isCancellable()): ?>
 <div class="row">
-  <div class="col-md-8 col-md-push-2 col-lg-6 col-lg-push-3">
+  <div class="col-sm-12">
     <div class="panel panel-warning">
       <div class="panel-heading">
         <a data-toggle="collapse" href="#cancellation"><?php echo Yii::t('Registration', 'Registration Cancellation'); ?></a>

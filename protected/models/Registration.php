@@ -238,6 +238,11 @@ class Registration extends ActiveRecord {
 		return time() < $competition->cancellation_end_time && $this->isAccepted() || $this->isWaiting();
 	}
 
+	public function isEditable() {
+		$competition = $this->competition;
+		return time() < $competition->reg_end && !$this->isCancelled();
+	}
+
 	public function isWaiting() {
 		return $this->status == self::STATUS_WAITING;
 	}
