@@ -355,7 +355,7 @@ class Registration extends ActiveRecord {
 
 	public function getEventsString($event) {
 		$str = '';
-		if (in_array($event, $this->events)) {
+		if ($this->containsEvent($event)) {
 			$str = '<span class="fa fa-check"></span>';
 		}
 		return $str;
@@ -485,9 +485,6 @@ class Registration extends ActiveRecord {
 			$columns = $this->competition->getEventsColumns(true);
 		}
 		$modelName = get_class($model);
-		$userLink = Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR)
-			? 'CHtml::link($data->user->getCompetitionName(), array("/board/user/edit", "id"=>$data->user_id))'
-			: '$data->user->getWcaLink()';
 		$columns = array_merge(array(
 			array(
 				'name'=>'email',
@@ -527,21 +524,8 @@ class Registration extends ActiveRecord {
 					'value'=>'date("Y-m-d", $data->user->birthday)',
 				),
 			));
-			if ($this->competition->require_avatar != Competition::REQUIRE_AVATAR_NONE) {
-				array_splice($columns, 5, 0, array(
-					array(
-						'name'=>'avatar_type',
-						'header'=>Yii::t('common', 'Photo'),
-						'type'=>'raw',
-						'value'=>'$data->getRegistrationAvatar()',
-					)
-				));
-			}
 		}
 		$isAdmin = Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR);
-		$userLink = $isAdmin
-			? 'CHtml::link($data->user->getCompetitionName(), array("/board/user/edit", "id"=>$data->user_id))'
-			: '$data->user->getWcaLink()';
 		$ipColumn = $isAdmin ? array(
 			array(
 				'name'=>'ip',
@@ -1079,7 +1063,6 @@ class Registration extends ActiveRecord {
 					break;
 			}
 		}
-		$wcaIds = array();
 		foreach ($registrations as $key=>$registration) {
 			if ($enableCache && $registration->location->status == CompetitionLocation::NO) {
 				unset($registrations[$key]);
@@ -1094,9 +1077,6 @@ class Registration extends ActiveRecord {
 				$statistics['location'][$registration->location_id] = 0;
 			}
 			$statistics['location'][$registration->location_id]++;
-			if ($registration->user->wcaid === '') {
-				$statistics['new']++;
-			}
 			if ($localType == Competition::LOCAL_TYPE_PROVINCE && $registration->user->province_id == $this->competition->location[0]->province_id
 				|| $localType == Competition::LOCAL_TYPE_CITY && $registration->user->city_id == $this->competition->location[0]->city_id
 				|| $localType == Competition::LOCAL_TYPE_MAINLAND && $registration->user->country_id == 1
@@ -1105,7 +1085,7 @@ class Registration extends ActiveRecord {
 			} else {
 				$statistics['nonlocal']++;
 			}
-			foreach ($registration->events as $event) {
+			foreach ($registration->events as $event=>$value) {
 				if (!isset($statistics[$event])) {
 					$statistics[$event] = 0;
 				}
@@ -1117,34 +1097,10 @@ class Registration extends ActiveRecord {
 			} else {
 				$statistics['unpaid'] += $fee;
 			}
-			//store wcaids
-			if ($registration->user->wcaid) {
-				$wcaIds[$registration->user->wcaid] = $registration;
-			}
-		}
-		if (self::$sortByEvent === true && !empty($wcaIds)) {
-			switch ($sort) {
-				case '333bf':
-				case '444bf':
-				case '555bf':
-				case '333mbf':
-					$modelName = 'RanksSingle';
-					break;
-				default:
-					$modelName = 'RanksAverage';
-					break;
-			}
-			$results = $modelName::model()->cache(86400)->findAllByAttributes(array(
-				'eventId'=>$sort,
-				'personId'=>array_keys($wcaIds),
-			));
-			foreach ($results as $result) {
-				$wcaIds[$result->personId]->best = $result->best;
-			}
 		}
 		$statistics['gender'] = $statistics[User::GENDER_MALE] . '/' . $statistics[User::GENDER_FEMALE];
 		$statistics['old'] = $statistics['number'] - $statistics['new'];
-		$statistics['name'] = $statistics['new'] . '/' . $statistics['old'];
+		// $statistics['name'] = $statistics['new'] . '/' . $statistics['old'];
 		$statistics['fee'] = $statistics['paid'] . '/' . $statistics['unpaid'];
 		$statistics['location_id'] = [];
 		if ($this->competition && $this->competition->isMultiLocation()) {

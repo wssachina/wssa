@@ -80,19 +80,6 @@
             )),
             $form->error($model, 'type', array('class'=>'text-danger'))
           );?>
-          <?php if ($this->user->isAdministrator() || $this->user->isDelegate()): ?>
-          <?php echo Html::formGroup(
-            $model, 'wca_competition_id', array(
-              'class'=>'col-md-4',
-            ),
-            $form->labelEx($model, 'wca_competition_id', array(
-              'label'=>'WCA比赛ID',
-            )),
-            Html::activeTextField($model, 'wca_competition_id'),
-            $form->error($model, 'wca_competition_id', array('class'=>'text-danger'))
-          );?>
-          <?php endif; ?>
-          <div class="clearfix"></div>
           <?php echo Html::formGroup(
             $model, 'entry_fee', array(
               'class'=>'col-md-4'
@@ -129,16 +116,6 @@
             Html::activeTextField($model, 'second_stage_ratio'),
             $form->error($model, 'second_stage_ratio', array('class'=>'text-danger'))
           );?>
-          <?php echo Html::formGroup(
-            $model, 'second_stage_all', array(
-              'class'=>'col-md-4',
-            ),
-            $form->labelEx($model, 'second_stage_all', array(
-              'label'=>'包含所有项目',
-            )),
-            Html::activeSwitch($model, 'second_stage_all'),
-            $form->error($model, 'second_stage_all', array('class'=>'text-danger'))
-          );?>
           <div class="clearfix"></div>
           <?php echo Html::formGroup(
             $model, 'third_stage_date', array(
@@ -164,18 +141,6 @@
             )),
             Html::activeTextField($model, 'third_stage_ratio'),
             $form->error($model, 'third_stage_ratio', array('class'=>'text-danger'))
-          );?>
-          <?php echo Html::formGroup(
-            $model, 'local_type', array(
-              'class'=>'col-md-4',
-            ),
-            $form->labelEx($model, 'local_type', array(
-              'label'=>'人数统计选项',
-            )),
-            $form->dropDownList($model, 'local_type', Competition::getLocalTypes(), array(
-              'class'=>'form-control',
-            )),
-            $form->error($model, 'local_type', array('class'=>'text-danger'))
           );?>
           <div class="clearfix"></div>
           <?php echo Html::formGroup(

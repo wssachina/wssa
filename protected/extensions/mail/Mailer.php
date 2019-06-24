@@ -52,11 +52,6 @@ class Mailer extends CApplicationComponent {
 				)
 			)),
 		));
-		if ($competition->type == Competition::TYPE_WCA) {
-			foreach ($competition->delegate as $delegate) {
-				$to[] = $delegate->user->email;
-			}
-		}
 		$cc = [];
 		foreach ($competition->organizer as $organizer) {
 			$cc[] = $organizer->user->email;
@@ -79,11 +74,6 @@ class Mailer extends CApplicationComponent {
 				)
 			)),
 		));
-		if ($competition->type == Competition::TYPE_WCA) {
-			foreach ($competition->delegate as $delegate) {
-				$to[] = $delegate->user->email;
-			}
-		}
 		$cc = [];
 		foreach ($competition->organizer as $organizer) {
 			$cc[] = $organizer->user->email;
@@ -104,11 +94,6 @@ class Mailer extends CApplicationComponent {
 				)
 			)),
 		));
-		if ($competition->type == Competition::TYPE_WCA) {
-			foreach ($competition->delegate as $delegate) {
-				$to[] = $delegate->user->email;
-			}
-		}
 		$cc = [];
 		foreach ($competition->organizer as $organizer) {
 			$cc[] = $organizer->user->email;

@@ -245,29 +245,6 @@ class User extends ActiveRecord {
 		$this->_preferredEvents = $events;
 	}
 
-	public function getHasCerts() {
-		if ($this->_hasCerts !== null) {
-			return $this->_hasCerts;
-		}
-		if ($this->wcaid == '') {
-			return $this->_hasCerts = false;
-		}
-		$competitions = Competition::model()->cache(86400)->findAllByAttributes([
-			'type'=>Competition::TYPE_WCA,
-			'status'=>Competition::STATUS_SHOW,
-		], [
-			'condition'=>'cert_name!=""',
-		]);
-		if ($competitions === []) {
-			return $this->_hasCerts = false;
-		}
-		$wcaIds = CHtml::listData($competitions, 'id', 'wca_competition_id');
-		return $this->_hasCerts = (Results::model()->countByAttributes([
-			'competitionId'=>$wcaIds,
-			'personId'=>$this->wcaid,
-		]) > 0);
-	}
-
 	public function getRoleName() {
 		$roles = self::getRoles();
 		return isset($roles[$this->role]) ? $roles[$this->role] : Yii::t('common', 'Unknown');

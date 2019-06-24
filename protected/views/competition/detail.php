@@ -1,10 +1,8 @@
 <dl>
-  <?php if ($competition->type == Competition::TYPE_WCA): ?>
-  <dt><?php echo Yii::t('Competition', 'WCA Competition'); ?></dt>
+  <?php if ($competition->isSanctionedCompetition()): ?>
+  <dt>世界竞技叠杯运动协会认证比赛</dt>
   <dd>
-    <?php echo Yii::t('Competition', 'This competition is recognized as an official World Cube Association competition. Therefore, all competitors should be familiar with the {regulations}.', array(
-    '{regulations}'=>CHtml::link(Yii::t('Competition', 'WCA regulations'), $competition->getWcaRegulationUrl(), array('target'=>'_blank')),
-  ));?>
+    这里需要有什么特殊的说明？
   </dd>
   <?php endif; ?>
   <?php if ($competition->wca_competition_id != ''): ?>
@@ -21,29 +19,11 @@
   <?php endif; ?>
   <dt><?php echo Yii::t('Competition', 'Organizers'); ?></dt>
   <dd>
-    <?php if ($competition->isOld()): ?>
-    <?php echo OldCompetition::formatInfo($competition->old->getAttributeValue('organizer')); ?>
-    <?php else: ?>
     <?php foreach ($competition->organizer as $key=>$organizer): ?>
     <?php if ($key > 0) echo Yii::t('common', ', '); ?>
     <?php echo CHtml::mailto(Html::fontAwesome('envelope', 'a') . $organizer->user->getAttributeValue('name', true), $organizer->user->email); ?>
     <?php endforeach; ?>
-    <?php endif; ?>
   </dd>
-  <?php if ($competition->delegate !== array() && !$competition->multi_countries): ?>
-  <dt><?php echo Yii::t('Competition', $competition->type == Competition::TYPE_WCA ? 'Delegates' : 'Main Judge'); ?></dt>
-  <dd>
-    <?php foreach ($competition->delegate as $key=>$delegate): ?>
-    <?php if ($key > 0) echo Yii::t('common', ', '); ?>
-    <?php echo CHtml::mailto(Html::fontAwesome('envelope', 'a') . $delegate->user->getAttributeValue('name', true), $delegate->user->email); ?>
-    <?php endforeach; ?>
-  </dd>
-  <?php elseif ($competition->isOld() && $competition->old->getAttributeValue('delegate')): ?>
-  <dt><?php echo Yii::t('Competition', $competition->type == Competition::TYPE_WCA ? 'Delegates' : 'Main Judge'); ?></dt>
-  <dd>
-    <?php echo OldCompetition::formatInfo($competition->old->getAttributeValue('delegate')); ?>
-  </dd>
-  <?php endif; ?>
   <dt><?php echo Yii::t('Competition', 'Events'); ?></dt>
   <dd>
     <table class="table fee-table">

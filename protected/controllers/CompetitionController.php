@@ -378,7 +378,6 @@ class CompetitionController extends Controller {
 	}
 
 	protected function getCompetitionNavibar($competition) {
-		$showResults = $competition->hasResults && $this->id != 'live';
 		$showLive = $competition->live == Competition::YES && !$competition->canRegister();
 		$navibar = array(
 			array(
@@ -415,14 +414,6 @@ class CompetitionController extends Controller {
 				'itemOptions'=>array(
 					'class'=>'nav-item',
 				),
-			),
-			array(
-				'label'=>Html::fontAwesome('sign-in', 'a') . Yii::t('Competition', 'Registration'),
-				'url'=>$competition->getUrl('registration'),
-				'itemOptions'=>array(
-					'class'=>'nav-item',
-				),
-				'visible'=>(!$showResults && !$showLive) || $competition->show_qrcode,
 			),
 		);
 		if ($competition->checkPermission($this->user)) {

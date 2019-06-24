@@ -23,8 +23,8 @@
  * @property integer $status
  */
 class Competition extends ActiveRecord {
-	const TYPE_WCA = 'WCA';
-	const TYPE_OTHER = 'other';
+	const TYPE_SANCTIONED = 'sanctioned';
+	const TYPE_RECREATIONAL = 'recreational';
 
 	const NOT_ONLINE_PAY = 0;
 	const ONLINE_PAY = 1;
@@ -56,7 +56,6 @@ class Competition extends ActiveRecord {
 	const REFUND_TYPE_100_PERCENT = '100';
 
 	private $_organizers;
-	private $_delegates;
 	private $_locations;
 	private $_events;
 	private $_schedules;
@@ -265,8 +264,8 @@ class Competition extends ActiveRecord {
 
 	public static function getTypes() {
 		return array(
-			self::TYPE_WCA=>self::TYPE_WCA,
-			self::TYPE_OTHER=>Yii::t('common', 'Other'),
+			self::TYPE_SANCTIONED=>'认证赛事',
+			self::TYPE_RECREATIONAL=>'普通赛事',
 		);
 	}
 
@@ -338,8 +337,8 @@ class Competition extends ActiveRecord {
 		}
 	}
 
-	public function isWCACompetition() {
-		return $this->type == self::TYPE_WCA;
+	public function isSanctionedCompetition() {
+		return $this->type == self::TYPE_SANCTIONED;
 	}
 
 	public function isOnlinePay() {
@@ -443,44 +442,9 @@ class Competition extends ActiveRecord {
 		return $this->status == self::STATUS_UNCONFIRMED;
 	}
 
-	public function getNearbyCompetitions($days = 26, $distance = 200, $isWCA = true) {
-		if (!$this->isWCACompetition() && $isWCA) {
-			return [];
-		}
-		if ($this->isMultiLocation()) {
-			return [];
-		}
-		$criteria = new CDbCriteria();
-		$criteria->compare('date', '>=' . ($this->date - $days * 86400));
-		$criteria->compare('date', '<=' . ($this->date + $days * 86400));
-		$criteria->addInCondition('status', [
-			self::STATUS_HIDE,
-			self::STATUS_SHOW,
-			self::STATUS_CONFIRMED,
-		]);
-		if ($isWCA) {
-			$criteria->compare('type', self::TYPE_WCA);
-		}
-		$criteria->compare('id', '<>' . $this->id);
-		$competitions = self::model()->findAll($criteria);
-		$city1 = $this->location[0]->city;
-		$competitions = array_filter($competitions, function($competition) use ($distance, $city1) {
-			if ($competition->isMultiLocation()) {
-				return false;
-			}
-			$city2 = $competition->location[0]->city;
-			$competition->distance = Region::getDistance($city1->latitude, $city1->longitude, $city2->latitude, $city2->longitude) / 1000;
-			return $competition->distance <= $distance;
-		});
-		return array_values($competitions);
-	}
-
 	public function getLogo() {
 		$logo = '';
 		switch ($this->type) {
-			case self::TYPE_WCA:
-				$logo = CHtml::image('/f/images/wca.png', Yii::t('common', 'WCA Competition'), array('class'=>'wca-competition'));
-				break;
 		}
 		return $logo;
 	}
@@ -562,62 +526,7 @@ class Competition extends ActiveRecord {
 		if ($this->_description !== null) {
 			return $this->_description;
 		}
-		$description = '{name} is a speedcubing competition held at {venue} on {date}, organized by {organizers}';
-		if ($this->delegate !== array()) {
-			$description .= ', and is in the charge of{wca} {delegates}';
-		}
-		$description .= '.';
-		$params = array(
-			'{name}'=>$this->getAttributeValue('name'),
-			'{date}'=>$this->getDisplayDate(),
-			'{wca}'=>$this->type == self::TYPE_WCA ? Yii::t('common', ' the WCA delegate') : '',
-		);
-		if ($this->isMultiLocation()) {
-			$venue = '';
-			$count = count($this->location);
-			foreach ($this->location as $key=>$location) {
-				$address = $location->getFullAddress(false);
-				if ($key == 0) {
-					$venue .= $address;
-				} elseif ($key < $count - 1) {
-					$venue .= Yii::t('common', ', ') . $address;
-				} else {
-					$venue .= Yii::t('common', ' and ') . $address;
-				}
-			}
-		} else {
-			$venue = $this->location[0]->getFullAddress();
-		}
-		$params['{venue}'] = $venue;
-		$organizers = '';
-		if ($this->isOld()) {
-			$organizers = strip_tags(OldCompetition::formatInfo($this->old->getAttributeValue('organizer')));
-		} else {
-			$count = count($this->organizer);
-			foreach ($this->organizer as $key=>$organizer) {
-				if ($key == 0) {
-					$organizers .= $organizer->user->getAttributeValue('name', true);
-				} elseif ($key < $count - 1) {
-					$organizers .= Yii::t('common', ', ') . $organizer->user->getAttributeValue('name', true);
-				} else {
-					$organizers .= Yii::t('common', ' and ') . $organizer->user->getAttributeValue('name', true);
-				}
-			}
-		}
-		$params['{organizers}'] = $organizers;
-		$delegates = '';
-		$count = count($this->delegate);
-		foreach ($this->delegate as $key=>$delegate) {
-			if ($key == 0) {
-				$delegates .= $delegate->user->getAttributeValue('name', true);
-			} elseif ($key < $count - 1) {
-				$delegates .= Yii::t('common', ', ') . $delegate->user->getAttributeValue('name', true);
-			} else {
-				$delegates .= Yii::t('common', ' and ') . $delegate->user->getAttributeValue('name', true);
-			}
-		}
-		$params['{delegates}'] = $delegates;
-		return $this->_description = Yii::t('common', $description, $params);
+		return $this->_description = '';
 	}
 
 	public function getStatusText() {
@@ -641,25 +550,8 @@ class Competition extends ActiveRecord {
 		return CHtml::link($logo . $name, $this->getUrl($type), array('class'=>'comp-type-' . strtolower($this->type)));
 	}
 
-	public function getWcaRegulationUrl() {
-		switch (Yii::app()->language) {
-			case 'zh_cn':
-				return 'https://www.worldcubeassociation.org/regulations/translations/chinese/';
-			case 'zh_tw':
-				return 'https://www.worldcubeassociation.org/regulations/translations/chinese-traditional/';
-			default:
-				return 'https://www.worldcubeassociation.org/regulations/';
-		}
-	}
-
-	public function getWcaUrl() {
+	public function getWSSAUrl() {
 		// return Competitions::getWcaUrl($this->wca_competition_id);
-	}
-
-	public function getHasResults() {
-		return $this->type == self::TYPE_WCA && Results::model()->cache(86400)->countByAttributes(array(
-			'competitionId'=>$this->wca_competition_id,
-		)) > 0;
 	}
 
 	public function getCountdown($type = 'normal') {
@@ -675,13 +567,6 @@ class Competition extends ActiveRecord {
 			$options['data-total-days'] = $this->reg_start > 0 ? floor(($this->reg_end - $this->reg_start) / 86400) : 30;
 			return Html::countdown($this->reg_end, $options);
 		}
-	}
-
-	public function hasUserResults($wcaid) {
-		return $this->type == self::TYPE_WCA && Results::model()->cache(86400)->countByAttributes(array(
-			'competitionId'=>$this->wca_competition_id,
-			'personId'=>$wcaid,
-		)) > 0;
 	}
 
 	public function getMyCertUrl() {
@@ -845,33 +730,6 @@ class Competition extends ActiveRecord {
 
 	public function setOldOrganizer($organizer) {
 		$this->old->organizer = $organizer;
-	}
-
-	public function getOldDelegate() {
-		return $this->old->delegate;
-	}
-
-	public function setOldDelegateZh($delegateZh) {
-		$this->old->delegate_zh = $delegateZh;
-	}
-
-	public function getOldDelegateZh() {
-		return $this->old->delegate_zh;
-	}
-
-	public function setOldDelegate($delegate) {
-		$this->old->delegate = $delegate;
-	}
-
-	public function getDelegates() {
-		if ($this->_delegates === null) {
-			$this->_delegates = CHtml::listData($this->delegate, 'delegate_id', 'delegate_id');
-		}
-		return $this->_delegates;
-	}
-
-	public function setDelegates($delegates) {
-		$this->_delegates = $delegates;
 	}
 
 	public function getLocations() {
@@ -1483,39 +1341,6 @@ class Competition extends ActiveRecord {
 		}
 	}
 
-	public function getEventsRoundTypes() {
-		$eventRoundTypes = LiveEventRound::model()->findAllByAttributes(array(
-			'competition_id'=>$this->id,
-		), array(
-			'order'=>'id ASC',
-		));
-		$events = array();
-		$ranks = [];
-		foreach ($eventRoundTypes as $eventRound) {
-			if (!isset($events[$eventRound->event])) {
-				$events[$eventRound->event] = array(
-					'i'=>$eventRound->event,
-					'name'=>Events::getFullEventName($eventRound->event),
-					'rs'=>array(),
-				);
-			}
-			$attributes = $eventRound->getBroadcastAttributes();
-			$attributes['name'] = Yii::t('RoundTypes', RoundTypes::getFullRoundName($eventRound->round));
-			$attributes['allStatus'] = $eventRound->allStatus;
-			if (!isset($ranks[$eventRound->round])) {
-				$ranks[$eventRound->round] = $eventRound->wcaRound->rank;
-			}
-			$events[$eventRound->event]['rs'][] = $attributes;
-		}
-		foreach ($events as $event=>$eventRound) {
-			usort($eventRound['rs'], function($roundA, $roundB) use($ranks) {
-				return $ranks[$roundA['i']] - $ranks[$roundB['i']];
-			});
-			$events[$event] = $eventRound;
-		}
-		return array_values($events);
-	}
-
 	public function getLastActiveEventRound($events) {
 		$liveResult = LiveResult::model()->findByAttributes(array(
 			'competition_id'=>$this->id,
@@ -1892,9 +1717,6 @@ class Competition extends ActiveRecord {
 		if ($user->isAdministrator()) {
 			return true;
 		}
-		if ($user->isWCADelegate() && isset($this->delegates[$user->id])) {
-			return true;
-		}
 		if (isset($this->organizers[$user->id])) {
 			return true;
 		}
@@ -1924,7 +1746,7 @@ class Competition extends ActiveRecord {
 		}
 		$isAdmin = Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR);
 		//处理代表和主办
-		foreach (array('organizer', 'delegate') as $attribute) {
+		foreach (array('organizer') as $attribute) {
 			$attributeId = $attribute . '_id';
 			$oldValues = array_values(CHtml::listData($this->$attribute, $attributeId, $attributeId));
 			$newValues = array_values((array)$this->{$attribute . 's'});
@@ -1961,7 +1783,7 @@ class Competition extends ActiveRecord {
 				$location->location_id = $key;
 			}
 			$location->attributes = $value;
-			foreach (['location_id', 'country_id', 'province_id', 'city_id', 'delegate_id', 'status'] as $attribute) {
+			foreach (['location_id', 'country_id', 'province_id', 'city_id', 'status'] as $attribute) {
 				$location->$attribute = intval($location->$attribute);
 			}
 			$location->longitude = floatval($location->longitude);
@@ -2036,31 +1858,9 @@ class Competition extends ActiveRecord {
 	}
 
 	public function checkCancellationEnd() {
-		//之前的比赛ID到669
-		if ($this->cancellation_end_time > 0 || $this->isWCACompetition() && $this->isAccepted() && $this->id > 669) {
-			if ($this->cancellation_end_time > $this->reg_end - 86400) {
-				$this->addError('cancellation_end_time', '补报截止时间必须早于报名截止时间至少一天');
-			}
-			if ($this->cancellation_end_time < $this->reg_start + 86400 * 7) {
-				$this->addError('cancellation_end_time', '补报截止时间必须晚于报名开始时间至少一周');
-			}
-		}
-		if ($this->cancellation_end_time == 0 xor $this->reg_reopen_time == 0) {
-			$this->addError('reg_reopen_time', '请同时设置补报截止时间和报名重开时间');
-			$this->addError('reg_reopen_time', '请同时设置补报截止时间和报名重开时间');
-		}
 	}
 
 	public function checkRegistrationReopen() {
-		//之前的比赛ID到669
-		if ($this->reg_reopen_time > 0 || $this->isWCACompetition() && $this->isAccepted() && $this->id > 669) {
-			if ($this->reg_reopen_time > $this->reg_end - 43200) {
-				$this->addError('reg_reopen_time', '报名重开时间必须早于比赛开始至少半天');
-			}
-			if ($this->reg_reopen_time < $this->cancellation_end_time + 43200) {
-				$this->addError('reg_reopen_time', '报名重开时间必须晚于退赛截止时间至少半天');
-			}
-		}
 	}
 
 	public function checkQualifyingEndTime() {
@@ -2123,21 +1923,6 @@ class Competition extends ActiveRecord {
 	}
 
 	public function checkType() {
-		if ($this->type == self::TYPE_WCA && empty($this->delegates)) {
-			$this->addError('delegates', 'WCA比赛需至少选择一名代表！');
-		}
-	}
-
-	public function checkWcaCompetitionId() {
-		if ($this->type == self::TYPE_OTHER && $this->wca_competition_id != '') {
-			$this->addError('wca_competition_id', '非WCA比赛请勿填写WCA比赛ID');
-		}
-		if ($this->type == self::TYPE_WCA && $this->wca_competition_id != '') {
-			$wcaCompetition = Competitions::model()->findByPk($this->wca_competition_id);
-			if ($wcaCompetition == null) {
-				$this->addError('wca_competition_id', '请填写WCA官网已公示比赛的ID');
-			}
-		}
 	}
 
 	public function checkLocations() {
@@ -2178,10 +1963,6 @@ class Competition extends ActiveRecord {
 							$error = true;
 						}
 					}
-				}
-				if (empty($locations['delegate_id'][$key]) && empty($locations['delegate_text'][$key])) {
-					$this->addError('locations.delegate_text.' . $index, '必须选择一个代表或者手动填写！');
-					$error = true;
 				}
 			}
 			if (!$this->multi_countries || $locations['country_id'][$key] == 1) {
@@ -2243,8 +2024,6 @@ class Competition extends ActiveRecord {
 				'venue_zh'=>$locations['venue_zh'][$key],
 				'longitude'=>$locations['longitude'][$key],
 				'latitude'=>$locations['latitude'][$key],
-				'delegate_id'=>$this->multi_countries ? $locations['delegate_id'][$key] : 0,
-				'delegate_text'=>$this->multi_countries ? $locations['delegate_text'][$key] : '',
 				'fee'=>$this->multi_countries ? $locations['fee'][$key] : '',
 				// 'status'=>intval($locations['status'][$key]),
 			);
@@ -2339,14 +2118,12 @@ class Competition extends ActiveRecord {
 			['fill_passport, show_regulations, show_qrcode, t_shirt, staff, podiums_children, podiums_females, podiums_new_comers, podiums_greater_china, podiums_u8, podiums_u10, podiums_u12', 'numerical', 'integerOnly'=>true],
 			['podiums_num', 'numerical', 'integerOnly'=>true, 'max'=>8, 'min'=>3],
 			['type', 'length', 'max'=>10],
-			['wca_competition_id', 'length', 'max'=>32],
 			['name_zh', 'length', 'max'=>50],
 			['name', 'length', 'max'=>128],
 			['name', 'checkName', 'skipOnError'=>true],
 			['name', 'unique', 'className'=>'Competition', 'attributeName'=>'name', 'skipOnError'=>true, 'on'=>'accept', 'criteria'=>$criteria],
 			['name_zh', 'unique', 'className'=>'Competition', 'attributeName'=>'name_zh', 'skipOnError'=>true, 'on'=>'accept', 'criteria'=>$criteria],
 			['type', 'checkType', 'skipOnError'=>true],
-			['wca_competition_id', 'checkWcaCompetitionId'],
 			['reg_start', 'checkRegistrationStart', 'skipOnError'=>true],
 			['reg_end', 'checkRegistrationEnd', 'skipOnError'=>true],
 			['cancellation_end_time', 'checkCancellationEnd', 'skipOnError'=>true, 'except'=>'accept'],
@@ -2357,17 +2134,12 @@ class Competition extends ActiveRecord {
 			['third_stage_date', 'checkThirdStageDate', 'skipOnError'=>true],
 			['third_stage_ratio', 'checkThirdStageRatio', 'skipOnError'=>true],
 			['locations', 'checkLocations', 'skipOnError'=>true],
-			[' refund_type, end_date, oldDelegate, oldDelegateZh, oldOrganizer, oldOrganizerZh, organizers, delegates, locations, schedules, regulations, regulations_zh, information, information_zh, travel, travel_zh, events', 'safe'],
-			['province, year, id, type, wca_competition_id, name, name_zh, date, end_date, reg_end, events, entry_fee, information, information_zh, travel, travel_zh, person_num, auto_accept, status', 'safe', 'on'=>'search'],
+			[' refund_type, end_date, organizers, locations, schedules, regulations, regulations_zh, information, information_zh, travel, travel_zh, events', 'safe'],
+			['province, year, id, type, name, name_zh, date, end_date, reg_end, events, entry_fee, information, information_zh, travel, travel_zh, person_num, auto_accept, status', 'safe', 'on'=>'search'],
 			['live_stream_url', 'url'],
 		];
 		if (!(Yii::app() instanceof CConsoleApplication) && Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR)) {
 			$rules[] = ['tba', 'safe'];
-		}
-		if (!$this->isOld()) {
-			$rules[] = ['organizers', 'required'];
-		} else {
-			$rules[] = ['oldOrganizer, oldOrganizerZh', 'required'];
 		}
 		return $rules;
 	}
@@ -2380,7 +2152,6 @@ class Competition extends ActiveRecord {
 		// class name for the relations automatically generated below.
 		return [
 			'organizer'=>[self::HAS_MANY, 'CompetitionOrganizer', 'competition_id'],
-			'delegate'=>[self::HAS_MANY, 'CompetitionDelegate', 'competition_id'],
 			'location'=>[self::HAS_MANY, 'CompetitionLocation', 'competition_id', 'order'=>'location.location_id'],
 			'old'=>[self::BELONGS_TO, 'OldCompetition', 'old_competition_id'],
 			'schedule'=>[self::HAS_MANY, 'Schedule', 'competition_id', 'order'=>'schedule.day,schedule.stage,schedule.start_time,schedule.end_time'],
@@ -2427,7 +2198,6 @@ class Competition extends ActiveRecord {
 			'person_num' => Yii::t('Competition', 'Person Num'),
 			'status' => Yii::t('Competition', 'Status'),
 			'organizers' => Yii::t('Competition', 'Organizers'),
-			'delegates' => Yii::t('Competition', 'Delegates'),
 			'year' => Yii::t('common', 'Year'),
 			'event' => Yii::t('common', 'Event'),
 			'province' => Yii::t('common', 'Province'),
@@ -2453,7 +2223,6 @@ class Competition extends ActiveRecord {
 		$criteria->with = ['location', 'location.province', 'location.city'];
 		$criteria->compare('t.id', $this->id, true);
 		$criteria->compare('t.type', $this->type, true);
-		$criteria->compare('t.wca_competition_id', $this->wca_competition_id, true);
 		$criteria->compare('t.name', $this->name, true);
 		$criteria->compare('t.name_zh', $this->name_zh, true);
 		$criteria->compare('t.date', $this->date, true);
@@ -2494,19 +2263,6 @@ class Competition extends ActiveRecord {
 			$user = Yii::app()->controller->user;
 			switch (true) {
 				case $user->isAdministrator():
-					break;
-				case $user->isDelegate():
-					$criteria->with = array(
-						'organizer'=>array(
-							'together'=>true,
-						),
-						'delegate'=>array(
-							'together'=>true,
-						),
-						'location', 'location.province', 'location.city'
-					);
-					$criteria->addCondition('organizer.organizer_id=:user_id OR delegate.delegate_id=:user_id');
-					$criteria->params[':user_id'] = $user->id;
 					break;
 				case $user->isOrganizer():
 				default:
