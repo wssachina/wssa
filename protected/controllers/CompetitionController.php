@@ -415,6 +415,13 @@ class CompetitionController extends Controller {
 					'class'=>'nav-item',
 				),
 			),
+			array(
+				'label'=>Html::fontAwesome('sign-in', 'a') . Yii::t('Competition', 'Registration'),
+				'url'=>$competition->getUrl('registration'),
+				'itemOptions'=>array(
+					'class'=>'nav-item',
+				),
+			),
 		);
 		if ($competition->checkPermission($this->user)) {
 			switch ($this->action->id) {
