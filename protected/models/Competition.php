@@ -442,11 +442,24 @@ class Competition extends ActiveRecord {
 		return $this->status == self::STATUS_UNCONFIRMED;
 	}
 
+	public function getPrefix() {
+		return 'WSSA ' . $this->competitionYear;
+	}
+
+	public function getCompetitionYear() {
+		$date = $this->getTimeInNumber('date');
+		return date('Y ', $date > 0 ? $date : time());
+	}
+
+	public function getFullName() {
+		return $this->prefix . $this->getAttributeValue('name');
+	}
+
 	public function getLogo() {
-		$logo = '';
 		switch ($this->type) {
+			case self::TYPE_SANCTIONED:
+				return Html::fontAwesome('check');
 		}
-		return $logo;
 	}
 
 	public function getLocationInfo($type) {
@@ -540,7 +553,7 @@ class Competition extends ActiveRecord {
 	}
 
 	public function getCompetitionLink() {
-		$name = $this->getAttributeValue('name');
+		$name = $this->getFullName();
 		$logo = $this->getLogo();
 		if (!$this->canRegister() && $this->live == self::YES && !$this->isEnded() && !$this->hasResults) {
 			$type = 'live';
@@ -1734,7 +1747,7 @@ class Competition extends ActiveRecord {
 		}
 		$this->name = trim(preg_replace('{ +}', ' ', $this->name));
 		$this->name_zh = trim(preg_replace('{ +}', ' ', $this->name_zh));
-		$this->alias = str_replace(' ', '-', $this->name);
+		$this->alias = str_replace(' ', '-', $this->competitionYear . $this->name);
 		$this->alias = preg_replace('{[^-a-z0-9]}i', '', $this->alias);
 		$this->alias = preg_replace('{-+}i', '-', $this->alias);
 		return parent::beforeSave();
@@ -1911,14 +1924,8 @@ class Competition extends ActiveRecord {
 		if (!preg_match('{^[\'.\-a-z0-9& ]+$}i', $this->name, $matches)) {
 			$this->addError('name', '英文名只能由字母、数字、空格、短杠-、点.和单引号\'组成');
 		}
-		if (!preg_match('{ \d{4}$}i', $this->name, $matches)) {
-			$this->addError('name', '英文名必须以年份结尾');
-		}
 		if (!preg_match('{^[a-z0-9 \x{4e00}-\x{9fc0}“”]+$}iu', $this->name_zh)) {
 			$this->addError('name_zh', '中文名只能由中文、英文、数字、空格和双引号“”组成');
-		}
-		if (!preg_match('{^\d{4}}i', $this->name_zh, $matches)) {
-			$this->addError('name_zh', '中文名必须以年份开头');
 		}
 	}
 
@@ -1942,29 +1949,6 @@ class Competition extends ActiveRecord {
 			) {
 				continue;
 			}
-			if ($this->multi_countries) {
-				if (empty($locations['country_id'][$key])) {
-					continue;
-				}
-				if ($locations['country_id'][$key] != 1) {
-					$provinceId = 0;
-					$locations['city_id'][$key] = 0;
-					if (empty($locations['fee'][$key])) {
-						$this->addError('locations.fee.' . $index, '非大陆地区请填写费用！');
-						$error = true;
-					}
-					if ($locations['country_id'][$key] > 4) {
-						if (empty($locations['city_name'][$key])) {
-							$this->addError('locations.city_name.' . $index, '非大陆及港澳台地区请填写英文城市！');
-							$error = true;
-						}
-						if (empty($locations['city_name_zh'][$key])) {
-							$this->addError('locations.city_name_zh.' . $index, '非大陆及港澳台地区请填写中文城市！');
-							$error = true;
-						}
-					}
-				}
-			}
 			if (!$this->multi_countries || $locations['country_id'][$key] == 1) {
 				if (empty($provinceId)) {
 					$this->addError('locations.province_id.' . $index, '省份不能为空');
@@ -1973,31 +1957,6 @@ class Competition extends ActiveRecord {
 				if (empty($locations['city_id'][$key])) {
 					$this->addError('locations.city_id.' . $index, '城市不能为空');
 					$error = true;
-				}
-			}
-			$locations['venue'][$key] = trim($locations['venue'][$key]);
-			if ($locations['venue'][$key] == '') {
-				$this->addError('locations.venue.' . $index, '英文地址不能为空');
-				$error = true;
-			}
-			// check capitalization, comma and space
-			if (strpos($locations['venue'][$key], '，') !== false) {
-				$this->addError('locations.venue.' . $index, '英文地址请使用半角逗号');
-				$error = true;
-			}
-			if (!$this->multi_countries) {
-				$venues = explode(',', $locations['venue'][$key]);
-				foreach ($venues as $k=>$venue) {
-					if (!preg_match('{^[0-9A-Z]}', trim($venue))) {
-						$this->addError('locations.venue.' . $index, '首字母请大写');
-						$error = true;
-						break;
-					}
-					if ($k > 0 && $venue{0} !== ' ') {
-						$this->addError('locations.venue.' . $index, '逗号之后请添加空格');
-						$error = true;
-						break;
-					}
 				}
 			}
 
@@ -2020,7 +1979,6 @@ class Competition extends ActiveRecord {
 				'city_id'=>$locations['city_id'][$key],
 				'city_name'=>$this->multi_countries ? $locations['city_name'][$key] : '',
 				'city_name_zh'=>$this->multi_countries ? $locations['city_name_zh'][$key] : '',
-				'venue'=>$locations['venue'][$key],
 				'venue_zh'=>$locations['venue_zh'][$key],
 				'longitude'=>$locations['longitude'][$key],
 				'latitude'=>$locations['latitude'][$key],
@@ -2137,6 +2095,7 @@ class Competition extends ActiveRecord {
 			[' refund_type, end_date, organizers, locations, schedules, regulations, regulations_zh, information, information_zh, travel, travel_zh, events', 'safe'],
 			['province, year, id, type, name, name_zh, date, end_date, reg_end, events, entry_fee, information, information_zh, travel, travel_zh, person_num, auto_accept, status', 'safe', 'on'=>'search'],
 			['live_stream_url', 'url'],
+			['wssa_url', 'url'],
 		];
 		if (!(Yii::app() instanceof CConsoleApplication) && Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR)) {
 			$rules[] = ['tba', 'safe'];
@@ -2201,6 +2160,7 @@ class Competition extends ActiveRecord {
 			'year' => Yii::t('common', 'Year'),
 			'event' => Yii::t('common', 'Event'),
 			'province' => Yii::t('common', 'Province'),
+			'wssa_url'=>'WSSA官方链接',
 		);
 	}
 

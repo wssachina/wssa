@@ -2,12 +2,12 @@
   <?php if ($competition->isSanctionedCompetition()): ?>
   <dt>世界竞技叠杯运动协会认证比赛</dt>
   <dd>
-    这里需要有什么特殊的说明？
+    该比赛是世界竞技叠杯运动协会官方认证的比赛，所有选手需要熟知<a href="http://www.thewssa.com/about/rules/" target="_blank">WSSA比赛规则</a>。
   </dd>
   <?php endif; ?>
-  <?php if ($competition->wca_competition_id != ''): ?>
-  <dt><?php echo Yii::t('Competition', 'WCA Official Page'); ?></dt>
-  <dd><?php echo CHtml::link($competition->getWcaUrl(), $competition->getWcaUrl(), array('target'=>'_blank')); ?>
+  <?php if ($competition->wssa_url != ''): ?>
+  <dt>WSSA官方页面</dt>
+  <dd><?php echo CHtml::link($competition->wssa_url, $competition->wssa_url, array('target'=>'_blank')); ?>
   <?php endif; ?>
   <?php if ($competition->tba == Competition::NO): ?>
   <dt><?php echo Yii::t('Competition', 'Date'); ?></dt>

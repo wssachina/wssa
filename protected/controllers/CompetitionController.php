@@ -37,11 +37,7 @@ class CompetitionController extends Controller {
 
 	public function actionDetail() {
 		$competition = $this->getCompetition();
-		$this->pageTitle = array($competition->getAttributeValue('name'));
-		if (preg_match_all('|<img[^>]+src="([^"]+)"[^>]*>|i', $competition->information_zh, $matches)) {
-			$this->setWeiboSharePic($matches[1]);
-		}
-		$this->setWeiboShareDefaultText($competition->getDescription(), false);
+		$this->pageTitle = array($competition->getFullName());
 		$this->render('detail', array(
 			'competition'=>$competition,
 		));
@@ -354,7 +350,7 @@ class CompetitionController extends Controller {
 		// }
 		// $this->setCompetitionNavibar($competition);
 		$this->setCompetitionBreadcrumbs($competition);
-		$name = $competition->getAttributeValue('name');
+		$name = $competition->getFullName();
 		if ($this->action->id === 'detail') {
 			$this->title = $name;
 		} else {
@@ -372,13 +368,13 @@ class CompetitionController extends Controller {
 		if ($this->action->id !== 'detail') {
 			$this->breadcrumbs = array(
 				'Competitions'=>array('/competition/index'),
-				$competition->getAttributeValue('name')=>$competition->getUrl(),
+				$competition->getFullName()=>$competition->getUrl(),
 				ucfirst($this->action->id),
 			);
 		} else {
 			$this->breadcrumbs = array(
 				'Competitions'=>array('/competition/index'),
-				$competition->getAttributeValue('name'),
+				$competition->getFullName(),
 			);
 		}
 	}
@@ -393,13 +389,13 @@ class CompetitionController extends Controller {
 					'class'=>'nav-item',
 				),
 			),
-			array(
-				'label'=>Html::fontAwesome('tasks', 'a') . Yii::t('Competition', 'Regulations'),
-				'url'=>$competition->getUrl('regulations'),
-				'itemOptions'=>array(
-					'class'=>'nav-item',
-				),
-			),
+			// array(
+			// 	'label'=>Html::fontAwesome('tasks', 'a') . Yii::t('Competition', 'Regulations'),
+			// 	'url'=>$competition->getUrl('regulations'),
+			// 	'itemOptions'=>array(
+			// 		'class'=>'nav-item',
+			// 	),
+			// ),
 			array(
 				'label'=>Html::fontAwesome('calendar', 'a') . Yii::t('Competition', 'Schedule'),
 				'url'=>$competition->getUrl('schedule'),

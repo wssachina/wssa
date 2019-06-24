@@ -14,47 +14,16 @@ class MultiLocations extends Widget {
 				$location->attributes,
 			);
 		}
-		//tab
-		echo CHtml::openTag('ul', array(
-			'class'=>'nav nav-tabs',
-			'role'=>'tablist',
-		));
-		foreach ($locations as $key=>$location) {
-			$index = $key + 1;
-			echo CHtml::tag('li', array(
-				'class'=>$key == 0 ? 'active' : '',
-			), CHtml::tag('a', array(
-				'href'=>'#location-' . $index,
-				'role'=>'tab',
-				'data-toggle'=>'tab',
-			), '地址' . $index . ($key == 0 ? '<span class="required">*</span></a>' : '')));
-		}
-		echo '<li><a id="addLocation"><i class="fa fa-plus"></i> 添加</a></li>';
-		echo CHtml::closeTag('ul');
-		echo '<div class="text-danger col-lg-12">地址1必填，除非多地点比赛，否则请只填写一个地址，留空即可删去多余地址。</div>';
 		//tab content
 		echo CHtml::openTag('div', array(
-			'class'=>'tab-content locations',
+			'class'=>'row locations',
 		));
 		foreach ($locations as $key=>$location) {
 			$index = $key + 1;
 			echo CHtml::openTag('div', array(
-				'class'=>'tab-pane location' . ($key == 0 ? ' active' : ''),
+				'class'=>'location' . ($key == 0 ? ' active' : ''),
 				'id'=>'location-' . $index,
 			));
-			if ($model->multi_countries) {
-				echo Html::formGroup(
-					$model, 'locations[country_id][]', array(
-						'class'=>'col-lg-12',
-					),
-					CHtml::label('国家/地区', false),
-					CHtml::dropDownList(CHtml::activeName($model, 'locations[country_id][]'), $location['country_id'], Region::getCountries(), array(
-						'class'=>'form-control country',
-						// 'prompt'=>'',
-					)),
-					CHtml::error($model, 'locations.country_id.' . $key, array('class'=>'text-danger'))
-				);
-			}
 			echo Html::formGroup(
 				$model, 'locations[province_id][]', array(
 					'class'=>'col-lg-6',
@@ -77,49 +46,16 @@ class MultiLocations extends Widget {
 				)),
 				CHtml::error($model, 'locations.city_id.' . $key, array('class'=>'text-danger'))
 			);
-			if ($model->multi_countries) {
-				echo Html::formGroup(
-					$model, 'locations[city_name][]', array(
-						'class'=>'col-lg-6',
-					),
-					CHtml::label('英文城市', false),
-					CHtml::textField(CHtml::activeName($model, 'locations[city_name][]'), $location['city_name'], array(
-						'class'=>'form-control',
-					)),
-					CHtml::error($model, 'locations.city_name.' . $key, array('class'=>'text-danger'))
-				);
-				echo Html::formGroup(
-					$model, 'locations[city_name_zh][]', array(
-						'class'=>'col-lg-6',
-					),
-					CHtml::label('中文城市', false),
-					CHtml::textField(CHtml::activeName($model, 'locations[city_name_zh][]'), $location['city_name_zh'], array(
-						'class'=>'form-control',
-					)),
-					CHtml::error($model, 'locations.city_name_zh.' . $key, array('class'=>'text-danger'))
-				);
-			}
 			echo Html::formGroup(
 				$model, 'locations[venue_zh][]', array(
 					'class'=>'col-lg-12',
 				),
-				CHtml::label('中文地址', false),
+				CHtml::label('详细地址', false),
 				CHtml::textField(CHtml::activeName($model, 'locations[venue_zh][]'), $location['venue_zh'], array(
 					'class'=>'form-control',
 				)),
 				CHtml::error($model, 'locations.venue_zh.' . $key, array('class'=>'text-danger help-block')),
 				'<div class="text-danger">请填写具体地址，略去省市</div>'
-			);
-			echo Html::formGroup(
-				$model, 'locations[venue][]', array(
-					'class'=>'col-lg-12',
-				),
-				CHtml::label('英文地址', false),
-				CHtml::textField(CHtml::activeName($model, 'locations[venue][]'), $location['venue'], array(
-					'class'=>'form-control',
-				)),
-				CHtml::error($model, 'locations.venue.' . $key, array('class'=>'text-danger help-block')),
-				'<div class="text-danger">请填写具体地址，略去省市；<br>请注意英文地址从小到大书写；<br>请使用半角逗号，并在标点之后添加空格；<br>请注意字母大小写规则；<br>请参考已公示比赛书写。</div>'
 			);
 			echo '<div class="col-lg-12">填写经纬度将会自动生成地图。<br>
 			<a href="http://www.gpsspg.com/maps.htm" target="_blank">点击这里查询坐标</a>，国内请填写<b class="text-danger">Google地球</b>坐标。<br>
@@ -145,39 +81,6 @@ class MultiLocations extends Widget {
 				)),
 				CHtml::error($model, 'locations.latitude.' . $key, array('class'=>'text-danger'))
 			);
-			if ($model->multi_countries) {
-				echo Html::formGroup(
-					$model, 'locations[delegate_id][]', array(
-						'class'=>'col-lg-12',
-					),
-					CHtml::label('代表', false),
-					CHtml::dropDownList(CHtml::activeName($model, 'locations[delegate_id][]'), $location['delegate_id'], $this->delegates, array(
-						'class'=>'form-control delegate',
-						'prompt'=>'',
-					)),
-					CHtml::error($model, 'locations.delegate_id.' . $key, array('class'=>'text-danger'))
-				);
-				echo Html::formGroup(
-					$model, 'locations[delegate_text][]', array(
-						'class'=>'col-lg-12',
-					),
-					CHtml::label('手写代表', false),
-					CHtml::textField(CHtml::activeName($model, 'locations[delegate_text][]'), $location['delegate_text'], array(
-						'class'=>'form-control',
-					)),
-					CHtml::error($model, 'locations.delegate_text.' . $key, array('class'=>'text-danger'))
-				);
-				echo Html::formGroup(
-					$model, 'locations[fee][]', array(
-						'class'=>'col-lg-12',
-					),
-					CHtml::label('费用', false),
-					CHtml::textField(CHtml::activeName($model, 'locations[fee][]'), $location['fee'], array(
-						'class'=>'form-control',
-					)),
-					CHtml::error($model, 'locations.fee.' . $key, array('class'=>'text-danger'))
-				);
-			}
 			echo CHtml::closeTag('div');
 		}
 		echo CHtml::closeTag('div');

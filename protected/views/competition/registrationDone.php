@@ -1,11 +1,7 @@
-<?php if ($registration->isPending() || $registration->isAccepted()): ?>
-<div class="alert alert-success">
-  <?php echo Yii::t('Competition', 'Your registration was submitted successfully.'); ?>
-  <?php if ($registration->isAccepted()): ?>
-  <?php echo Yii::t('Competition', 'Click {here} to view the competitors list.', array(
-    '{here}'=>CHtml::link(Yii::t('common', 'here'), $competition->getUrl('competitors')),
-  )); ?>
-  <?php elseif ($registration->payable): ?>
+<?php if ($registration->isPending()): ?>
+<div class="alert alert-danger">
+  您的报名信息已经成功提交，但报名尚未通过审核。
+  <?php if ($registration->payable): ?>
   <?php echo Yii::t('Competition', 'It will be verified automatically after your {paying}.', array(
     '{paying}'=>CHtml::tag('b', array('class'=>'text-danger'), Yii::t('common', 'paying the fee online')),
   )); ?>
@@ -116,7 +112,7 @@
       <div class="panel-heading">
         <a data-toggle="collapse" href="#edit">编辑报名信息</a>
       </div>
-      <div class="panel-body collapse" id="edit">
+      <div class="panel-body collapse<?php if ($registration->hasErrors()) echo ' in'; ?>" id="edit">
         <?php $form = $this->beginWidget('ActiveForm', array(
           'id'=>'registration-form',
           'htmlOptions'=>array(
@@ -161,9 +157,9 @@
         ]); ?>
         <input type="hidden" name="cancel" value="1">
         <?php if ($registration->getPaidFee() > 0): ?>
-        <h4><?php echo Yii::t('Registration', 'Paid Fee via Cubing China') ;?></h4>
+        <h4>已付报名费</h4>
         <p><i class="fa fa-rmb"></i><?php echo $registration->getPaidFee(); ?></p>
-        <h4><?php echo Yii::t('Registration', 'Returned Fee to Registrant') ;?></h4>
+        <h4>应退报名费</h4>
         <p><i class="fa fa-rmb"></i><?php echo number_format($registration->getRefundFee() / 100, 2, '.', ''); ?></p>
         <p class="text-info"><?php echo Yii::t('Registration', 'The refund will be made via the payment method which you have used at the registration.'); ?></p>
         <?php endif; ?>

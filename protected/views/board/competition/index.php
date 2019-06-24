@@ -27,7 +27,11 @@
               'value'=>'$data->getTypeText()',
               'filter'=>Competition::getTypes()
             ],
-            'name_zh',
+            [
+              'name'=>'name_zh',
+              'type'=>'raw',
+              'value'=>'$data->getFullName()',
+            ],
             [
               'header'=>'运营费',
               'type'=>'raw',

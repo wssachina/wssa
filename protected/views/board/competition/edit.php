@@ -38,23 +38,29 @@
           <?php endif; ?>
           <?php echo Html::formGroup(
             $model, 'name_zh', array(
-              'class'=>'col-lg-6',
+              'class'=>'col-lg-12',
             ),
             $form->labelEx($model, 'name_zh', array(
               'label'=>'中文名',
             )),
+            '<div class="input-group">',
+            CHtml::tag('div', ['class'=>'input-group-addon'], $model->prefix),
             Html::activeTextField($model, 'name_zh'),
+            '</div>',
             $form->error($model, 'name_zh', array('class'=>'text-danger'))
           );?>
           <?php echo Html::formGroup(
             $model, 'name', array(
-              'class'=>'col-lg-6',
+              'class'=>'col-lg-12',
             ),
             $form->labelEx($model, 'name', array(
               'label'=>'英文名',
             )),
+            '<div class="input-group">',
+            CHtml::tag('div', ['class'=>'input-group-addon'], $model->prefix),
             Html::activeTextField($model, 'name'),
-            '<div class="help-text">用以生成比赛链接，如WSSA 2019 Asian Open Sport Stacking Championships</div>',
+            '</div>',
+            '<div class="help-text">用以生成比赛链接，如Beijing Open</div>',
             $form->error($model, 'name', array('class'=>'text-danger'))
           );?>
           <div class="clearfix"></div>
@@ -91,6 +97,17 @@
             $form->error($model, 'entry_fee', array('class'=>'text-danger'))
           );?>
           <div class="clearfix"></div>
+          <?php if ($this->user->isAdministrator()): ?>
+          <?php echo Html::formGroup(
+            $model, 'wssa_url', array(
+              'class'=>'col-sm-12'
+            ),
+            $form->labelEx($model, 'wssa_url'),
+            Html::activeTextField($model, 'wssa_url'),
+            $form->error($model, 'wssa_url', array('class'=>'text-danger'))
+          );?>
+          <div class="clearfix"></div>
+          <?php endif; ?>
           <?php echo Html::formGroup(
             $model, 'second_stage_date', array(
               'class'=>'col-md-4',
@@ -296,7 +313,16 @@
               $form->error($model, 'organizers', array('class'=>'text-danger'))
             );
           } ?>
-
+          <?php echo Html::formGroup(
+            $model, 'locations', array(
+              'class'=>'col-lg-12',
+            ),
+            $this->widget('MultiLocations', array(
+              'model'=>$model,
+              'cities'=>$cities,
+            ), true),
+            $form->error($model, 'locations', array('class'=>'text-danger'))
+          );?>
           <?php if ($model->isAccepted() || $this->user->isAdministrator()): ?>
           <div class="clearfix"></div>
           <?php $this->renderPartial('editorTips'); ?>
@@ -312,22 +338,6 @@
             )),
             $form->error($model, 'information_zh', array('class'=>'text-danger'))
           );?>
-          <hr>
-          <div class="col-lg-12">
-            <h5>其他选项</h5>
-          </div>
-          <?php foreach (Competition::getOptions() as $key=>$value):?>
-          <?php echo Html::formGroup(
-            $model, $key, array(
-              'class'=>'col-md-3',
-            ),
-            $form->labelEx($model, $key, array(
-              'label'=>$value['label'],
-            )),
-            Html::activeSwitch($model, $key),
-            $form->error($model, $key, array('class'=>'text-danger'))
-          );?>
-          <?php endforeach; ?>
           <?php endif; ?>
           <div class="clearfix"></div>
           <div class="col-lg-12">
