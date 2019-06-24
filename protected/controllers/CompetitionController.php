@@ -267,8 +267,6 @@ class CompetitionController extends Controller {
 				$model->attributes = $_POST['Registration'];
 				if (!isset($_POST['Registration']['events'])) {
 					$model->events = null;
-				} else {
-					$model->events = array_keys($model->events);
 				}
 				$model->user_id = $this->user->id;
 				$model->total_fee = $model->getTotalFee(true);

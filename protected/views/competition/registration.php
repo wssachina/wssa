@@ -14,6 +14,7 @@
       'model'=>$model,
       'competition'=>$competition,
       'name'=>'events',
+      'form'=>$form,
     ), true)
     // $form->error($model, 'events', array('class'=>'text-danger'))
   );?>

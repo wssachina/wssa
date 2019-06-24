@@ -4,6 +4,7 @@ class CompetitionRegisterForm extends Widget {
 	public $model;
 	public $competition;
 	public $name = 'events';
+	public $form;
 	public function run() {
 		$events = Events::getRegisterEvents();
 		$model = $this->model;
@@ -55,6 +56,7 @@ class CompetitionRegisterForm extends Widget {
 					echo CHtml::tag('div', ['class'=>'extra-input-label'], $label);
 					echo CHtml::activeTextField($model, $attribute . '[name]');
 					echo '</label>';
+					echo $this->form->error($model, "events.{$event}.name", array('class'=>'text-danger'));
 					echo '</div>';
 					break;
 				case 'relay':
@@ -65,10 +67,12 @@ class CompetitionRegisterForm extends Widget {
 					echo CHtml::tag('div', ['class'=>'extra-input-label'], '队伍名称');
 					echo CHtml::activeTextField($model, $attribute . '[name]');
 					echo '</label>';
+					echo $this->form->error($model, "events.{$event}.name", array('class'=>'text-danger'));
 					echo '<label class="extra-input-wrapper">';
 					echo CHtml::tag('div', ['class'=>'extra-input-label'], '教练姓名');
 					echo CHtml::activeTextField($model, $attribute . '[coordinator]');
 					echo '</label>';
+					echo $this->form->error($model, "events.{$event}.coordinator", array('class'=>'text-danger'));
 					echo '</div>';
 					break;
 			}

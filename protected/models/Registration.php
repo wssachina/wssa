@@ -315,120 +315,34 @@ class Registration extends ActiveRecord {
 		return false;
 	}
 
-	public function getUnmetEvents() {
-		$competition = $this->competition;
-		$user = $this->user;
-		$results = Results::model()->with('competition')->findAllByAttributes([
-			'personId'=>$user->wcaid,
-		], [
-			'condition'=>'competition.year<:year
-				OR (competition.year=:year AND competition.endMonth<:month)
-				OR (competition.year=:year AND competition.endMonth=:month AND competition.endDay<=:day)',
-			'select'=>[
-				'eventId',
-				'min(CASE WHEN best>0 THEN best ELSE 9999999999 END) AS best',
-				'min(CASE WHEN average>0 THEN average ELSE 9999999999 END) AS average',
-			],
-			'group'=>'eventId',
-			'params'=>[
-				':year'=>intval(date('Y', $competition->qualifying_end_time)),
-				':month'=>intval(date('n', $competition->qualifying_end_time)),
-				':day'=>intval(date('j', $competition->qualifying_end_time)),
-			],
-		]);
-		foreach ($results as $result) {
-			if ($result->best == 9999999999) {
+	public function checkEvents() {
+		$events = $this->events;
+		if (!isset($events['individual'])) {
+			$events = array_merge(['individual'=>['checked'=>true]], $events);
+		}
+		foreach ($events as $event=>$value) {
+			if (!isset($value['checked']) || !$value['checked']) {
+				unset($events[$event]);
 				continue;
 			}
-			$rank = new RanksSingle();
-			$rank->best = $result->best;
-			$rank->average = new RanksAverage();
-			$rank->average->best = $result->average;
-			$temp[$result->eventId] = $rank;
-		}
-		$unmetEvents = [];
-		foreach ($competition->allEvents as $event) {
-			if (!$event->check($temp[$event->event] ?? null)) {
-				$unmetEvents[] = $event->event;
+			switch ($event) {
+				case 'age-division':
+				case 'child-parent':
+					if (empty($value['name'])) {
+						$this->addError("events.{$event}.name", '请输入搭档名字');
+					}
+					break;
+				case 'relay':
+					if (empty($value['name'])) {
+						$this->addError("events.{$event}.name", '请输入队伍名称');
+					}
+					if (empty($value['coordinator'])) {
+						$this->addError("events.{$event}.coordinator", '请输入教练姓名');
+					}
+					break;
 			}
 		}
-		return $unmetEvents;
-	}
-
-	public function checkEntourageName() {
-		if ($this->has_entourage && empty($this->entourage_name)) {
-			$this->addError('entourage_name', Yii::t('yii','{attribute} cannot be blank.', array(
-				'{attribute}'=>$this->getAttributeLabel('entourage_name'),
-			)));
-		}
-		if ($this->has_entourage && empty($this->entourage_passport_type)) {
-			$this->addError('entourage_passport_type', Yii::t('yii','{attribute} cannot be blank.', array(
-				'{attribute}'=>$this->getAttributeLabel('entourage_passport_type'),
-			)));
-		}
-		if ($this->has_entourage && empty($this->entourage_passport_number)) {
-			$this->addError('entourage_passport_number', Yii::t('yii','{attribute} cannot be blank.', array(
-				'{attribute}'=>$this->getAttributeLabel('entourage_passport_number'),
-			)));
-		}
-	}
-
-	public function checkPassportType() {
-		if (!$this->has_entourage) {
-			return;
-		}
-		if ($this->entourage_passport_type == User::PASSPORT_TYPE_OTHER && empty($this->entourage_passport_name)) {
-			$this->addError('entourage_passport_name', Yii::t('yii','{attribute} cannot be blank.', array(
-				'{attribute}'=>$this->getAttributeLabel('entourage_passport_name'),
-			)));
-		}
-	}
-
-	public function checkPassportNumber() {
-		if (!$this->has_entourage) {
-			return;
-		}
-		switch ($this->entourage_passport_type) {
-			case User::PASSPORT_TYPE_ID:
-				if (!preg_match('|^\d{6}(\d{8})(\d{3})[\dX]$|i', $this->entourage_passport_number, $matches)) {
-					$this->addError('entourage_passport_number', Yii::t('common', 'Invalid identity number.'));
-					return false;
-				}
-				$sum = 0;
-				for ($i = 0; $i < 17; $i++) {
-					$sum += $this->entourage_passport_number{$i} * $this->coefficients[$i];
-				}
-				$mod = $sum % 11;
-				if (strtoupper($this->entourage_passport_number{17}) != $this->codes[$mod]) {
-					$this->addError('entourage_passport_number', Yii::t('common', 'Invalid identity number.'));
-					return false;
-				}
-				break;
-			case User::PASSPORT_TYPE_PASSPORT:
-				if (!preg_match('|^\w+$|i', $this->entourage_passport_number, $matches)) {
-					$this->addError('entourage_passport_number', Yii::t('common', 'Invalid identity number.'));
-					return false;
-				}
-				break;
-		}
-		if (!empty($this->entourage_passport_number) && $this->entourage_passport_number != $this->repeatPassportNumber) {
-			$this->addError('repeatPassportNumber', Yii::t('common', 'Repeat identity number must be the same as identity number.'));
-		}
-	}
-
-	public function checkAvatarType() {
-		switch ($this->competition->require_avatar) {
-			case Competition::REQUIRE_AVATAR_ACA:
-				if ($this->avatar_type == self::AVATAR_TYPE_NOW) {
-					if ($this->user->avatar == null) {
-						$this->avatar_type = null;
-						$this->addError('avatar_type', '');
-					} else {
-						$this->avatar_id = $this->user->avatar_id;
-					}
-				}
-				break;
-		}
+		$this->events = json_encode($events);
 	}
 
 	public function checkStaffStatement() {
@@ -448,9 +362,9 @@ class Registration extends ActiveRecord {
 	}
 
 	public function getRegistrationEvents() {
-		$competitionEvents = $this->competition->getRegistrationEvents();
+		$competitionEvents = $this->competition->associatedEvents;
 		$events = array();
-		foreach ($this->events as $event) {
+		foreach ($this->events as $event=>$value) {
 			if (isset($competitionEvents[$event])) {
 				$events[] = Events::getFullEventName($event);
 			}
@@ -459,7 +373,7 @@ class Registration extends ActiveRecord {
 	}
 
 	public function containsEvent($event) {
-		return in_array("$event", $this->events);
+		return array_key_exists("$event", $this->events);
 	}
 
 	public function getRegistrationFee() {
@@ -481,7 +395,7 @@ class Registration extends ActiveRecord {
 		$competitionEvents = $competition->associatedEvents;
 		$fees = array();
 		$multiple = $competition->second_stage_date <= time() && $competition->second_stage_all;
-		foreach ($this->events as $event) {
+		foreach ($this->events as $event=>$value) {
 			if (isset($competitionEvents[$event])) {
 				$fees[] = $competition->getEventFee($event);
 			}
@@ -923,7 +837,7 @@ class Registration extends ActiveRecord {
 	}
 
 	protected function beforeValidate() {
-		$this->handleEvents();
+		// $this->handleEvents();
 		return parent::beforeValidate();
 	}
 
@@ -947,7 +861,8 @@ class Registration extends ActiveRecord {
 			array('competition_id, user_id, events, date', 'required'),
 			array('location_id, total_fee, entourage_passport_type, status', 'numerical', 'integerOnly'=>true, 'min'=>0),
 			array('competition_id, user_id, date, entourage_passport_number', 'length', 'max'=>20),
-			array('events', 'length', 'max'=>512),
+			// array('events', 'length', 'max'=>512),
+			array('events', 'checkEvents'),
 			array('comments', 'length', 'max'=>2048),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
@@ -955,18 +870,6 @@ class Registration extends ActiveRecord {
 		);
 		if ($this->competition_id > 0) {
 			$competition = $this->competition;
-			if ($competition->entourage_limit) {
-				$rules[] = array('entourage_name', 'checkEntourageName', 'on'=>'register');
-				$rules[] = array('entourage_passport_name', 'safe', 'on'=>'register');
-				$rules[] = array('entourage_passport_type', 'checkPassportType', 'on'=>'register');
-				$rules[] = array('entourage_passport_number', 'checkPassportNumber', 'on'=>'register');
-				$rules[] = array('has_entourage', 'required', 'on'=>'register');
-				$rules[] = ['repeatPassportNumber, guest_paid', 'safe', 'on'=>'register'];
-			}
-			if ($competition->require_avatar) {
-				$rules[] = array('avatar_type', 'checkAvatarType', 'on'=>'register');
-				$rules[] = array('avatar_type', 'required', 'on'=>'register');
-			}
 			if ($competition->isMultiLocation()) {
 				$rules[] = array('location_id', 'required', 'on'=>'register');
 			}
