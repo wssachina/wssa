@@ -321,7 +321,7 @@ class Registration extends ActiveRecord {
 	}
 
 	public function checkEvents() {
-		$events = $this->events;
+		$events = (array)$this->events;
 		if (!isset($events['individual'])) {
 			$events = array_merge(['individual'=>['checked'=>true]], $events);
 		}
