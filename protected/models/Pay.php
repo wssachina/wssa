@@ -275,7 +275,7 @@ class Pay extends ActiveRecord {
 			'out_trade_no'=>$this->order_no,
 			'product_code'=>'FAST_INSTANT_TRADE_PAY',
 			'total_amount'=>number_format($this->amount / 100, 2, '.', ''),
-			'subject'=>'WSSA中国-' . $this->order_name,
+			'subject'=>$this->order_name,
 		);
 		$params = $this->generateAlipaySign($commonParams, $bizParams, $alipay['private_key_path']);
 		return array(

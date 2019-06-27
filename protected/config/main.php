@@ -281,7 +281,7 @@ $config = [
 		'payments'=>[
 			'alipay'=>[
 				'gateway'=>'https://openapi.alipay.com/gateway.do?charset=UTF-8',
-				'app_id'=>'2016062701556602',
+				'app_id'=>'2018101061632800',
 				'private_key_path'=>Env::get('PAYMENT_ALIPAY_PRIVATE_KEY'),
 				'alipay_public_key_path'=>Env::get('PAYMENT_ALIPAY_PUBLIC_KEY'),
 				'img'=>'/f/images/pay/alipay.png',
