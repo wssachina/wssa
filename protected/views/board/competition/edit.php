@@ -338,6 +338,18 @@
             )),
             $form->error($model, 'information_zh', array('class'=>'text-danger'))
           );?>
+          <?php echo Html::formGroup(
+            $model, 'travel_zh', array(
+              'class'=>'col-lg-12',
+            ),
+            $form->labelEx($model, 'travel_zh', array(
+              'label'=>'交通信息',
+            )),
+            $form->textArea($model, 'travel_zh', array(
+              'class'=>'editor form-control'
+            )),
+            $form->error($model, 'travel_zh', array('class'=>'text-danger'))
+          );?>
           <?php endif; ?>
           <div class="clearfix"></div>
           <div class="col-lg-12">

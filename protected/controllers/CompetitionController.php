@@ -428,7 +428,6 @@ class CompetitionController extends Controller {
 		if ($competition->checkPermission($this->user)) {
 			switch ($this->action->id) {
 				case 'regulations':
-				case 'travel':
 				case 'schedule':
 					$action = $this->action->id;
 					$url = ['/board/competition/' . $action, 'id'=>$competition->id];
