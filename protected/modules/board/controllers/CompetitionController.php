@@ -71,7 +71,7 @@ class CompetitionController extends AdminController {
 		if ($model->isAccepted()) {
 			$this->redirect(['/board/competition/edit', 'id'=>$model->id]);
 		}
-		if (isset($_POST['Competition']) && ($this->user->isAdministrator() || $this->user->isWCADelegate())) {
+		if (isset($_POST['Competition']) && ($this->user->isAdministrator())) {
 			$status = $model->status;
 			$model->attributes = $_POST['Competition'];
 			$model->formatDate();
@@ -104,7 +104,6 @@ class CompetitionController extends AdminController {
 		}
 		$this->render('view', [
 			'competition'=>$model,
-			'nearbyCompetitions'=>$model->getNearbyCompetitions(),
 		]);
 	}
 
@@ -164,7 +163,6 @@ class CompetitionController extends AdminController {
 			'end_date',
 			'reg_start',
 			'reg_end',
-			'delegates',
 			'organizers',
 			'locations',
 			'qualifying_end_time',
@@ -280,22 +278,12 @@ class CompetitionController extends AdminController {
 	}
 
 	private function getCompetitionData($model) {
-		$wcaDelegates = array();
-		foreach (User::getDelegates(User::IDENTITY_WCA_DELEGATE) as $delegate) {
-			$wcaDelegates[$delegate->id] = $delegate->name_zh ?: $delegate->name;
-		}
-		$ccaDelegates = array();
-		foreach (User::getDelegates(User::IDENTITY_CCA_DELEGATE) as $delegate) {
-			$ccaDelegates[$delegate->id] = $delegate->name_zh ?: $delegate->name;
-		}
 		$organizers = User::getOrganizers();
 		$types = Competition::getTypes();
 		$cities = Region::getAllCities();
 		return array(
 			'model'=>$model,
 			'cities'=>$cities,
-			'wcaDelegates'=>$wcaDelegates,
-			'ccaDelegates'=>$ccaDelegates,
 			'organizers'=>$organizers,
 			'types'=>$types,
 		);

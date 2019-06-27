@@ -85,7 +85,7 @@ $this->renderPartial('registerSide', $_data_);
       'id'=>'province',
     ),
     $form->labelEx($model, 'province_id'),
-    $form->dropDownList($model, 'province_id', Region::getProvinces(), array(
+    $form->dropDownList($model, 'province_id', Region::getProvinces(false), array(
       'class'=>'form-control',
       'prompt'=>'',
     )),

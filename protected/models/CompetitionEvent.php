@@ -17,6 +17,7 @@
  * @property string $update_time
  */
 class CompetitionEvent extends ActiveRecord {
+	private $_children;
 
 	public function getQualifyTime() {
 		$times = [];
@@ -93,6 +94,21 @@ class CompetitionEvent extends ActiveRecord {
 		return isset($ret) ? $ret : true;
 	}
 
+	public function getChildren() {
+		if ($this->_children === null) {
+			$competition = $this->competition;
+			$childrenIds = CHtml::listData($this->e->children, 'id', 'id');
+			$children = [];
+			foreach ($competition->allEvents as $event) {
+				if (isset($childrenIds[$event->event])) {
+					$children[] = $event;
+				}
+			}
+			$this->_children = $children;
+		}
+		return $this->_children;
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -125,7 +141,7 @@ class CompetitionEvent extends ActiveRecord {
 		// class name for the relations automatically generated below.
 		return [
 			'competition'=>[self::BELONGS_TO, 'Competition', 'competition_id'],
-			'wcaEvent'=>[self::BELONGS_TO, 'Events', 'event'],
+			'e'=>[self::BELONGS_TO, 'Events', 'event'],
 		];
 	}
 

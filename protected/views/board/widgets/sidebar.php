@@ -10,64 +10,64 @@
       ),
       'encodeLabel'=>false,
       'items'=>array(
-        // array(
-        //   'label'=>'<i class="fa fa-table"></i> 比赛 <i class="fa fa-caret-down"></i>',
-        //   'url'=>'javascript:;',
-        //   'active'=>$this->controller->id == 'competition',
-        //   'linkOptions'=>array(
-        //     'data-parent'=>'#side',
-        //     'data-toggle'=>'collapse',
-        //     'class'=>'accordion-toggle',
-        //     'data-target'=>'#competition',
-        //   ),
-        //   'itemOptions'=>array(
-        //     'class'=>'panel',
-        //   ),
-        //   'submenuOptions'=>array(
-        //     'class'=>'collapse nav in',
-        //     'id'=>'competition',
-        //   ),
-        //   'items'=>array(
-        //     array(
-        //       'label'=>'<i class="fa fa-angle-double-right"></i> 比赛管理',
-        //       'url'=>array('/board/competition/index'),
-        //       'visible'=>Yii::app()->user->checkRole(User::ROLE_ORGANIZER),
-        //     ),
-        //     array(
-        //       'label'=>'<i class="fa fa-angle-double-right"></i> 申请比赛',
-        //       'url'=>array('/board/competition/apply'),
-        //     ),
-        //     array(
-        //       'label'=>'<i class="fa fa-angle-double-right"></i> 申请列表',
-        //       'url'=>array('/board/competition/application'),
-        //     ),
-        //   ),
-        // ),
-        // array(
-        //   'label'=>'<i class="fa fa-group"></i> 报名 <i class="fa fa-caret-down"></i>',
-        //   'url'=>'javascript:;',
-        //   'active'=>$this->controller->id == 'registration',
-        //   'visible'=>Yii::app()->user->checkRole(User::ROLE_ORGANIZER),
-        //   'linkOptions'=>array(
-        //     'data-parent'=>'#side',
-        //     'data-toggle'=>'collapse',
-        //     'class'=>'accordion-toggle',
-        //     'data-target'=>'#registration',
-        //   ),
-        //   'itemOptions'=>array(
-        //     'class'=>'panel',
-        //   ),
-        //   'submenuOptions'=>array(
-        //     'class'=>'collapse nav in',
-        //     'id'=>'registration',
-        //   ),
-        //   'items'=>array(
-        //     array(
-        //       'label'=>'<i class="fa fa-angle-double-right"></i> 报名管理',
-        //       'url'=>array('/board/registration/index'),
-        //     ),
-        //   ),
-        // ),
+        array(
+          'label'=>'<i class="fa fa-table"></i> 比赛 <i class="fa fa-caret-down"></i>',
+          'url'=>'javascript:;',
+          'active'=>$this->controller->id == 'competition',
+          'linkOptions'=>array(
+            'data-parent'=>'#side',
+            'data-toggle'=>'collapse',
+            'class'=>'accordion-toggle',
+            'data-target'=>'#competition',
+          ),
+          'itemOptions'=>array(
+            'class'=>'panel',
+          ),
+          'submenuOptions'=>array(
+            'class'=>'collapse nav in',
+            'id'=>'competition',
+          ),
+          'items'=>array(
+            array(
+              'label'=>'<i class="fa fa-angle-double-right"></i> 比赛管理',
+              'url'=>array('/board/competition/index'),
+              'visible'=>Yii::app()->user->checkRole(User::ROLE_ORGANIZER),
+            ),
+            array(
+              'label'=>'<i class="fa fa-angle-double-right"></i> 申请比赛',
+              'url'=>array('/board/competition/apply'),
+            ),
+            array(
+              'label'=>'<i class="fa fa-angle-double-right"></i> 申请列表',
+              'url'=>array('/board/competition/application'),
+            ),
+          ),
+        ),
+        array(
+          'label'=>'<i class="fa fa-group"></i> 报名 <i class="fa fa-caret-down"></i>',
+          'url'=>'javascript:;',
+          'active'=>$this->controller->id == 'registration',
+          'visible'=>Yii::app()->user->checkRole(User::ROLE_ORGANIZER),
+          'linkOptions'=>array(
+            'data-parent'=>'#side',
+            'data-toggle'=>'collapse',
+            'class'=>'accordion-toggle',
+            'data-target'=>'#registration',
+          ),
+          'itemOptions'=>array(
+            'class'=>'panel',
+          ),
+          'submenuOptions'=>array(
+            'class'=>'collapse nav in',
+            'id'=>'registration',
+          ),
+          'items'=>array(
+            array(
+              'label'=>'<i class="fa fa-angle-double-right"></i> 报名管理',
+              'url'=>array('/board/registration/index'),
+            ),
+          ),
+        ),
         array(
           'label'=>'<i class="fa fa-group"></i> 用户 <i class="fa fa-caret-down"></i>',
           'url'=>'javascript:;',

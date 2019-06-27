@@ -2,6 +2,8 @@
 
 class CompetitionController extends Controller {
 
+	public $competition;
+
 	public function accessRules() {
 		return array(
 			array(
@@ -35,11 +37,7 @@ class CompetitionController extends Controller {
 
 	public function actionDetail() {
 		$competition = $this->getCompetition();
-		$this->pageTitle = array($competition->getAttributeValue('name'));
-		if (preg_match_all('|<img[^>]+src="([^"]+)"[^>]*>|i', $competition->information_zh, $matches)) {
-			$this->setWeiboSharePic($matches[1]);
-		}
-		$this->setWeiboShareDefaultText($competition->getDescription(), false);
+		$this->pageTitle = array($competition->getFullName());
 		$this->render('detail', array(
 			'competition'=>$competition,
 		));
@@ -243,6 +241,14 @@ class CompetitionController extends Controller {
 					Yii::app()->user->setFlash('success', Yii::t('Registration', 'Your registration has been cancelled.'));
 				}
 			}
+
+			if (isset($_POST['Registration']) && $registration->isEditable()) {
+				$registration->events = isset($_POST['Registration']['events']) ? $_POST['Registration']['events'] : null;
+				$registration->comments = isset($_POST['Registration']['comments']) ? $_POST['Registration']['comments'] : null;
+				if ($registration->save()) {
+					Yii::app()->user->setFlash('success', '编辑报名信息成功！');
+				}
+			}
 			$registration->formatEvents();
 			$this->render('registrationDone', array(
 				'user'=>$user,
@@ -260,53 +266,34 @@ class CompetitionController extends Controller {
 		$model->competition = $competition;
 		$model->competition_id = $competition->id;
 		$model->events = array_values(PreferredEvent::getUserEvents($user));
-		if ($competition->shouldDisableUnmetEvents) {
-			$model->events = array_diff($model->events, array_keys($unmetEvents));
-		}
-		if ($competition->isMultiLocation()) {
-			$model->location_id = null;
-		}
 		if (isset($_POST['Registration'])) {
-			if (!$competition->fill_passport || $this->user->passport_type != User::NO) {
-				$model->attributes = $_POST['Registration'];
-				if (!isset($_POST['Registration']['events'])) {
-					$model->events = null;
-				}
-				if ($competition->shouldDisableUnmetEvents) {
-					$model->events = array_diff($model->events, array_keys($unmetEvents));
-				}
-				$model->user_id = $this->user->id;
-				$model->total_fee = $model->getTotalFee(true);
-				$model->ip = Yii::app()->request->getUserHostAddress();
-				$model->date = time();
-				$model->status = Registration::STATUS_PENDING;
-				if ($competition->auto_accept == Competition::YES && $competition->online_pay != Competition::ONLINE_PAY) {
-					$model->status = Registration::STATUS_ACCEPTED;
-				}
-				// for FMC Asia
-				if ($competition->multi_countries && $model->location->country_id != 1) {
-					$model->status = Registration::STATUS_ACCEPTED;
-				}
-				// for oversea users
-				if ($this->user->country_id > 1 && $this->user->hasSuccessfulRegistration()) {
-					$model->status = Registration::STATUS_ACCEPTED;
-				}
-				if ($model->save()) {
-					Yii::app()->mailer->sendRegistrationNotice($model);
-					$this->setWeiboShareDefaultText($competition->getRegistrationDoneWeiboText(), false);
+			$model->attributes = $_POST['Registration'];
+			if (!isset($_POST['Registration']['events'])) {
+				$model->events = null;
+			}
+			$model->user_id = $this->user->id;
+			$model->total_fee = $model->getTotalFee(true);
+			$model->ip = Yii::app()->request->getUserHostAddress();
+			$model->date = time();
+			$model->status = Registration::STATUS_PENDING;
+			if ($competition->auto_accept == Competition::YES && $competition->online_pay != Competition::ONLINE_PAY) {
+				$model->status = Registration::STATUS_ACCEPTED;
+			}
+			if ($model->save()) {
+				Yii::app()->mailer->sendRegistrationNotice($model);
+				$this->setWeiboShareDefaultText($competition->getRegistrationDoneWeiboText(), false);
+				$model->formatEvents();
+				if ($model->isAccepted()) {
+					$model->accept();
 					$model->formatEvents();
-					if ($model->isAccepted()) {
-						$model->accept();
-						$model->formatEvents();
-					}
-					$this->render('registrationDone', array(
-						'user'=>$user,
-						'accepted'=>$model->isAccepted(),
-						'competition'=>$competition,
-						'registration'=>$model,
-					));
-					Yii::app()->end();
 				}
+				$this->render('registrationDone', array(
+					'user'=>$user,
+					'accepted'=>$model->isAccepted(),
+					'competition'=>$competition,
+					'registration'=>$model,
+				));
+				Yii::app()->end();
 			}
 		}
 		$model->formatEvents();
@@ -361,9 +348,9 @@ class CompetitionController extends Controller {
 		// if (!$competition->isPublic() && !Yii::app()->user->checkRole(User::ROLE_ORGANIZER)) {
 		// 	throw new CHttpException(404, 'Error');
 		// }
-		$this->setCompetitionNavibar($competition);
+		// $this->setCompetitionNavibar($competition);
 		$this->setCompetitionBreadcrumbs($competition);
-		$name = $competition->getAttributeValue('name');
+		$name = $competition->getFullName();
 		if ($this->action->id === 'detail') {
 			$this->title = $name;
 		} else {
@@ -372,6 +359,8 @@ class CompetitionController extends Controller {
 		$this->pageTitle = array($name, ucfirst($this->action->id));
 		$this->appendKeywords($name);
 		$this->setDescription($competition->getDescription());
+		$this->layout = '//layouts/competition';
+		$this->competition = $competition;
 		return $competition;
 	}
 
@@ -379,88 +368,92 @@ class CompetitionController extends Controller {
 		if ($this->action->id !== 'detail') {
 			$this->breadcrumbs = array(
 				'Competitions'=>array('/competition/index'),
-				$competition->getAttributeValue('name')=>$competition->getUrl(),
+				$competition->getFullName()=>$competition->getUrl(),
 				ucfirst($this->action->id),
 			);
 		} else {
 			$this->breadcrumbs = array(
 				'Competitions'=>array('/competition/index'),
-				$competition->getAttributeValue('name'),
+				$competition->getFullName(),
 			);
 		}
 	}
 
-	private function setCompetitionNavibar($competition) {
-		$showResults = $competition->hasResults && $this->id != 'live';
+	protected function getCompetitionNavibar($competition) {
 		$showLive = $competition->live == Competition::YES && !$competition->canRegister();
 		$navibar = array(
-			array(
-				'label'=>Html::fontAwesome('home', 'a') . Yii::t('Competition', 'Cubing China'),
-				'url'=>array('/site/index'),
-				'itemOptions'=>array(
-					'class'=>'nav-item',
-				),
-			),
 			array(
 				'label'=>Html::fontAwesome('info-circle', 'a') . Yii::t('Competition', 'Main Page'),
 				'url'=>$competition->getUrl('detail'),
 				'itemOptions'=>array(
-					'class'=>'nav-item cube-red',
+					'class'=>'nav-item',
 				),
 			),
-			array(
-				'label'=>Html::fontAwesome('tasks', 'a') . Yii::t('Competition', 'Regulations'),
-				'url'=>$competition->getUrl('regulations'),
-				'itemOptions'=>array(
-					'class'=>'nav-item cube-orange',
-				),
-			),
+			// array(
+			// 	'label'=>Html::fontAwesome('tasks', 'a') . Yii::t('Competition', 'Regulations'),
+			// 	'url'=>$competition->getUrl('regulations'),
+			// 	'itemOptions'=>array(
+			// 		'class'=>'nav-item',
+			// 	),
+			// ),
 			array(
 				'label'=>Html::fontAwesome('calendar', 'a') . Yii::t('Competition', 'Schedule'),
 				'url'=>$competition->getUrl('schedule'),
 				'itemOptions'=>array(
-					'class'=>'nav-item cube-yellow',
+					'class'=>'nav-item',
 				),
 			),
 			array(
 				'label'=>Html::fontAwesome('taxi', 'a') . Yii::t('Competition', 'Travel'),
 				'url'=>$competition->getUrl('travel'),
 				'itemOptions'=>array(
-					'class'=>'nav-item cube-green',
+					'class'=>'nav-item',
 				),
 			),
 			array(
 				'label'=>Html::fontAwesome('users', 'a') . Yii::t('Competition', 'Competitors'),
 				'url'=>$competition->getUrl('competitors'),
 				'itemOptions'=>array(
-					'class'=>'nav-item cube-blue',
+					'class'=>'nav-item',
 				),
 			),
 			array(
 				'label'=>Html::fontAwesome('sign-in', 'a') . Yii::t('Competition', 'Registration'),
 				'url'=>$competition->getUrl('registration'),
 				'itemOptions'=>array(
-					'class'=>'nav-item cube-white',
+					'class'=>'nav-item',
 				),
-				'visible'=>(!$showResults && !$showLive) || $competition->show_qrcode,
-			),
-			array(
-				'label'=>Html::fontAwesome('table', 'a') . Yii::t('Competition', 'Results'),
-				'url'=>array('/results/c', 'id'=>$competition->wca_competition_id),
-				'itemOptions'=>array(
-					'class'=>'nav-item cube-purple',
-				),
-				'visible'=>$showResults,
-			),
-			array(
-				'label'=>Html::fontAwesome('play', 'a') . Yii::t('Competition', 'Live'),
-				'url'=>$competition->getUrl('live'),
-				'itemOptions'=>array(
-					'class'=>'nav-item cube-pink',
-				),
-				'visible'=>!$showResults && $showLive,
 			),
 		);
-		$this->navibar = $navibar;
+		if ($competition->checkPermission($this->user)) {
+			switch ($this->action->id) {
+				case 'regulations':
+				case 'travel':
+				case 'schedule':
+					$action = $this->action->id;
+					$url = ['/board/competition/' . $action, 'id'=>$competition->id];
+					break;
+				case 'competitors':
+					$url = ['/board/registration/index', 'Registration'=>['competition_id'=>$competition->id]];
+					break;
+				case 'tab':
+					$url = ['/board/competition/tab', 'id'=>$this->iGet('id')];
+					break;
+				default:
+					$url = ['/board/competition/edit', 'id'=>$competition->id];
+					break;
+			}
+			$navibar[] = [
+				'label'=>Html::fontAwesome('edit', 'a') . '编辑',
+				'url'=>$url,
+				'itemOptions'=>array(
+					'class'=>'nav-item cube-white',
+				),
+				'linkOptions'=>[
+					'target'=>'_blank',
+				]
+			];
+		}
+		return $navibar;
 	}
 }

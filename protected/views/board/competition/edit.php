@@ -30,532 +30,315 @@
             <p class="text-danger">
               <b>友情提示</b>：比赛信息可以多次编辑，请注意保存。
             </p>
-            <?php if ($model->isNewRecord): ?>
-            <p class="lead">此处是赛事主办比赛申请页面，不是选手报名页面，请注意！<br>如需报名参加比赛，请移步<?php echo CHtml::link('赛事页面', ['/competition/index']); ?>。</p>
-            <?php endif; ?>
-            <p class="lead">第一次申请请仔细阅读<?php echo CHtml::link('申请流程', ['/faq/index',
-              'category_id'=>2,
-              '#'=>'faq-9',
-            ], ['target'=>'_blank']); ?> ！</p>
           </div>
-          <ul class="nav nav-tabs" role="tablist">
-            <li role="presentation" class="active"><a href="#baseinfo" role="tab" data-toggle="tab">基本信息</a></li>
-            <?php if ($model->isAccepted() || $this->user->isAdministrator()): ?>
-            <li role="presentation"><a href="#detail" role="tab" data-toggle="tab">详情</a></li>
-            <li role="presentation"><a href="#regulation" role="tab" data-toggle="tab">规则</a></li>
-            <li role="presentation"><a href="#transportation" role="tab" data-toggle="tab">交通</a></li>
-            <li role="presentation"><a href="#other" role="tab" data-toggle="tab">其他</a></li>
-            <?php endif; ?>
-          </ul>
-          <div class="tab-content">
-            <div role="tabpanel" class="tab-pane active" id="baseinfo">
-              <?php if ($this->user->isOrganizer() && $model->isPublic()): ?>
-              <div class="col-lg-12">
-                <div class="alert alert-danger">该比赛已公示，基本信息不能修改，如需修改请联系<a href="mailto:<?php echo Yii::app()->params->adminEmail; ?>"><i class="fa fa-envelope"></i>管理员</a></div>
-              </div>
-              <?php endif; ?>
-              <div class="col-lg-12">
-                <div class="text-danger">请参阅<?php echo CHtml::link('粗饼网比赛名称规范试行版', '/static/naming conventions.pdf', ['target'=>'_blank']); ?>填写比赛名称。</div>
-              </div>
-              <?php echo Html::formGroup(
-                $model, 'name_zh', array(
-                  'class'=>'col-lg-6',
-                ),
-                $form->labelEx($model, 'name_zh', array(
-                  'label'=>'中文名',
-                )),
-                Html::activeTextField($model, 'name_zh'),
-                $form->error($model, 'name_zh', array('class'=>'text-danger'))
-              );?>
-              <?php echo Html::formGroup(
-                $model, 'name', array(
-                  'class'=>'col-lg-6',
-                ),
-                $form->labelEx($model, 'name', array(
-                  'label'=>'英文名',
-                )),
-                Html::activeTextField($model, 'name'),
-                $form->error($model, 'name', array('class'=>'text-danger'))
-              );?>
-              <div class="clearfix"></div>
-              <?php echo Html::formGroup(
-                $model, 'person_num', array(
-                  'class'=>'col-md-4',
-                ),
-                $form->labelEx($model, 'person_num', array(
-                  'label'=>'人数限制',
-                )),
-                Html::activeTextField($model, 'person_num'),
-                $form->error($model, 'person_num', array('class'=>'text-danger'))
-              );?>
-              <?php echo Html::formGroup(
-                $model, 'type', array(
-                  'class'=>'col-md-4',
-                ),
-                $form->labelEx($model, 'type', array(
-                  'label'=>'类型',
-                )),
-                $form->dropDownList($model, 'type', $types, array(
-                  'class'=>'form-control',
-                )),
-                $form->error($model, 'type', array('class'=>'text-danger'))
-              );?>
-              <?php if ($this->user->isAdministrator() || $this->user->isDelegate()): ?>
-              <?php echo Html::formGroup(
-                $model, 'wca_competition_id', array(
-                  'class'=>'col-md-4',
-                ),
-                $form->labelEx($model, 'wca_competition_id', array(
-                  'label'=>'WCA比赛ID',
-                )),
-                Html::activeTextField($model, 'wca_competition_id'),
-                $form->error($model, 'wca_competition_id', array('class'=>'text-danger'))
-              );?>
-              <?php endif; ?>
-              <div class="clearfix"></div>
-              <?php echo Html::formGroup(
-                $model, 'entry_fee', array(
-                  'class'=>'col-md-4'
-                ),
-                $form->labelEx($model, 'entry_fee', array(
-                  'label'=>'基础报名费',
-                )),
-                Html::activeTextField($model, 'entry_fee'),
-                $form->error($model, 'entry_fee', array('class'=>'text-danger'))
-              );?>
-              <?php echo Html::formGroup(
-                $model, 'auto_accept', array(
-                  'class'=>'col-md-4',
-                ),
-                $form->labelEx($model, 'auto_accept', array(
-                  'label'=>'报名自动审核' . Html::fontAwesome('question-circle', 'b'),
-                  'data-toggle'=>'tooltip',
-                  'title'=>'若选是，在未开启在线支付的状态下，选手报名后将会立刻通过审核，而不是进入待审列表',
-                )),
-                Html::activeSwitch($model, 'auto_accept'),
-                $form->error($model, 'auto_accept', array('class'=>'text-danger'))
-              );?>
-              <?php echo Html::formGroup(
-                $model, 'online_pay', array(
-                  'class'=>'col-md-4',
-                ),
-                $form->labelEx($model, 'online_pay', array(
-                  'label'=>'在线支付' . Html::fontAwesome('question-circle', 'b'),
-                  'data-toggle'=>'tooltip',
-                  'title'=>'在线支付极大程度方便主办方的审核工作，手续费率大约是1.5%，详情请联系管理员',
-                )),
-                Html::activeSwitch($model, 'online_pay'),
-                $form->error($model, 'online_pay', array('class'=>'text-danger'))
-              );?>
-              <div class="clearfix"></div>
-              <?php echo Html::formGroup(
-                $model, 'second_stage_date', array(
-                  'class'=>'col-md-4',
-                ),
-                $form->labelEx($model, 'second_stage_date', array(
-                  'label'=>'第二阶段时间' . Html::fontAwesome('question-circle', 'b'),
-                  'data-toggle'=>'tooltip',
-                  'title'=>'不采用分阶段报名费的比赛忽略此项',
-                )),
-                Html::activeTextField($model, 'second_stage_date', array(
-                  'class'=>'datetime-picker',
-                  'data-date-format'=>'yyyy-mm-dd hh:ii:00',
-                )),
-                $form->error($model, 'second_stage_date', array('class'=>'text-danger'))
-              );?>
-              <?php echo Html::formGroup(
-                $model, 'second_stage_ratio', array(
-                  'class'=>'col-md-4',
-                ),
-                $form->labelEx($model, 'second_stage_ratio', array(
-                  'label'=>'第二阶段倍率',
-                )),
-                Html::activeTextField($model, 'second_stage_ratio'),
-                $form->error($model, 'second_stage_ratio', array('class'=>'text-danger'))
-              );?>
-              <?php echo Html::formGroup(
-                $model, 'second_stage_all', array(
-                  'class'=>'col-md-4',
-                ),
-                $form->labelEx($model, 'second_stage_all', array(
-                  'label'=>'包含所有项目',
-                )),
-                Html::activeSwitch($model, 'second_stage_all'),
-                $form->error($model, 'second_stage_all', array('class'=>'text-danger'))
-              );?>
-              <div class="clearfix"></div>
-              <?php echo Html::formGroup(
-                $model, 'third_stage_date', array(
-                  'class'=>'col-md-4',
-                ),
-                $form->labelEx($model, 'third_stage_date', array(
-                  'label'=>'第三阶段时间' . Html::fontAwesome('question-circle', 'b'),
-                  'data-toggle'=>'tooltip',
-                  'title'=>'不采用分阶段报名费的比赛忽略此项',
-                )),
-                Html::activeTextField($model, 'third_stage_date', array(
-                  'class'=>'datetime-picker',
-                  'data-date-format'=>'yyyy-mm-dd hh:ii:00',
-                )),
-                $form->error($model, 'third_stage_date', array('class'=>'text-danger'))
-              );?>
-              <?php echo Html::formGroup(
-                $model, 'third_stage_ratio', array(
-                  'class'=>'col-md-4',
-                ),
-                $form->labelEx($model, 'third_stage_ratio', array(
-                  'label'=>'第三阶段倍率',
-                )),
-                Html::activeTextField($model, 'third_stage_ratio'),
-                $form->error($model, 'third_stage_ratio', array('class'=>'text-danger'))
-              );?>
-              <?php echo Html::formGroup(
-                $model, 'local_type', array(
-                  'class'=>'col-md-4',
-                ),
-                $form->labelEx($model, 'local_type', array(
-                  'label'=>'人数统计选项',
-                )),
-                $form->dropDownList($model, 'local_type', Competition::getLocalTypes(), array(
-                  'class'=>'form-control',
-                )),
-                $form->error($model, 'local_type', array('class'=>'text-danger'))
-              );?>
-              <div class="clearfix"></div>
-              <?php echo Html::formGroup(
-                $model, 'date', array(
-                  'class'=>'col-lg-3 col-md-6',
-                ),
-                $form->labelEx($model, 'date', array(
-                  'label'=>'日期',
-                )),
-                Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR) ? $form->labelEx($model, 'tba', array(
-                  'label'=>$form->checkBox($model, 'tba') . '待定',
-                )) : '',
-                Html::activeTextField($model, 'date', array(
-                  'class'=>'datetime-picker',
-                  'data-date-format'=>'yyyy-mm-dd',
-                  'data-min-view'=>'2',
-                )),
-                $form->error($model, 'date', array('class'=>'text-danger'))
-              );?>
-              <?php echo Html::formGroup(
-                $model, 'end_date', array(
-                  'class'=>'col-lg-3 col-md-6',
-                ),
-                $form->labelEx($model, 'end_date', array(
-                  'label'=>'结束日期',
-                )),
-                Html::activeTextField($model, 'end_date', array(
-                  'class'=>'datetime-picker',
-                  'data-date-format'=>'yyyy-mm-dd',
-                  'data-min-view'=>'2',
-                )),
-                $form->error($model, 'end_date', array('class'=>'text-danger'))
-              );?>
-              <div class="clearfix hidden-lg"></div>
-              <?php echo Html::formGroup(
-                $model, 'reg_start', array(
-                  'class'=>'col-lg-3 col-md-6',
-                ),
-                $form->labelEx($model, 'reg_start'),
-                Html::activeTextField($model, 'reg_start', array(
-                  'class'=>'datetime-picker',
-                  'data-date-format'=>'yyyy-mm-dd hh:ii:00',
-                  'placeholder'=>'留空默认公示后即开放报名',
-                )),
-                $form->error($model, 'reg_start', array('class'=>'text-danger'))
-              );?>
-              <?php echo Html::formGroup(
-                $model, 'reg_end', array(
-                  'class'=>'col-lg-3 col-md-6',
-                ),
-                $form->labelEx($model, 'reg_end'),
-                Html::activeTextField($model, 'reg_end', array(
-                  'class'=>'datetime-picker',
-                  'data-date-format'=>'yyyy-mm-dd hh:ii:00',
-                )),
-                $form->error($model, 'reg_end', array('class'=>'text-danger'))
-              );?>
-              <div class="clearfix"></div>
-              <?php if ($model->isAccepted()): ?>
-              <?php echo Html::formGroup(
-                $model, 'refund_type', array(
-                  'class'=>'col-lg-3 col-md-6',
-                ),
-                $form->labelEx($model, 'refund_type', array(
-                  'label'=>'退赛退费比例',
-                )),
-                $form->dropDownList($model, 'refund_type', Competition::getRefundTypes(), array(
-                  'class'=>'form-control',
-                )),
-                $form->error($model, 'refund_type', array('class'=>'text-danger'))
-              );?>
-              <?php echo Html::formGroup(
-                $model, 'cancellation_end_time', array(
-                  'class'=>'col-lg-3 col-md-6',
-                ),
-                $form->labelEx($model, 'cancellation_end_time', [
-                  'label'=>'退赛截止时间',
-                ]),
-                Html::activeTextField($model, 'cancellation_end_time', array(
-                  'class'=>'datetime-picker',
-                  'data-date-format'=>'yyyy-mm-dd hh:ii:00',
-                  'placeholder'=>'请务必早于报名结束时间至少一天',
-                )),
-                $form->error($model, 'cancellation_end_time', array('class'=>'text-danger'))
-              );?>
-              <div class="clearfix hidden-lg"></div>
-              <?php echo Html::formGroup(
-                $model, 'reg_reopen_time', array(
-                  'class'=>'col-lg-3 col-md-6',
-                ),
-                $form->labelEx($model, 'reg_reopen_time', [
-                  'label'=>'补报开始时间',
-                ]),
-                Html::activeTextField($model, 'reg_reopen_time', array(
-                  'class'=>'datetime-picker',
-                  'data-date-format'=>'yyyy-mm-dd hh:ii:00',
-                  'placeholder'=>'请务必早于报名结束时间至少半天',
-                )),
-                $form->error($model, 'reg_reopen_time', array('class'=>'text-danger'))
-              );?>
-              <?php endif; ?>
-              <?php if ($model->has_qualifying_time): ?>
-              <?php echo Html::formGroup(
-                $model, 'qualifying_end_time', array(
-                  'class'=>'col-lg-3 col-md-6',
-                ),
-                $form->labelEx($model, 'qualifying_end_time'),
-                Html::activeTextField($model, 'qualifying_end_time', array(
-                  'class'=>'datetime-picker',
-                  'data-date-format'=>'yyyy-mm-dd hh:ii:00',
-                )),
-                $form->error($model, 'qualifying_end_time', array('class'=>'text-danger'))
-              );?>
-              <div class="clearfix"></div>
-              <?php endif; ?>
-              <div class="clearfix"></div>
-              <?php
-              if ($model->isOld()) {
-                echo Html::formGroup(
-                  $model, 'organizers', array(
-                    'class'=>'col-lg-12',
-                  ),
-                  $form->labelEx($model, 'oldOrganizer', array(
-                    'label'=>'主办方',
-                  )),
-                  Html::activeTextField($model, 'oldOrganizerZh'),
-                  $form->error($model, 'oldOrganizerZh', array('class'=>'text-danger')),
-                  Html::activeTextField($model, 'oldOrganizer'),
-                  $form->error($model, 'oldOrganizer', array('class'=>'text-danger'))
-                );
-              } elseif ($model->isAccepted() || $this->user->isAdministrator()) {
-                echo Html::formGroup(
-                  $model, 'organizers', array(
-                    'class'=>'col-lg-12',
-                  ),
-                  $form->labelEx($model, 'organizers', array(
-                    'label'=>'主办方',
-                  )),
-                  $form->checkBoxList($model, 'organizers', CHtml::listData($organizers, 'id', 'name_zh'), array(
-                    'uncheckValue'=>'',
-                    'container'=>'div',
-                    'separator'=>'',
-                    'class'=>'form-control organizer',
-                    'labelOptions'=>array(
-                      'class'=>'checkbox-inline hidden',
-                    ),
-                    'template'=>'{beginLabel}{input}{labelTitle}{endLabel}',
-                  )),
-                  CHtml::textField('', '', array(
-                    'class'=>'form-control tokenfield',
-                    'placeholder'=>'输入名字或拼音',
-                  )),
-                  $form->error($model, 'organizers', array('class'=>'text-danger'))
-                );
-              } ?>
-              <?php echo Html::formGroup(
-                $model, 'delegates', array(
-                  'class'=>'col-lg-12',
-                ),
-                $form->labelEx($model, 'delegates', array(
-                  'label'=>'代表',
-                )),
-                !$model->isOld() ? '' : implode('', array(
-                  CHtml::tag('span', array(), $model->old->delegate_zh),
-                  Html::activeTextField($model, 'oldDelegateZh'),
-                  $form->error($model, 'oldDelegateZh', array('class'=>'text-danger')),
-                  Html::activeTextField($model, 'oldDelegate'),
-                  $form->error($model, 'oldDelegate', array('class'=>'text-danger')),
-                )),
-                $form->checkBoxList($model, 'delegates', $wcaDelegates, array(
-                  'uncheckValue'=>'',
-                  'baseID'=>'wca_delegates',
-                  'container'=>'div',
-                  'separator'=>'',
-                  'class'=>'form-control',
-                  'labelOptions'=>array(
-                    'class'=>'checkbox-inline',
-                  ),
-                  'template'=>'{beginLabel}{input}{labelTitle}{endLabel}',
-                )),
-                $form->checkBoxList($model, 'delegates', $ccaDelegates, array(
-                  'uncheckValue'=>null,
-                  'container'=>'div',
-                  'baseID'=>'cca_delegates',
-                  'separator'=>'',
-                  'class'=>'form-control',
-                  'labelOptions'=>array(
-                    'class'=>'checkbox-inline',
-                  ),
-                  'template'=>'{beginLabel}{input}{labelTitle}{endLabel}',
-                )),
-                $form->error($model, 'delegates', array('class'=>'text-danger'))
-              );?>
-              <?php echo Html::formGroup(
-                $model, 'locations', array(
-                  'class'=>'col-lg-12',
-                ),
-                $this->widget('MultiLocations', array(
-                  'model'=>$model,
-                  'cities'=>$cities,
-                  'delegates'=>$wcaDelegates,
-                ), true),
-                $form->error($model, 'locations', array('class'=>'text-danger'))
-              );?>
-              <?php if ($model->isAccepted() || $this->user->isAdministrator()): ?>
-              <div class="clearfix"></div>
-              <hr>
-              <div class="col-lg-12">
-                <h5>其他选项</h5>
-                <div class="text-danger">请注意，当你选择U8、U10、U12时，少儿组将失效。U8、U10、U12三组可以自由组合，系统自动匹配年龄。</div>
-              </div>
-              <?php foreach (Competition::getOptions() as $key=>$value):?>
-              <?php echo Html::formGroup(
-                $model, $key, array(
-                  'class'=>'col-md-3',
-                ),
-                $form->labelEx($model, $key, array(
-                  'label'=>$value['label'],
-                )),
-                Html::activeSwitch($model, $key),
-                $form->error($model, $key, array('class'=>'text-danger'))
-              );?>
-              <?php endforeach; ?>
-              <?php echo Html::formGroup(
-                $model, 'podiums_num', array(
-                  'class'=>'col-md-3',
-                ),
-                $form->labelEx($model, 'podiums_num', array(
-                  'label'=>'领奖台人数',
-                )),
-                $form->dropDownList($model, 'podiums_num', array_combine(range(3, 8), range(3, 8)), [
-                  'class'=>'form-control',
-                ]),
-                $form->error($model, 'podiums_num', array('class'=>'text-danger'))
-              );?>
-              <?php endif; ?>
-            </div>
-            <?php if ($model->isAccepted() || $this->user->isAdministrator()): ?>
-            <div role="tabpanel" class="tab-pane" id="detail">
-              <?php $this->renderPartial('editorTips'); ?>
-              <?php echo Html::formGroup(
-                $model, 'information_zh', array(
-                  'class'=>'col-lg-6',
-                ),
-                $form->labelEx($model, 'information_zh', array(
-                  'label'=>'中文详情',
-                )),
-                $form->textArea($model, 'information_zh', array(
-                  'class'=>'editor form-control'
-                )),
-                $form->error($model, 'information_zh', array('class'=>'text-danger'))
-              );?>
-              <?php echo Html::formGroup(
-                $model, 'information', array(
-                  'class'=>'col-lg-6',
-                ),
-                $form->labelEx($model, 'information', array(
-                  'label'=>'英文详情',
-                )),
-                $form->textArea($model, 'information', array(
-                  'class'=>'editor form-control'
-                )),
-                $form->error($model, 'information', array('class'=>'text-danger'))
-              );?>
-              <div class="clearfix"></div>
-            </div>
-            <div role="tabpanel" class="tab-pane" id="regulation">
-              <?php $this->renderPartial('editorTips'); ?>
-              <?php echo Html::formGroup(
-                $model, 'regulations_zh', array(
-                  'class'=>'col-lg-6',
-                ),
-                $form->labelEx($model, 'regulations_zh', array(
-                  'label'=>'中文规则',
-                )),
-                $form->textArea($model, 'regulations_zh', array(
-                  'class'=>'editor form-control'
-                )),
-                $form->error($model, 'regulations_zh', array('class'=>'text-danger'))
-              );?>
-              <?php echo Html::formGroup(
-                $model, 'regulations', array(
-                  'class'=>'col-lg-6',
-                ),
-                $form->labelEx($model, 'regulations', array(
-                  'label'=>'英文规则',
-                )),
-                $form->textArea($model, 'regulations', array(
-                  'class'=>'editor form-control'
-                )),
-                $form->error($model, 'regulations', array('class'=>'text-danger'))
-              );?>
-              <div class="clearfix"></div>
-            </div>
-            <div role="tabpanel" class="tab-pane" id="transportation">
-              <?php $this->renderPartial('editorTips'); ?>
-              <?php echo Html::formGroup(
-                $model, 'travel_zh', array(
-                  'class'=>'col-lg-6',
-                ),
-                $form->labelEx($model, 'travel_zh', array(
-                  'label'=>'中文交通信息',
-                )),
-                $form->textArea($model, 'travel_zh', array(
-                  'class'=>'editor form-control'
-                )),
-                $form->error($model, 'travel_zh', array('class'=>'text-danger'))
-              );?>
-              <?php echo Html::formGroup(
-                $model, 'travel', array(
-                  'class'=>'col-lg-6',
-                ),
-                $form->labelEx($model, 'travel', array(
-                  'label'=>'英文交通信息',
-                )),
-                $form->textArea($model, 'travel', array(
-                  'class'=>'editor form-control'
-                )),
-                $form->error($model, 'travel', array('class'=>'text-danger'))
-              );?>
-            </div>
-            <div role="tabpanel" class="tab-pane" id="other">
-              <?php echo Html::formGroup(
-                $model, 'live_stream_url', array(
-                  'class'=>'col-lg-12',
-                ),
-                $form->labelEx($model, 'live_stream_url', array(
-                  'label'=>'直播链接',
-                )),
-                Html::activeTextField($model, 'live_stream_url'),
-                CHtml::tag('div', ['class'=>'help-text'], '该链接会展示在成绩直播页面'),
-                $form->error($model, 'live_stream_url', array('class'=>'text-danger'))
-              );?>
-            </div>
-            <?php endif; ?>
+          <?php if ($this->user->isOrganizer() && $model->isPublic()): ?>
+          <div class="col-lg-12">
+            <div class="alert alert-danger">该比赛已公示，基本信息不能修改，如需修改请联系<a href="mailto:<?php echo Yii::app()->params->adminEmail; ?>"><i class="fa fa-envelope"></i>管理员</a></div>
           </div>
+          <?php endif; ?>
+          <?php echo Html::formGroup(
+            $model, 'name_zh', array(
+              'class'=>'col-lg-12',
+            ),
+            $form->labelEx($model, 'name_zh', array(
+              'label'=>'中文名',
+            )),
+            '<div class="input-group">',
+            CHtml::tag('div', ['class'=>'input-group-addon'], $model->prefix),
+            Html::activeTextField($model, 'name_zh'),
+            '</div>',
+            $form->error($model, 'name_zh', array('class'=>'text-danger'))
+          );?>
+          <?php echo Html::formGroup(
+            $model, 'name', array(
+              'class'=>'col-lg-12',
+            ),
+            $form->labelEx($model, 'name', array(
+              'label'=>'英文名',
+            )),
+            '<div class="input-group">',
+            CHtml::tag('div', ['class'=>'input-group-addon'], $model->prefix),
+            Html::activeTextField($model, 'name'),
+            '</div>',
+            '<div class="help-text">用以生成比赛链接，如Beijing Open</div>',
+            $form->error($model, 'name', array('class'=>'text-danger'))
+          );?>
+          <div class="clearfix"></div>
+          <?php echo Html::formGroup(
+            $model, 'person_num', array(
+              'class'=>'col-md-4',
+            ),
+            $form->labelEx($model, 'person_num', array(
+              'label'=>'人数限制',
+            )),
+            Html::activeTextField($model, 'person_num'),
+            $form->error($model, 'person_num', array('class'=>'text-danger'))
+          );?>
+          <?php echo Html::formGroup(
+            $model, 'type', array(
+              'class'=>'col-md-4',
+            ),
+            $form->labelEx($model, 'type', array(
+              'label'=>'类型',
+            )),
+            $form->dropDownList($model, 'type', $types, array(
+              'class'=>'form-control',
+            )),
+            $form->error($model, 'type', array('class'=>'text-danger'))
+          );?>
+          <?php echo Html::formGroup(
+            $model, 'entry_fee', array(
+              'class'=>'col-md-4'
+            ),
+            $form->labelEx($model, 'entry_fee', array(
+              'label'=>'基础报名费',
+            )),
+            Html::activeTextField($model, 'entry_fee'),
+            $form->error($model, 'entry_fee', array('class'=>'text-danger'))
+          );?>
+          <div class="clearfix"></div>
+          <?php if ($this->user->isAdministrator()): ?>
+          <?php echo Html::formGroup(
+            $model, 'wssa_url', array(
+              'class'=>'col-sm-12'
+            ),
+            $form->labelEx($model, 'wssa_url'),
+            Html::activeTextField($model, 'wssa_url'),
+            $form->error($model, 'wssa_url', array('class'=>'text-danger'))
+          );?>
+          <div class="clearfix"></div>
+          <?php endif; ?>
+          <?php echo Html::formGroup(
+            $model, 'second_stage_date', array(
+              'class'=>'col-md-4',
+            ),
+            $form->labelEx($model, 'second_stage_date', array(
+              'label'=>'第二阶段时间' . Html::fontAwesome('question-circle', 'b'),
+              'data-toggle'=>'tooltip',
+              'title'=>'不采用分阶段报名费的比赛忽略此项',
+            )),
+            Html::activeTextField($model, 'second_stage_date', array(
+              'class'=>'datetime-picker',
+              'data-date-format'=>'yyyy-mm-dd hh:ii:00',
+            )),
+            $form->error($model, 'second_stage_date', array('class'=>'text-danger'))
+          );?>
+          <?php echo Html::formGroup(
+            $model, 'second_stage_ratio', array(
+              'class'=>'col-md-4',
+            ),
+            $form->labelEx($model, 'second_stage_ratio', array(
+              'label'=>'第二阶段倍率',
+            )),
+            Html::activeTextField($model, 'second_stage_ratio'),
+            $form->error($model, 'second_stage_ratio', array('class'=>'text-danger'))
+          );?>
+          <div class="clearfix"></div>
+          <?php echo Html::formGroup(
+            $model, 'third_stage_date', array(
+              'class'=>'col-md-4',
+            ),
+            $form->labelEx($model, 'third_stage_date', array(
+              'label'=>'第三阶段时间' . Html::fontAwesome('question-circle', 'b'),
+              'data-toggle'=>'tooltip',
+              'title'=>'不采用分阶段报名费的比赛忽略此项',
+            )),
+            Html::activeTextField($model, 'third_stage_date', array(
+              'class'=>'datetime-picker',
+              'data-date-format'=>'yyyy-mm-dd hh:ii:00',
+            )),
+            $form->error($model, 'third_stage_date', array('class'=>'text-danger'))
+          );?>
+          <?php echo Html::formGroup(
+            $model, 'third_stage_ratio', array(
+              'class'=>'col-md-4',
+            ),
+            $form->labelEx($model, 'third_stage_ratio', array(
+              'label'=>'第三阶段倍率',
+            )),
+            Html::activeTextField($model, 'third_stage_ratio'),
+            $form->error($model, 'third_stage_ratio', array('class'=>'text-danger'))
+          );?>
+          <div class="clearfix"></div>
+          <?php echo Html::formGroup(
+            $model, 'date', array(
+              'class'=>'col-lg-3 col-md-6',
+            ),
+            $form->labelEx($model, 'date', array(
+              'label'=>'日期',
+            )),
+            Yii::app()->user->checkRole(User::ROLE_ADMINISTRATOR) ? $form->labelEx($model, 'tba', array(
+              'label'=>$form->checkBox($model, 'tba') . '待定',
+            )) : '',
+            Html::activeTextField($model, 'date', array(
+              'class'=>'datetime-picker',
+              'data-date-format'=>'yyyy-mm-dd',
+              'data-min-view'=>'2',
+            )),
+            $form->error($model, 'date', array('class'=>'text-danger'))
+          );?>
+          <?php echo Html::formGroup(
+            $model, 'end_date', array(
+              'class'=>'col-lg-3 col-md-6',
+            ),
+            $form->labelEx($model, 'end_date', array(
+              'label'=>'结束日期',
+            )),
+            Html::activeTextField($model, 'end_date', array(
+              'class'=>'datetime-picker',
+              'data-date-format'=>'yyyy-mm-dd',
+              'data-min-view'=>'2',
+            )),
+            $form->error($model, 'end_date', array('class'=>'text-danger'))
+          );?>
+          <div class="clearfix hidden-lg"></div>
+          <?php echo Html::formGroup(
+            $model, 'reg_start', array(
+              'class'=>'col-lg-3 col-md-6',
+            ),
+            $form->labelEx($model, 'reg_start'),
+            Html::activeTextField($model, 'reg_start', array(
+              'class'=>'datetime-picker',
+              'data-date-format'=>'yyyy-mm-dd hh:ii:00',
+              'placeholder'=>'留空默认公示后即开放报名',
+            )),
+            $form->error($model, 'reg_start', array('class'=>'text-danger'))
+          );?>
+          <?php echo Html::formGroup(
+            $model, 'reg_end', array(
+              'class'=>'col-lg-3 col-md-6',
+            ),
+            $form->labelEx($model, 'reg_end'),
+            Html::activeTextField($model, 'reg_end', array(
+              'class'=>'datetime-picker',
+              'data-date-format'=>'yyyy-mm-dd hh:ii:00',
+            )),
+            $form->error($model, 'reg_end', array('class'=>'text-danger'))
+          );?>
+          <div class="clearfix"></div>
+          <?php if ($model->isAccepted()): ?>
+          <?php echo Html::formGroup(
+            $model, 'refund_type', array(
+              'class'=>'col-lg-3 col-md-6',
+            ),
+            $form->labelEx($model, 'refund_type', array(
+              'label'=>'退赛退费比例',
+            )),
+            $form->dropDownList($model, 'refund_type', Competition::getRefundTypes(), array(
+              'class'=>'form-control',
+            )),
+            $form->error($model, 'refund_type', array('class'=>'text-danger'))
+          );?>
+          <?php echo Html::formGroup(
+            $model, 'cancellation_end_time', array(
+              'class'=>'col-lg-3 col-md-6',
+            ),
+            $form->labelEx($model, 'cancellation_end_time', [
+              'label'=>'退赛截止时间',
+            ]),
+            Html::activeTextField($model, 'cancellation_end_time', array(
+              'class'=>'datetime-picker',
+              'data-date-format'=>'yyyy-mm-dd hh:ii:00',
+              'placeholder'=>'请务必早于报名结束时间至少一天',
+            )),
+            $form->error($model, 'cancellation_end_time', array('class'=>'text-danger'))
+          );?>
+          <div class="clearfix hidden-lg"></div>
+          <?php echo Html::formGroup(
+            $model, 'reg_reopen_time', array(
+              'class'=>'col-lg-3 col-md-6',
+            ),
+            $form->labelEx($model, 'reg_reopen_time', [
+              'label'=>'补报开始时间',
+            ]),
+            Html::activeTextField($model, 'reg_reopen_time', array(
+              'class'=>'datetime-picker',
+              'data-date-format'=>'yyyy-mm-dd hh:ii:00',
+              'placeholder'=>'请务必早于报名结束时间至少半天',
+            )),
+            $form->error($model, 'reg_reopen_time', array('class'=>'text-danger'))
+          );?>
+          <?php endif; ?>
+          <?php if ($model->has_qualifying_time): ?>
+          <?php echo Html::formGroup(
+            $model, 'qualifying_end_time', array(
+              'class'=>'col-lg-3 col-md-6',
+            ),
+            $form->labelEx($model, 'qualifying_end_time'),
+            Html::activeTextField($model, 'qualifying_end_time', array(
+              'class'=>'datetime-picker',
+              'data-date-format'=>'yyyy-mm-dd hh:ii:00',
+            )),
+            $form->error($model, 'qualifying_end_time', array('class'=>'text-danger'))
+          );?>
+          <div class="clearfix"></div>
+          <?php endif; ?>
+          <div class="clearfix"></div>
+          <?php
+          if ($model->isOld()) {
+            echo Html::formGroup(
+              $model, 'organizers', array(
+                'class'=>'col-lg-12',
+              ),
+              $form->labelEx($model, 'oldOrganizer', array(
+                'label'=>'主办方',
+              )),
+              Html::activeTextField($model, 'oldOrganizerZh'),
+              $form->error($model, 'oldOrganizerZh', array('class'=>'text-danger')),
+              Html::activeTextField($model, 'oldOrganizer'),
+              $form->error($model, 'oldOrganizer', array('class'=>'text-danger'))
+            );
+          } elseif ($model->isAccepted() || $this->user->isAdministrator()) {
+            echo Html::formGroup(
+              $model, 'organizers', array(
+                'class'=>'col-lg-12',
+              ),
+              $form->labelEx($model, 'organizers', array(
+                'label'=>'主办方',
+              )),
+              $form->checkBoxList($model, 'organizers', CHtml::listData($organizers, 'id', 'name_zh'), array(
+                'uncheckValue'=>'',
+                'container'=>'div',
+                'separator'=>'',
+                'class'=>'form-control organizer',
+                'labelOptions'=>array(
+                  'class'=>'checkbox-inline hidden',
+                ),
+                'template'=>'{beginLabel}{input}{labelTitle}{endLabel}',
+              )),
+              CHtml::textField('', '', array(
+                'class'=>'form-control tokenfield',
+                'placeholder'=>'输入名字或拼音',
+              )),
+              $form->error($model, 'organizers', array('class'=>'text-danger'))
+            );
+          } ?>
+          <?php echo Html::formGroup(
+            $model, 'locations', array(
+              'class'=>'col-lg-12',
+            ),
+            $this->widget('MultiLocations', array(
+              'model'=>$model,
+              'cities'=>$cities,
+            ), true),
+            $form->error($model, 'locations', array('class'=>'text-danger'))
+          );?>
+          <?php if ($model->isAccepted() || $this->user->isAdministrator()): ?>
+          <div class="clearfix"></div>
+          <?php $this->renderPartial('editorTips'); ?>
+          <?php echo Html::formGroup(
+            $model, 'information_zh', array(
+              'class'=>'col-lg-12',
+            ),
+            $form->labelEx($model, 'information_zh', array(
+              'label'=>'比赛信息',
+            )),
+            $form->textArea($model, 'information_zh', array(
+              'class'=>'editor form-control'
+            )),
+            $form->error($model, 'information_zh', array('class'=>'text-danger'))
+          );?>
+          <?php endif; ?>
           <div class="clearfix"></div>
           <div class="col-lg-12">
             <button type="submit" class="btn btn-default btn-square"><?php echo Yii::t('common', 'Submit'); ?></button>

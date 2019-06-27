@@ -26,7 +26,6 @@ use GuzzleHttp\Psr7;
 class Pay extends ActiveRecord {
 	const CHANNEL_NOWPAY = 'nowPay';
 	const CHANNEL_ALIPAY = 'alipay';
-	const CHANNEL_BALIPAY = 'balipay';
 
 	const TYPE_REGISTRATION = 0;
 
@@ -79,9 +78,7 @@ class Pay extends ActiveRecord {
 
 	public static function getChannels() {
 		return array(
-			self::CHANNEL_ALIPAY=>'支付宝-担保交易',
-			self::CHANNEL_NOWPAY=>'现在支付',
-			self::CHANNEL_BALIPAY=>'支付宝-即时到帐'
+			self::CHANNEL_ALIPAY=>'支付宝',
 		);
 	}
 
@@ -99,7 +96,7 @@ class Pay extends ActiveRecord {
 			$amount = $this->paid_amount;
 		}
 		$app = Yii::app();
-		$alipay = $app->params->payments['balipay'];
+		$alipay = $app->params->payments['alipay'];
 		$baseUrl = $app->request->getBaseUrl(true);
 		$language = $app->language;
 		$app->language = 'zh_cn';
@@ -183,7 +180,7 @@ class Pay extends ActiveRecord {
 
 	public function validateAlipayNotify($params) {
 		$app = Yii::app();
-		$alipay = $app->params->payments['balipay'];
+		$alipay = $app->params->payments['alipay'];
 		$tradeStatus = isset($params['trade_status']) ? $params['trade_status'] : '';
 		$buyerEmail = isset($params['buyer_email']) ? $params['buyer_email'] : '';
 		$tradeNo = isset($params['trade_no']) ? $params['trade_no'] : '';
@@ -192,7 +189,7 @@ class Pay extends ActiveRecord {
 		if ($result) {
 			$this->trade_no = $tradeNo;
 			$this->pay_account = $buyerEmail;
-			$this->channel = 'balipay';
+			$this->channel = 'alipay';
 			$status = self::STATUS_UNPAID;
 			switch ($tradeStatus) {
 				case self::ALIPAY_TRADE_SUCCESS:
@@ -261,7 +258,7 @@ class Pay extends ActiveRecord {
 
 	public function generateAlipayParams($isMobile) {
 		$app = Yii::app();
-		$alipay = $app->params->payments['balipay'];
+		$alipay = $app->params->payments['alipay'];
 		$baseUrl = $app->request->getBaseUrl(true);
 		$language = $app->language;
 		$app->language = 'zh_cn';
@@ -271,14 +268,14 @@ class Pay extends ActiveRecord {
 			'timestamp'=>date('Y-m-d H:i:s'),
 			'version'=>'1.0',
 			'charset'=>self::CHARSET,
-			'return_url'=>$baseUrl . $app->createUrl('/pay/frontNotify', array('channel'=>self::CHANNEL_BALIPAY)),
-			'notify_url'=>$baseUrl . $app->createUrl('/pay/notify', array('channel'=>self::CHANNEL_BALIPAY)),
+			'return_url'=>$baseUrl . $app->createUrl('/pay/frontNotify', array('channel'=>self::CHANNEL_ALIPAY)),
+			'notify_url'=>$baseUrl . $app->createUrl('/pay/notify', array('channel'=>self::CHANNEL_ALIPAY)),
 		];
 		$bizParams = array(
 			'out_trade_no'=>$this->order_no,
 			'product_code'=>'FAST_INSTANT_TRADE_PAY',
 			'total_amount'=>number_format($this->amount / 100, 2, '.', ''),
-			'subject'=>'粗饼-' . $this->order_name,
+			'subject'=>$this->order_name,
 		);
 		$params = $this->generateAlipaySign($commonParams, $bizParams, $alipay['private_key_path']);
 		return array(

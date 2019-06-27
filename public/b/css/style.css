@@ -2266,3 +2266,86 @@ body img {
   text-transform: uppercase
 }
 
+.main-event {
+  border: 1px solid #eee;
+  padding: 15px 15px 5px;
+  margin-bottom: 15px;
+}
+
+.main-event .child-events {
+  padding-left: 15px;
+}
+
+.main-event .checkbox {
+  margin-top: 0;
+}
+
+
+.register-events .register-event {
+  margin-bottom: 15px;
+}
+.register-events .register-event .event-info {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+      align-items: center;
+  -ms-flex-pack: start;
+      justify-content: flex-start;
+  border-bottom: 1px solid #efefef;
+}
+.register-events .register-event .event-info label {
+  cursor: pointer;
+  margin-bottom: 0;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+      align-items: center;
+  -ms-flex-pack: start;
+      justify-content: flex-start;
+}
+.register-events .register-event .extra-info {
+  padding: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: all 0.3s ease-in-out;
+}
+.register-events .register-event .extra-info.show {
+  padding: 15px;
+  max-height: 500px;
+}
+.register-events .register-event .extra-info .extra-description {
+  background-color: #dedede;
+  padding: 10px 15px;
+  margin-bottom: 15px;
+  border-left: 2px solid #175ca3;
+}
+.register-events .register-event .extra-info label {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+      align-items: center;
+  -ms-flex-pack: start;
+      justify-content: flex-start;
+  height: 30px;
+}
+.register-events .register-event .extra-info label .extra-input-label {
+  margin-right: 15px;
+  cursor: pointer;
+}
+.register-events .register-event .extra-info label input {
+  outline: none;
+  border: none;
+  border-bottom: 1px solid #ddd;
+}
+.register-events .checkbox-wrapper {
+  padding: 10px 20px;
+  background-color: #dddddd;
+  border: 1px solid #cccccc;
+  cursor: pointer;
+}
+.register-events .event-name {
+  margin-left: 10px;
+}
+.register-events .has-tooltip {
+  cursor: pointer;
+}

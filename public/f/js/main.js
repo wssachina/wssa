@@ -19,6 +19,14 @@ window.CubingChina = {
 }
 
 $(function() {
+  $(document).on('change', '#disclaimer', function() {
+    $('#submit-button').prop('disabled', !this.checked);
+  }).on('change', '.registration-events', function() {
+    const extra = $(this).parent().parent().parent().parent().find('.extra-info')
+    console.log(extra)
+    extra[this.checked ? 'addClass' : 'removeClass']('show')
+  });
+  $('.registration-events').trigger('change');
   $('input, textarea').placeholder();
   $('.wrapper table:not(.table)').addClass('table table-bordered table-condensed').parent().addClass('table-responsive');
   $('.slider-wrapper').slick({
@@ -27,6 +35,7 @@ $(function() {
     mobileFirst: true,
     adaptiveHeight: true
   });
+  $('[data-toggle="tooltip"]').tooltip()
   if (!('ontouchstart' in window)) {
     (function() {
       var win = $(window);
@@ -76,121 +85,6 @@ $(function() {
       });
     })();
   }
-  (function() {
-    var mouseEvent;
-    var lastLength = 0;
-    var battleControl = $('<div id="battle-control">').appendTo(document.body);
-    var listWrapper = $('<div class="battle-list">').appendTo(battleControl);
-    var truncateButton = $('<button class="truncate button"><i class="fa fa-close"></i></button>').appendTo(battleControl);
-    var battleButton = $('<a target="_blank" class="button go">GO</a>').appendTo(battleControl);
-    truncateButton.on('click', function() {
-      $.each($.cookie(), function(key, value) {
-        if (key.indexOf('battle_') === 0) {
-          removeBattlePerson(key.substr('7'));
-        }
-      });
-      updateBattleList();
-    });
-    $('<button class="rocket button"><i class="fa fa-rocket"></i></button').appendTo(battleControl);
-    battleControl.find('button.rocket').on('focus', function() {
-      battleControl.addClass('active');
-    }).on('blur', function() {
-      battleControl.removeClass('active');
-    });
-    updateBattleList();
-    $(document).on('click', 'input.battle-person', function(e) {
-      var id = $(this).data('id');
-      var name = $(this).data('name');
-      if (this.checked) {
-        if (getBattleList().length >= 4) {
-          e.preventDefault();
-          //todo notifycation
-          return false;
-        }
-        mouseEvent = e;
-        addBattlePerson(id, name);
-      } else {
-        removeBattlePerson(id);
-      }
-    });
-    function addBattlePerson(id, name) {
-      var key = 'battle_' + id;
-      $.cookie(key, name, {
-        expires: 365,
-        path: '/'
-      });
-      updateBattleList();
-    }
-    function removeBattlePerson(id) {
-      var key = 'battle_' + id;
-      $.removeCookie(key, {
-        path: '/'
-      });
-      $('input.battle-person[data-id="' + id + '"]').prop('checked', false);
-      updateBattleList();
-    }
-    function updateBattleList() {
-      var list = getBattleList();
-      var ids = [];
-      if (list.length > 0){
-        listWrapper.empty();
-        list.forEach(function(person) {
-          ids.push(person.id);
-          $('<div class="battle-person">').append(
-            $('<a>').attr({
-              href: '/results/person/' + person.id,
-              target: '_blank'
-            }).text(person.name),
-            $('<i class="fa fa-close">').on('click', function() {
-              removeBattlePerson(person.id);
-            })
-          ).appendTo(listWrapper);
-        });
-        if (lastLength < list.length) {
-          battleControl.stop().css({
-            right: mouseEvent ? $(window).width() - mouseEvent.clientX : 200,
-            bottom: mouseEvent ? $(window).height() - mouseEvent.clientY : 200
-          }).animate({
-            right: 5,
-            bottom: 50
-          }, 800, 'swing');
-        }
-        battleControl.show();
-      } else {
-        battleControl.hide();
-      }
-      if (list.length > 0) {
-        battleButton.attr('href', '/results/battle/' + ids.join('-'));
-      } else {
-        battleButton.attr('href', 'javascript: void(0)');
-      }
-      lastLength = list.length;
-    }
-    function getBattleList() {
-      var list = [];
-      $.each($.cookie(), function(key, value) {
-        if (key.indexOf('battle_') === 0) {
-          list.push({
-            id: key.substr('7'),
-            name: value
-          });
-        }
-      });
-      return list;
-    }
-  })();
-  $('#expand-fee').on('click', function() {
-    var that = $(this);
-    var fa = that.find('i.fa');
-    var dd = that.parent().next();
-    if (fa.hasClass('fa-plus')) {
-      fa.removeClass('fa-plus').addClass('fa-minus');
-      dd.height('auto');
-    } else {
-      fa.addClass('fa-plus').removeClass('fa-minus');
-      dd.height(104).css('overflow-y', 'hidden');
-    }
-  })
   var i = 0, lastTime = Date.now()
   $('.countdown-timer').each(function() {
     var that = $(this), containers = [

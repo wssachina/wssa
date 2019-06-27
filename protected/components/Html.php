@@ -132,7 +132,7 @@ EOT
 	}
 
 	public static function fontAwesome($name, $position = '') {
-		$icon = '<i class="fa fa-' . $name . '"></i>';
+		$icon = '<i class="fa fa-fw fa-' . $name . '"></i>';
 		switch ($position) {
 			case 'a':
 				$icon .= ' ';

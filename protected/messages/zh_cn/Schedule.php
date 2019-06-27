@@ -23,7 +23,7 @@ return array (
   'Blue Stage' => '蓝色赛台',
   'Classroom' => '教室',
   'Competition' => '比赛',
-  'Competitors' => '人数',
+  'Competitors' => '晋级人数',
   'Cut Off' => '及格线',
   'Day' => '第几天',
   'End Time' => '结束时间',
