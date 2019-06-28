@@ -51,68 +51,51 @@
                   <?php echo CHtml::mailto(Html::fontAwesome('envelope', 'a') . $organizer->user->getAttributeValue('name', true), $organizer->user->email); ?>
                   <?php endforeach; ?>
                 </dd>
-                <?php if ($competition->delegate !== array() && !$competition->multi_countries): ?>
-                <dt><?php echo Yii::t('Competition', $competition->type == Competition::TYPE_WCA ? 'Delegates' : 'Main Judge'); ?></dt>
-                <dd>
-                  <?php foreach ($competition->delegate as $key=>$delegate): ?>
-                  <?php if ($key > 0) echo Yii::t('common', ', '); ?>
-                  <?php echo CHtml::mailto(Html::fontAwesome('envelope', 'a') . $delegate->user->getAttributeValue('name', true), $delegate->user->email); ?>
-                  <?php endforeach; ?>
-                </dd>
-                <?php elseif ($competition->isOld() && $competition->old->getAttributeValue('delegate')): ?>
-                <dt><?php echo Yii::t('Competition', $competition->type == Competition::TYPE_WCA ? 'Delegates' : 'Main Judge'); ?></dt>
-                <dd>
-                  <?php echo OldCompetition::formatInfo($competition->old->getAttributeValue('delegate')); ?>
-                </dd>
-                <?php endif; ?>
                 <dt><?php echo Yii::t('Competition', 'Events'); ?></dt>
                 <dd>
-                  <?php echo implode(Yii::t('common', ', '), array_map(function($event) use ($competition) {
-                    return Yii::t('event', $competition->getFullEventName($event));
-                  }, array_keys($competition->getRegistrationEvents()))); ?>
+                  <table class="table fee-table">
+                    <tbody>
+                    <?php foreach ($competition->getMainEvents() as $competitionEvent): ?>
+                      <tr>
+                        <th><?php echo $competitionEvent->e->name; ?></th>
+                        <th>领奖台</th>
+                      </tr>
+                      <?php foreach ($competitionEvent->children as $event): ?>
+                      <tr>
+                        <td><?php echo $event->e->name; ?></td>
+                        <td><?php echo $event->podiums ? 'Top ' . $event->podiums : '待定'; ?></td>
+                      </tr>
+                      <?php endforeach; ?>
+                    <?php endforeach; ?>
+                    </tbody>
+                  </table>
                 </dd>
-                <dt>在线支付</dt>
-                <dd><?php echo $competition->online_pay == Competition::YES ? '是' : '否'; ?></dd>
-                <dt>自动审核</dt>
-                <dd><?php echo $competition->auto_accept == Competition::YES ? '是' : '否'; ?></dd>
                 <dt><?php echo Yii::t('Competition', 'Entry Fee'); ?></dt>
-                <dd class="table-responsive">
-                  <table class="table table-bordered table-hover table-condensed">
+                <dd>
+                  <table class="table fee-table">
                     <thead>
                       <tr>
-                        <th><?php echo Yii::t('Competition', 'Events'); ?></th>
-                        <th><?php echo $competition->firstStage; ?></th>
-                        <?php if ($competition->hasSecondStage): ?>
-                        <th><?php echo $competition->secondStage; ?></th>
-                        <?php endif; ?>
-                        <?php if ($competition->hasThirdStage): ?>
-                        <th><?php echo $competition->thirdStage; ?></th>
-                        <?php endif; ?>
+                        <th>报名时间</th>
+                        <th>费用</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr>
-                        <td><?php echo Yii::t('Competition', 'Base Entry Fee'); ?></td>
-                        <td>　<i class="fa fa-rmb"></i><?php echo $competition->entry_fee; ?></td>
-                        <?php if ($competition->hasSecondStage): ?>
-                        <td>　<i class="fa fa-rmb"></i><?php echo $competition->getEventFee('entry', Competition::STAGE_SECOND); ?></td>
-                        <?php endif; ?>
-                        <?php if ($competition->hasThirdStage): ?>
-                        <td>　<i class="fa fa-rmb"></i><?php echo $competition->getEventFee('entry', Competition::STAGE_THIRD); ?></td>
-                        <?php endif; ?>
+                        <th><?php echo $competition->firstStage; ?></th>
+                        <td><i class="fa fa-rmb"></i><?php echo $competition->entry_fee; ?></td>
                       </tr>
-                      <?php foreach ($competition->associatedEvents as $key=>$value): ?>
+                      <?php if ($competition->hasSecondStage): ?>
                       <tr>
-                        <td><?php echo Events::getFullEventName($key); ?></td>
-                        <td>&nbsp;+<i class="fa fa-rmb"></i><?php echo $value['fee']; ?></td>
-                        <?php if ($competition->hasSecondStage): ?>
-                        <td>&nbsp;+<i class="fa fa-rmb"></i><?php echo $competition->getEventFee($key, Competition::STAGE_SECOND); ?></td>
-                        <?php endif; ?>
-                        <?php if ($competition->hasThirdStage): ?>
-                        <td>&nbsp;+<i class="fa fa-rmb"></i><?php echo $competition->getEventFee($key, Competition::STAGE_THIRD); ?></td>
-                        <?php endif; ?>
+                        <th><?php echo $competition->secondStage; ?></th>
+                        <td><i class="fa fa-rmb"></i><?php echo $competition->getEventFee('entry', Competition::STAGE_SECOND); ?></td>
                       </tr>
-                      <?php endforeach; ?>
+                      <?php endif; ?>
+                      <?php if ($competition->hasThirdStage): ?>
+                      <tr>
+                        <th><?php echo $competition->thirdStage; ?></th>
+                        <td><i class="fa fa-rmb"></i><?php echo $competition->getEventFee('entry', Competition::STAGE_THIRD); ?></td>
+                      </tr>
+                      <?php endif; ?>
                     </tbody>
                   </table>
                 </dd>

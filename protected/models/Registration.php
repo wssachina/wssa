@@ -847,11 +847,12 @@ class Registration extends ActiveRecord {
 	 */
 	public function rules() {
 		$rules = array(
-			array('competition_id, user_id, events, date', 'required'),
+			array('competition_id, user_id, date', 'required'),
 			array('location_id, total_fee, entourage_passport_type, status', 'numerical', 'integerOnly'=>true, 'min'=>0),
 			array('competition_id, user_id, date, entourage_passport_number', 'length', 'max'=>20),
 			// array('events', 'length', 'max'=>512),
 			array('events', 'checkEvents'),
+			array('events', 'required'),
 			array('comments', 'length', 'max'=>2048),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.

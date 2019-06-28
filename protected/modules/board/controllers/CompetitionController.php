@@ -79,7 +79,7 @@ class CompetitionController extends AdminController {
 				$model->scenario = 'accept';
 			}
 			if ($model->save()) {
-				$model->application->attributes = $_POST['CompetitionApplication'] ?? [];
+				$model->application->attributes = isset($_POST['CompetitionApplication']) ? $_POST['CompetitionApplication'] :  [];
 				$model->application->save();
 				switch ($model->isAccepted()) {
 					case true:
@@ -120,6 +120,9 @@ class CompetitionController extends AdminController {
 			$model->attributes = $_POST['Competition'];
 			$model->status = Competition::STATUS_UNCONFIRMED;
 			if (!$user->isAdministrator()) {
+				$model->organizers = [$user->id];
+			}
+			if (empty($model->organizers)) {
 				$model->organizers = [$user->id];
 			}
 			if ($model->save()) {

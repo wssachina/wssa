@@ -239,6 +239,7 @@ class CompetitionController extends Controller {
 			if (isset($_POST['cancel']) && $registration->isCancellable()) {
 				if ($registration->cancel()) {
 					Yii::app()->user->setFlash('success', Yii::t('Registration', 'Your registration has been cancelled.'));
+					$this->redirect($competition->getUrl('registration'));
 				}
 			}
 
@@ -247,6 +248,7 @@ class CompetitionController extends Controller {
 				$registration->comments = isset($_POST['Registration']['comments']) ? $_POST['Registration']['comments'] : null;
 				if ($registration->save()) {
 					Yii::app()->user->setFlash('success', '编辑报名信息成功！');
+					$this->redirect($competition->getUrl('registration'));
 				}
 			}
 			$registration->formatEvents();
@@ -281,19 +283,12 @@ class CompetitionController extends Controller {
 			}
 			if ($model->save()) {
 				Yii::app()->mailer->sendRegistrationNotice($model);
-				$this->setWeiboShareDefaultText($competition->getRegistrationDoneWeiboText(), false);
 				$model->formatEvents();
 				if ($model->isAccepted()) {
 					$model->accept();
 					$model->formatEvents();
 				}
-				$this->render('registrationDone', array(
-					'user'=>$user,
-					'accepted'=>$model->isAccepted(),
-					'competition'=>$competition,
-					'registration'=>$model,
-				));
-				Yii::app()->end();
+				$this->redirect($competition->getUrl('registration'));
 			}
 		}
 		$model->formatEvents();
