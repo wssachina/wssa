@@ -121,7 +121,7 @@
                 ),
                 'name'=>'reg_ip',
                 'type'=>'raw',
-                'value'=>'$data->getRegIpDisplay("reg_ip")',
+                // 'value'=>'$data->getRegIpDisplay("reg_ip")',
               ),
               array(
                 'headerHtmlOptions'=>array(
