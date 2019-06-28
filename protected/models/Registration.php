@@ -208,12 +208,12 @@ class Registration extends ActiveRecord {
 
 	public function getTShirtSizeText() {
 		$sizes = self::getTShirtSizes();
-		return $sizes[$this->t_shirt_size] ?? '';
+		return isset($sizes[$this->t_shirt_size]) ? $sizes[$this->t_shirt_size] : '';
 	}
 
 	public function getStaffTypeText() {
 		$types = self::getStaffTypes();
-		return $types[$this->staff_type] ?? '';
+		return isset($types[$this->staff_type]) ? $types[$this->staff_type] : '';
 	}
 
 	public function isPending() {
