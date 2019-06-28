@@ -270,6 +270,9 @@ $config = [
 		'description'=>'The Chinese WSSA website.',
 		'keywords'=>[
 			'WSSA China',
+			'WSSA',
+			'竞技叠杯运动协会',
+			'世界竞技叠杯运会',
 		],
 		'staticPath'=>PUBLIC_PATH . '/static/',
 		'staticUrlPrefix'=>'/static/',

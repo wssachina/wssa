@@ -16,6 +16,7 @@
         array(
           'url'=>array('/site/page', 'view'=>'links'),
           'label'=>Yii::t('common', 'Links'),
+          'visible'=>false,
         ),
         array(
           'url'=>array('/site/page', 'view'=>'disclaimer'),
