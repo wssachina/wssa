@@ -535,7 +535,7 @@ class Registration extends ActiveRecord {
 			array(
 				'name'=>'ip',
 				'type'=>'raw',
-				'value'=>'$data->getRegIpDisplay()',
+				// 'value'=>'$data->getRegIpDisplay()',
 			),
 		) : array();
 		$columns = array_merge(array(

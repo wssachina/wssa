@@ -65,8 +65,8 @@ class RegistrationController extends AdminController {
 			Yii::app()->user->setFlash('danger', '权限不足！');
 			$this->redirect(array('/board/registration/index'));
 		}
-		if (isset($_POST['event'])) {
-			$this->export($model, $this->aPost('event'), $this->iPost('all'), $this->iPost('xlsx'), $this->iPost('extra'), $this->sPost('order'));
+		if (isset($_POST['export'])) {
+			$this->export($model, $this->iPost('all'), $this->iPost('xlsx'), $this->iPost('extra'), $this->sPost('order'));
 		}
 		$exportFormsts = Events::getAllExportFormats();
 		$this->render('export', array(
@@ -135,9 +135,8 @@ class RegistrationController extends AdminController {
 		));
 	}
 
-	public function export($competition, $exportFormsts, $all = false, $xlsx = false, $extra = false, $order = 'date') {
+	public function export($competition, $all = false, $xlsx = false, $extra = false, $order = 'date') {
 		$registrations = Registration::getRegistrations($competition, $all, $order);
-		$template = PHPExcel_IOFactory::load(Yii::getPathOfAlias('application.data.results') . '.xls');
 		$export = new PHPExcel();
 		$export->getProperties()
 			->setCreator(Yii::app()->params->author)
@@ -145,163 +144,69 @@ class RegistrationController extends AdminController {
 			->setTitle($competition->wca_competition_id ?: $competition->name)
 			->setSubject($competition->name);
 		$export->removeSheetByIndex(0);
-		//注册页
-		$sheet = $template->getSheet(0);
-		$sheet->setCellValue('A1', $competition->wca_competition_id ?: $competition->name);
-		$events = $competition->getRegistrationEvents();
-		$col = 'J';
-		$cubecompsEvents = array(
-			'333'=>'3x3',
-			'444'=>'4x4',
-			'555'=>'5x5',
-			'666'=>'6x6',
-			'777'=>'7x7',
-			'222'=>'2x2',
-			'333bf'=>'333bld',
-			'333fm'=>'fmc',
-			'minx'=>'mega',
-			'pyram'=>'pyra',
-			'444bf'=>'444bld',
-			'555bf'=>'555bld',
-			'333mbf'=>'333mlt',
-		);
-		foreach ($events as $event=>$data) {
-			$sheet->setCellValue($col . 2, "=SUM({$col}4:{$col}" . (count($registrations) + 4) . ')');
-			$sheet->setCellValue($col . 3, isset($cubecompsEvents[$event]) ? $cubecompsEvents[$event] : $event);
-			$sheet->getColumnDimension($col)->setWidth(5.5);
+		//名单
+		$sheet = $export->createSheet();
+		$sheet->setTitle('参赛名单');
+		$col = 'A';
+		$columns = [
+			'英文名',
+			'英文姓',
+			'中文姓名',
+			'性别',
+			'出生年月',
+			'国家',
+			'省份',
+			'学校 / 俱乐部',
+			'双人搭档',
+			'亲子双人搭档',
+			'接力队伍名称',
+			'接力队伍教练',
+		];
+		foreach ($columns as $column) {
+			$sheet->setCellValue($col . '1', $column);
 			$col++;
 		}
+		$row = 2;
 		foreach ($registrations as $key=>$registration) {
 			$user = $registration->user;
-			$row = $key + 4;
-			$sheet->setCellValue('A' . $row, $registration->number)
-				->setCellValue('B' . $row, $user->getCompetitionName())
-				->setCellValue('C' . $row, $user->country->name)
-				->setCellValue('D' . $row, $user->wcaid)
-				->setCellValue('E' . $row, $user->getWcaGender())
-				->setCellValue('F' . $row, PHPExcel_Shared_Date::FormattedPHPToExcel(
-					date('Y', $user->birthday),
-					date('m', $user->birthday),
-					date('d', $user->birthday)
-				));
-			$col = 'J';
-			foreach ($events as $event=>$data) {
-				if (in_array("$event", $registration->events)) {
-					$sheet->setCellValue($col . $row, 1);
-				}
+			$name = explode(' ', $user->name);
+			$firstName = implode(' ', array_slice($name, 0, -1));
+			$lastName = implode('', array_slice($name, -1));
+			$col = 'A';
+			$sheet->setCellValue($col . $row, $firstName);
+			$col++;
+			$sheet->setCellValue($col . $row, $lastName);
+			$col++;
+			$sheet->setCellValue($col . $row, $user->name_zh);
+			$col++;
+			$sheet->setCellValue($col . $row, $user->getGenderText());
+			$col++;
+			$sheet->setCellValue($col . $row, date('Y-m-d', $user->birthday));
+			$col++;
+			$sheet->setCellValue($col . $row, $user->country->name_zh);
+			$col++;
+			$sheet->setCellValue($col . $row, $user->province !== null ? $user->province->name_zh : '');
+			$col++;
+			// 学校 / 俱乐部
+			$col++;
+			$events = $registration->events;
+			if (isset($events['age-division'])) {
+				$sheet->setCellValue($col . $row, $events['age-division']['name']);
 				$col++;
 			}
-			if ($extra) {
+			if (isset($events['child-parent'])) {
+				$sheet->setCellValue($col . $row, $events['child-parent']['name']);
 				$col++;
-				$fee = $registration->getTotalFee();
-				if ($registration->isPaid()) {
-					$fee .= Yii::t('common', ' (paid)');
-				}
-				$sheet->setCellValue($col . $row, $fee);
-				$col++;
-				$sheet->setCellValueExplicit($col . $row, $user->mobile, PHPExcel_Cell_DataType::TYPE_STRING);
-				$col++;
-				$sheet->setCellValue($col . $row, $user->email);
-				$col++;
-				$sheet->setCellValue($col . $row, $registration->comments);
-				if ($competition->t_shirt) {
-					$col++;
-					$col++;
-					$sheet->setCellValue($col . $row, $registration->getTShirtSizeText());
-				}
-				if ($competition->staff) {
-					$col++;
-					$col++;
-					$sheet->setCellValue($col . $row, $registration->getStaffTypeText());
-					$col++;
-					$sheet->setCellValue($col . $row, $registration->staff_statement);
-				}
-				if ($competition->fill_passport) {
-					$col++;
-					$col++;
-					$sheet->setCellValue($col . $row, $user->getPassportTypeText());
-					$col++;
-					$sheet->setCellValueExplicit($col . $row, $user->passport_number, PHPExcel_Cell_DataType::TYPE_STRING);
-				}
-				if ($competition->entourage_limit && $registration->has_entourage) {
-					$col++;
-					$col++;
-					$sheet->setCellValue($col . $row, $registration->entourage_name);
-					$col++;
-					$sheet->setCellValue($col . $row, $registration->getPassportTypeText());
-					$col++;
-					$sheet->setCellValueExplicit($col . $row, $registration->entourage_passport_number, PHPExcel_Cell_DataType::TYPE_STRING);
-					$col++;
-					$sheet->setCellValueExplicit($col . $row, $registration->guest_paid == Registration::YES ? '已支付' : '未支付');
-				}
 			}
-			if (!$registration->isAccepted()) {
-				$sheet->getStyle("A{$row}:D{$row}")->applyFromArray(array(
-					'fill'=>array(
-						'type'=>PHPExcel_Style_Fill::FILL_SOLID,
-						'color'=>array(
-							'argb'=>'FFFFFF00',
-						),
-					),
-				));
+			if (isset($events['relay'])) {
+				$sheet->setCellValue($col . $row, $events['relay']['name']);
+				$col++;
+				$sheet->setCellValue($col . $row, $events['relay']['coordinator']);
+				$col++;
 			}
+			$row++;
 		}
-		$export->addExternalSheet($sheet);
-		//各个项目
-		foreach ($exportFormsts as $event=>$rounds) {
-			$count = count($rounds);
-			foreach ($rounds as $round=>$format) {
-				if ($round == $count - 1) {
-					$round = 'f';
-				} else {
-					$round++;
-				}
-				$sheet = $template->getSheetByName($format);
-				if ($sheet === null) {
-					continue;
-				}
-				$sheet = clone $sheet;
-				$sheet->setTitle("{$event}-{$round}");
-				$template->addSheet($sheet);
-				$sheet->setCellValue('A1', Events::getFullEventName($event) . ' - ' . RoundTypes::getFullRoundName($round));
-				if ($round == 1 || $count == 1) {
-					$row = 5;
-					foreach ($registrations as $registration) {
-						if (!in_array("$event", $registration->events)) {
-							continue;
-						}
-						$user = $registration->user;
-						$sheet->setCellValue('B' . $row, $user->getCompetitionName())
-							->setCellValue('C' . $row, $user->country->name)
-							->setCellValue('D' . $row, $user->wcaid);
-						if ($row > 5) {
-							$formula = $sheet->getCell('A' . ($row - 1))->getValue();
-							$formula = strtr($formula, array(
-								'-4'=>'_temp_',
-								$row - 1=>$row,
-								$row - 2=>$row - 1,
-								$row=>$row+1,
-							));
-							$formula = str_replace('_temp_', '-4', $formula);
-							$sheet->setCellValue('A' . $row, $formula);
-						}
-						if (!$registration->isAccepted()) {
-							$sheet->getStyle("A{$row}:D{$row}")->applyFromArray(array(
-								'fill'=>array(
-									'type'=>PHPExcel_Style_Fill::FILL_SOLID,
-									'color'=>array(
-										'argb'=>'FFFFFF00',
-									),
-								),
-							));
-						}
-						$row++;
-					}
-				}
-				$export->addExternalSheet($sheet);
-			}
-		}
-		$this->exportToExcel($export, 'php://output', $competition->name, $xlsx);
+		$this->exportToExcel($export, 'php://output', $competition->name_zh . '名单', $xlsx);
 	}
 
 	public function exportLiveData($competition, $xlsx = false) {
