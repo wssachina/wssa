@@ -192,18 +192,18 @@ class RegistrationController extends AdminController {
 			$events = $registration->events;
 			if (isset($events['age-division'])) {
 				$sheet->setCellValue($col . $row, $events['age-division']['name']);
-				$col++;
 			}
+			$col++;
 			if (isset($events['child-parent'])) {
 				$sheet->setCellValue($col . $row, $events['child-parent']['name']);
-				$col++;
 			}
+			$col++;
 			if (isset($events['relay'])) {
 				$sheet->setCellValue($col . $row, $events['relay']['name']);
 				$col++;
 				$sheet->setCellValue($col . $row, $events['relay']['coordinator']);
-				$col++;
 			}
+			$col++;
 			$row++;
 		}
 		$this->exportToExcel($export, 'php://output', $competition->name_zh . '名单', $xlsx);
