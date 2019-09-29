@@ -59,7 +59,7 @@ class ActiveRecord extends CActiveRecord {
 		), $this->$attribute);
 	}
 
-	protected function getTimeInNumber($attribute) {
+	public function getTimeInNumber($attribute) {
 		$time = $this->$attribute;
 		if (!ctype_digit($time)) {
 			$time = strtotime($time);

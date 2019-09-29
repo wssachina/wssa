@@ -227,6 +227,21 @@ class User extends ActiveRecord {
 		return in_array($permission, CHtml::listData($this->permissions, 'id', 'permission'));
 	}
 
+	public function canRegister($competition) {
+		$teamChinaPreservedDate = $competition->getTimeInNumber('team_china_preserved_date');
+		if ($teamChinaPreservedDate == 0) {
+			return true;
+		}
+		return time() > $teamChinaPreservedDate || $this->hasIdentity(UserIdentity::IDENTITY_TEAM_CHINA);
+	}
+
+	public function canNotRegisterReason($competition) {
+		$teamChinaPreservedDate = $competition->getTimeInNumber('team_china_preserved_date');
+		if ($teamChinaPreservedDate > 0 && !$this->hasIdentity(UserIdentity::IDENTITY_TEAM_CHINA)) {
+			return sprintf('当前是中国队专属报名时间，请于%s之后前来报名。', date('Y-m-d H:i:s', $teamChinaPreservedDate));
+		}
+	}
+
 	public function hasSuccessfulRegistration() {
 		return Registration::model()->countByAttributes([
 			'user_id'=>$this->id,
@@ -266,6 +281,15 @@ class User extends ActiveRecord {
 
 	public function setIdentity($identity) {
 		$this->_identity = $identity;
+	}
+
+	public function hasIdentity($identity) {
+		foreach ($this->allIdentities as $userIdentity) {
+			if ($identity == $userIdentity->identity) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public function updateIdentity() {
