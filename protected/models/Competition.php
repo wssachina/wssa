@@ -1083,19 +1083,19 @@ class Competition extends ActiveRecord {
 				$buttons[] = CHtml::link(Html::fontAwesome('list-alt'), ['/board/competition/schedule', 'id'=>$this->id], ['class'=>'btn btn-sm btn-default btn-square tips', 'data-toggle'=>'tooltip', 'title'=>'赛程']);
 				if ($this->status == self::STATUS_SHOW) {
 					$buttons[] = CHtml::link(Html::fontAwesome('users'), ['/board/registration/index', 'Registration'=>['competition_id'=>$this->id]], ['class'=>'btn btn-sm btn-purple btn-square tips', 'data-toggle'=>'tooltip', 'title'=>'报名管理']);
-					if ($this->isRegistrationEnded()) {
-						$buttons[] = CHtml::tag('button', [
-							'class'=>'btn btn-sm btn-square toggle tips btn-' . ($this->live ? 'red' : 'green'),
-							'title'=>'开启/关闭成绩直播',
-							'data-id'=>$this->id,
-							'data-toggle'=>'tooltip',
-							'data-url'=>CHtml::normalizeUrl(['/board/competition/toggle']),
-							'data-attribute'=>'live',
-							'data-value'=>$this->live,
-							'data-text'=>json_encode([Html::fontAwesome('play'), Html::fontAwesome('stop')]),
-							'data-name'=>$this->name_zh,
-						], !$this->live ? Html::fontAwesome('play') : Html::fontAwesome('stop'));
-					}
+					// if ($this->isRegistrationEnded()) {
+					// 	$buttons[] = CHtml::tag('button', [
+					// 		'class'=>'btn btn-sm btn-square toggle tips btn-' . ($this->live ? 'red' : 'green'),
+					// 		'title'=>'开启/关闭成绩直播',
+					// 		'data-id'=>$this->id,
+					// 		'data-toggle'=>'tooltip',
+					// 		'data-url'=>CHtml::normalizeUrl(['/board/competition/toggle']),
+					// 		'data-attribute'=>'live',
+					// 		'data-value'=>$this->live,
+					// 		'data-text'=>json_encode([Html::fontAwesome('play'), Html::fontAwesome('stop')]),
+					// 		'data-name'=>$this->name_zh,
+					// 	], !$this->live ? Html::fontAwesome('play') : Html::fontAwesome('stop'));
+					// }
 				}
 				if ($isAdministrator) {
 					$buttons[] = CHtml::tag('button', [
