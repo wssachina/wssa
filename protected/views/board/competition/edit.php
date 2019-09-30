@@ -107,6 +107,20 @@
             $form->error($model, 'wssa_url', array('class'=>'text-danger'))
           );?>
           <div class="clearfix"></div>
+          <?php echo Html::formGroup(
+            $model, 'team_china_preserved_date', array(
+              'class'=>'col-md-4',
+            ),
+            $form->labelEx($model, 'team_china_preserved_date', array(
+              'label'=>'中国队专属时间',
+            )),
+            Html::activeTextField($model, 'team_china_preserved_date', array(
+              'class'=>'datetime-picker',
+              'data-date-format'=>'yyyy-mm-dd hh:ii:00',
+              'autocomplete'=>'off',
+            )),
+            $form->error($model, 'team_china_preserved_date', array('class'=>'text-danger'))
+          );?>
           <?php endif; ?>
           <?php echo Html::formGroup(
             $model, 'second_stage_date', array(

@@ -1239,7 +1239,7 @@ class Competition extends ActiveRecord {
 		foreach ([
 			'date', 'end_date', 'reg_start', 'reg_end',
 			'second_stage_date', 'third_stage_date', 'qualifying_end_time',
-			'cancellation_end_time', 'reg_reopen_time',
+			'cancellation_end_time', 'reg_reopen_time', 'team_china_preserved_date',
 		] as $attribute) {
 			if ($this->$attribute != '') {
 				$date = strtotime($this->$attribute);
@@ -1268,6 +1268,7 @@ class Competition extends ActiveRecord {
 		foreach ([
 			'reg_start', 'reg_end', 'second_stage_date', 'third_stage_date',
 			'qualifying_end_time', 'cancellation_end_time', 'reg_reopen_time',
+			'team_china_preserved_date',
 		] as $attribute) {
 			if (!empty($this->$attribute)) {
 				$this->$attribute = date('Y-m-d H:i:s', $this->$attribute);
@@ -1884,6 +1885,14 @@ class Competition extends ActiveRecord {
 		}
 	}
 
+	public function checkTeamChinaPreservedDate() {
+		if (($this->team_china_preserved_date >= $this->reg_end && $this->reg_end > 0)
+			|| ($this->team_china_preserved_date <= $this->reg_start && $this->team_china_preserved_date > 0)
+		) {
+			$this->addError('team_china_preserved_date', '中国队专属时间必须介于报名开始和报名结束之间');
+		}
+	}
+
 	public function checkSecondStageDate() {
 		if (($this->second_stage_date >= $this->reg_end && $this->reg_end > 0)
 			|| ($this->second_stage_date <= $this->reg_start && $this->second_stage_date > 0)
@@ -2086,6 +2095,7 @@ class Competition extends ActiveRecord {
 			['cancellation_end_time', 'checkCancellationEnd', 'skipOnError'=>true, 'except'=>'accept'],
 			['reg_reopen_time', 'checkRegistrationReopen', 'skipOnError'=>true, 'except'=>'accept'],
 			['qualifying_end_time', 'checkQualifyingEndTime', 'skipOnError'=>true],
+			['team_china_preserved_date', 'checkTeamChinaPreservedDate', 'skipOnError'=>true],
 			['second_stage_date', 'checkSecondStageDate', 'skipOnError'=>true],
 			['second_stage_ratio', 'checkSecondStageRatio', 'skipOnError'=>true],
 			['third_stage_date', 'checkThirdStageDate', 'skipOnError'=>true],
@@ -2160,6 +2170,7 @@ class Competition extends ActiveRecord {
 			'event' => Yii::t('common', 'Event'),
 			'province' => Yii::t('common', 'Province'),
 			'wssa_url'=>'WSSA官方链接',
+			'team_china_preserved_date'=>'此时间之前只有中国队能报名',
 		);
 	}
 

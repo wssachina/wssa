@@ -1,4 +1,9 @@
 <dl>
+  <?php if ($competition->team_china_preserved_date > 0): ?>
+  <div class="alert alert-danger alert-dismissable">
+    <?php echo date('Y-m-d H:i:s', $competition->team_china_preserved_date) ?>之前是中国队专属报名时间，只有中国队成员可以进行报名！
+  </div>
+  <?php endif; ?>
   <?php if ($competition->isSanctionedCompetition()): ?>
   <dt>世界竞技叠杯运动协会认证比赛</dt>
   <dd>

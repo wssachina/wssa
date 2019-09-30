@@ -1,3 +1,4 @@
+<?php if ($this->user->canRegister($competition)): ?>
 <?php $form = $this->beginWidget('ActiveForm', array(
   'id'=>'registration-form',
   'htmlOptions'=>array(
@@ -25,3 +26,8 @@
     'disabled'=>$competition->fill_passport && $this->user->passport_type == User::NO,
   ], Yii::t('common', 'Submit')); ?>
 <?php $this->endWidget(); ?>
+<?php else: ?>
+<div class="alert alert-danger alert-dismissable">
+  <?php echo $this->user->canNotRegisterReason($competition); ?>
+</div>
+<?php endif; ?>

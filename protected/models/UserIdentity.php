@@ -14,11 +14,13 @@
 class UserIdentity extends ActiveRecord {
 	const IDENTITY_COACH = 1;
 	const IDENTITY_JUDGE = 2;
+	const IDENTITY_TEAM_CHINA = 3;
 
 	public static function getAllIdentities() {
 		return array(
 			self::IDENTITY_COACH=>'教练',
 			self::IDENTITY_JUDGE=>'裁判',
+			self::IDENTITY_TEAM_CHINA=>'中国队',
 		);
 	}
 
