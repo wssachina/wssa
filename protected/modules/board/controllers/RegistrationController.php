@@ -166,6 +166,12 @@ class RegistrationController extends AdminController {
 			$sheet->setCellValue($col . '1', $column);
 			$col++;
 		}
+		if ($extra) {
+			foreach (['手机', '邮箱', '备注'] as $column) {
+				$sheet->setCellValue($col . '1', $column);
+				$col++;
+			}
+		}
 		$row = 2;
 		foreach ($registrations as $key=>$registration) {
 			$user = $registration->user;
@@ -202,8 +208,19 @@ class RegistrationController extends AdminController {
 				$sheet->setCellValue($col . $row, $events['relay']['name']);
 				$col++;
 				$sheet->setCellValue($col . $row, $events['relay']['coordinator']);
+			} else {
+				$col++;
 			}
 			$col++;
+			//额外信息
+			if ($extra) {
+				$sheet->setCellValue($col . $row, $user->mobile);
+				$col++;
+				$sheet->setCellValue($col . $row, $user->email);
+				$col++;
+				$sheet->setCellValue($col . $row, $registration->comments);
+				$col++;
+			}
 			$row++;
 		}
 		$this->exportToExcel($export, 'php://output', $competition->name_zh . '名单', $xlsx);
