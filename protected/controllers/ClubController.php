@@ -15,6 +15,7 @@ class ClubController extends Controller {
 	public function actionIndex() {
 		$model = new Club();
 		$model->unsetAttributes();
+		$model->status = Club::STATUS_SHOW;
 		$model->province_id = $this->iGet('province');
 		if ($model->province_id <= 0) {
 			$model->province_id = null;
