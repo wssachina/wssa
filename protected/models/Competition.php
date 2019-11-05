@@ -2084,7 +2084,7 @@ class Competition extends ActiveRecord {
 			['entry_fee, second_stage_all, online_pay, person_num, auto_accept, fill_passport, local_type, live, status', 'numerical', 'integerOnly'=>true],
 			['fill_passport, show_regulations, show_qrcode, t_shirt, staff, podiums_children, podiums_females, podiums_new_comers, podiums_greater_china, podiums_u8, podiums_u10, podiums_u12', 'numerical', 'integerOnly'=>true],
 			['podiums_num', 'numerical', 'integerOnly'=>true, 'max'=>8, 'min'=>3],
-			['type', 'length', 'max'=>10],
+			['type', 'length', 'max'=>20],
 			['name_zh', 'length', 'max'=>50],
 			['name', 'length', 'max'=>128],
 			['name', 'checkName', 'skipOnError'=>true],
