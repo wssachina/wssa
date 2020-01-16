@@ -23,7 +23,7 @@ class CompetitionLocation extends ActiveRecord {
 			case $showDisinct && in_array($this->province_id, [215, 525, 567, 642]):
 				return $this->province->getAttributeValue('name');
 			default:
-				return $this->city ? $this->city->getAttributeValue('name') : $this->getAttributeValue('venue');
+				return $this->city ? $this->city->getAttributeValue('name') : '';
 		}
 	}
 

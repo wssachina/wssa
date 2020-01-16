@@ -471,7 +471,8 @@ class Competition extends ActiveRecord {
 			switch ($type) {
 				case 'city':
 				case 'province':
-					return $this->location[0]->$type->getAttributeValue('name');
+					$region = $this->location[0]->$type;
+					return $region ? $region->getAttributeValue('name') : '';
 				default:
 					return $this->location[0]->getAttributeValue($type);
 			}
@@ -1958,7 +1959,7 @@ class Competition extends ActiveRecord {
 			) {
 				continue;
 			}
-			if (!$this->multi_countries || $locations['country_id'][$key] == 1) {
+			if (!Yii::app()->controller->user->isAdministrator()) {
 				if (empty($provinceId)) {
 					$this->addError('locations.province_id.' . $index, '省份不能为空');
 					$error = true;
