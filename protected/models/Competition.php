@@ -1887,7 +1887,7 @@ class Competition extends ActiveRecord {
 	}
 
 	public function checkTeamChinaPreservedDate() {
-		if (($this->team_china_preserved_date >= $this->reg_end && $this->reg_end > 0)
+		if (($this->team_china_preserved_date > $this->reg_end && $this->reg_end > 0)
 			|| ($this->team_china_preserved_date <= $this->reg_start && $this->team_china_preserved_date > 0)
 		) {
 			$this->addError('team_china_preserved_date', '中国队专属时间必须介于报名开始和报名结束之间');
