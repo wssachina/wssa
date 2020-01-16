@@ -471,7 +471,8 @@ class Competition extends ActiveRecord {
 			switch ($type) {
 				case 'city':
 				case 'province':
-					return $this->location[0]->$type->getAttributeValue('name');
+					$region = $this->location[0]->$type;
+					return $region ? $region->getAttributeValue('name') : '';
 				default:
 					return $this->location[0]->getAttributeValue($type);
 			}
@@ -1886,7 +1887,7 @@ class Competition extends ActiveRecord {
 	}
 
 	public function checkTeamChinaPreservedDate() {
-		if (($this->team_china_preserved_date >= $this->reg_end && $this->reg_end > 0)
+		if (($this->team_china_preserved_date > $this->reg_end && $this->reg_end > 0)
 			|| ($this->team_china_preserved_date <= $this->reg_start && $this->team_china_preserved_date > 0)
 		) {
 			$this->addError('team_china_preserved_date', '中国队专属时间必须介于报名开始和报名结束之间');
@@ -1958,7 +1959,7 @@ class Competition extends ActiveRecord {
 			) {
 				continue;
 			}
-			if (!$this->multi_countries || $locations['country_id'][$key] == 1) {
+			if (!Yii::app()->controller->user->isAdministrator()) {
 				if (empty($provinceId)) {
 					$this->addError('locations.province_id.' . $index, '省份不能为空');
 					$error = true;

@@ -57,7 +57,7 @@
             <div class="clearfix"></div>
             <?php echo Html::formGroup(
               $model, 'content_zh', array(
-                'class'=>'col-lg-6',
+                'class'=>'col-lg-12',
               ),
               $form->labelEx($model, 'content_zh', array(
                 'label'=>'中文正文',
@@ -67,19 +67,6 @@
                 'rows'=>'10',
               )),
               $form->error($model, 'content_zh', array('class'=>'text-danger'))
-            );?>
-            <?php echo Html::formGroup(
-              $model, 'content', array(
-                'class'=>'col-lg-6',
-              ),
-              $form->labelEx($model, 'content', array(
-                'label'=>'英文正文',
-              )),
-              $form->textArea($model, 'content', array(
-                'class'=>'form-control',
-                'rows'=>'10',
-              )),
-              $form->error($model, 'content', array('class'=>'text-danger'))
             );?>
             <div class="col-lg-12">
               <button type="submit" class="btn btn-default btn-square"><?php echo Yii::t('common', 'Submit'); ?></button>

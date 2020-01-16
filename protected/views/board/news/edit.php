@@ -95,7 +95,7 @@
             <div class="clearfix"></div>
             <?php echo Html::formGroup(
               $model, 'content_zh', array(
-                'class'=>'col-lg-6',
+                'class'=>'col-lg-12',
               ),
               $form->labelEx($model, 'content_zh', array(
                 'label'=>'中文正文',
@@ -105,22 +105,10 @@
               )),
               $form->error($model, 'content_zh', array('class'=>'text-danger'))
             );?>
-            <?php echo Html::formGroup(
-              $model, 'content', array(
-                'class'=>'col-lg-6',
-              ),
-              $form->labelEx($model, 'content', array(
-                'label'=>'英文正文',
-              )),
-              $form->textArea($model, 'content', array(
-                'class'=>'editor form-control'
-              )),
-              $form->error($model, 'content', array('class'=>'text-danger'))
-            );?>
             <div class="clearfix"></div>
             <?php echo Html::formGroup(
               $model, 'description_zh', array(
-                'class'=>'col-lg-6',
+                'class'=>'col-lg-12',
               ),
               $form->labelEx($model, 'description_zh', array(
                 'label'=>'中文摘要',
@@ -129,18 +117,6 @@
                 'class'=>'editor form-control'
               )),
               $form->error($model, 'description_zh', array('class'=>'text-danger'))
-            );?>
-            <?php echo Html::formGroup(
-              $model, 'description', array(
-                'class'=>'col-lg-6',
-              ),
-              $form->labelEx($model, 'description', array(
-                'label'=>'英文摘要',
-              )),
-              $form->textArea($model, 'description', array(
-                'class'=>'editor form-control'
-              )),
-              $form->error($model, 'description', array('class'=>'text-danger'))
             );?>
             <div class="clearfix"></div>
             <?php echo Html::formGroup(
@@ -192,6 +168,8 @@
               )),
               $form->error($model, 'meta_description', array('class'=>'text-danger'))
             );?>
+            <?php echo $form->hiddenField($model, 'content'); ?>
+            <?php echo $form->hiddenField($model, 'description'); ?>
             <div class="col-lg-12">
               <button type="submit" class="btn btn-default btn-square"><?php echo Yii::t('common', 'Submit'); ?></button>
             </div>
