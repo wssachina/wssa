@@ -33,9 +33,10 @@ class NewsTemplate extends ActiveRecord {
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name, title, title_zh, content, content_zh', 'required'),
+			array('name, title, title_zh, content_zh', 'required'),
 			array('name', 'length', 'max'=>255),
 			array('title, title_zh', 'length', 'max'=>1024),
+			array('content', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, name, title, title_zh, content, content_zh', 'safe', 'on'=>'search'),
