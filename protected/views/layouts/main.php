@@ -61,7 +61,7 @@
   <div class="bottom-bar">
     <div class="container">
       <div class="row">
-        <small class="copyright col-md-6 col-sm-12 col-xs-12">Copyright @ <?php echo date('Y'); ?> 北京金色王国文化传播有限公司 京ICP备18011908号-1</small>
+        <small class="copyright col-md-6 col-sm-12 col-xs-12">Copyright © <?php echo date('Y'); ?> 北京金色王国文化传播有限公司 京ICP备18011908号-1</small>
         <ul class="social pull-right col-md-6 col-sm-12 col-xs-12">
           <li class="row-end"><?php echo CHtml::link(Html::fontAwesome('rss'), array('/feed/index')); ?></li>
         </ul>
