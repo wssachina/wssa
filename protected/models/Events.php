@@ -189,7 +189,7 @@ class Events extends ActiveRecord {
 	public static function getAllEvents() {
 		if (self::$_allEvents === null) {
 			self::$_allEvents = CHtml::listData(self::model()->findAll([
-				'order'=>'rank',
+				'order'=>'`rank`',
 			]), 'id', 'name');
 		}
 		return self::$_allEvents;

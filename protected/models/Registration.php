@@ -501,7 +501,7 @@ class Registration extends ActiveRecord {
 				'value'=>"CHtml::label(CHtml::checkBox('{$modelName}[competitors][]', \$data->isAccepted(), array(
 					'class'=>implode(' ', array_map(function(\$a) {
 						return 'event-' . \$a;
-					}, \$data->events)) . ' competitor',
+					}, array_keys(\$data->events))) . ' competitor',
 					'value'=>\$data->user->email,
 					'data-accepted'=>intval(\$data->isAccepted()),
 					'data-staff'=>\$data->staff_type,
