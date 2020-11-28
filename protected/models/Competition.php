@@ -229,10 +229,10 @@ class Competition extends ActiveRecord {
 		));
 		$competitions = array();
 		if ($inProgress !== array()) {
-			$competitions['In Progress'] = CHtml::listData($inProgress, 'id', 'name_zh');
+			$competitions['In Progress'] = CHtml::listData($inProgress, 'id', 'fullName');
 		}
 		if ($ended !== array()) {
-			$competitions['Ended'] = CHtml::listData($ended, 'id', 'name_zh');
+			$competitions['Ended'] = CHtml::listData($ended, 'id', 'fullName');
 		}
 		return $competitions;
 	}
