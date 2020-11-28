@@ -800,7 +800,7 @@ class Registration extends ActiveRecord {
 		$pay->type_id = $this->competition_id;
 		$pay->sub_type_id = $this->id;
 		$pay->amount = $this->total_fee * 100;
-		$pay->order_name = $this->competition->name_zh;
+		$pay->order_name = $this->competition->getFullName() . '-' . $this->user->name_zh;
 		$r = $pay->save();
 		return $pay;
 	}
