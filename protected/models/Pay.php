@@ -420,7 +420,7 @@ class Pay extends ActiveRecord {
 						array(
 							'name'=>'type_id',
 							'header'=>Yii::t('common', 'Competition'),
-							'value'=>'$data->competition->name_zh',
+							'value'=>'$data->competition->getFullName()',
 							'filter'=>Competition::getRegistrationCompetitions(),
 						),
 					));
