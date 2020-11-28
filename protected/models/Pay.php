@@ -142,7 +142,7 @@ class Pay extends ActiveRecord {
 		$client = new Client();
 		try {
 			$response = $client->post($gateway, [
-				'form_params'=>$params,
+				'body'=>$params,
 			]);
 			if ($response->getStatusCode() != 200) {
 				return false;
