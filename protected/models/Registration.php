@@ -437,6 +437,7 @@ class Registration extends ActiveRecord {
 		}
 		switch ($this->competition->refund_type) {
 			case Competition::REFUND_TYPE_50_PERCENT:
+			case Competition::REFUND_TYPE_80_PERCENT:
 			case Competition::REFUND_TYPE_100_PERCENT:
 				$percent = intval($this->competition->refund_type);
 				return $this->pay->paid_amount * $percent / 100;

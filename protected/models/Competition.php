@@ -53,6 +53,7 @@ class Competition extends ActiveRecord {
 
 	const REFUND_TYPE_NONE = 'none';
 	const REFUND_TYPE_50_PERCENT = '50';
+	const REFUND_TYPE_80_PERCENT = '80';
 	const REFUND_TYPE_100_PERCENT = '100';
 
 	private $_organizers;
@@ -273,6 +274,7 @@ class Competition extends ActiveRecord {
 		return array(
 			self::REFUND_TYPE_NONE=>'不退',
 			self::REFUND_TYPE_50_PERCENT=>'50%',
+			self::REFUND_TYPE_80_PERCENT=>'80%',
 			self::REFUND_TYPE_100_PERCENT=>'100%',
 		);
 	}
