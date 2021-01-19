@@ -52,14 +52,14 @@
                 'value'=>'$data->getEmailLink()',
               ),
               'mobile',
-              array(
-                'headerHtmlOptions'=>array(
-                  'class'=>'header-wcaid',
-                ),
-                'name'=>'wcaid',
-                'type'=>'raw',
-                'value'=>'$data->getWcaLink($data->wcaid)',
-              ),
+              // array(
+              //   'headerHtmlOptions'=>array(
+              //     'class'=>'header-wcaid',
+              //   ),
+              //   'name'=>'wcaid',
+              //   'type'=>'raw',
+              //   'value'=>'$data->getWcaLink($data->wcaid)',
+              // ),
               array(
                 'headerHtmlOptions'=>array(
                   'class'=>'header-gender',
@@ -96,16 +96,16 @@
                 'type'=>'raw',
                 'value'=>'$data->getRegionName($data->country)',
               ),
-              // array(
-              //   'name'=>'province_id',
-              //   'type'=>'raw',
-              //   'value'=>'$data->getRegionName($data->province)',
-              // ),
-              // array(
-              //   'name'=>'city_id',
-              //   'type'=>'raw',
-              //   'value'=>'$data->getRegionName($data->city)',
-              // ),
+               array(
+                 'name'=>'province_id',
+                 'type'=>'raw',
+                 'value'=>'$data->getRegionName($data->province)',
+               ),
+               array(
+                 'name'=>'city_id',
+                 'type'=>'raw',
+                 'value'=>'$data->getRegionName($data->city)',
+               ),
               array(
                 'headerHtmlOptions'=>array(
                   'class'=>'header-time',
@@ -121,7 +121,7 @@
                 ),
                 'name'=>'reg_ip',
                 'type'=>'raw',
-                // 'value'=>'$data->getRegIpDisplay("reg_ip")',
+                'value'=>'$data->getRegIpDisplay("reg_ip")',
               ),
               array(
                 'headerHtmlOptions'=>array(
