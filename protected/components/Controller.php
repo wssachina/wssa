@@ -158,10 +158,41 @@ class Controller extends CController {
 					),
 				),
 				array(
-					'label'=>Html::fontAwesome('file-text-o', 'a') . Yii::t('common', 'About'),
-					'url'=>array('/site/page', 'view'=>'about'),
+					'label'=>Html::fontAwesome('file-text-o', 'a') . Yii::t('common', 'About') . Html::fontAwesome('angle-down', 'b'),
+					'url'=>'#',
 					'itemOptions'=>array(
-						'class'=>'nav-item',
+						'class'=>'nav-item dropdown',
+					),
+					'linkOptions'=>array(
+						'class'=>'dropdown-toggle',
+						'data-toggle'=>'dropdown',
+						'data-hover'=>'dropdown',
+						'data-delay'=>0,
+						'data-close-others'=>'false',
+					),
+					'items'=>array(
+						array(
+							'url'=>array('/site/page', 'view'=>'about'),
+							'label'=>Html::fontAwesome('file-text-o', 'a') . Yii::t('common', 'About'),
+						),
+						array(
+							'url'=>array('/faq/index'),
+							'label'=>Html::fontAwesome('question-circle', 'a') . Yii::t('common', 'FAQ'),
+							'visible'=>Faq::model()->countByAttributes(['status'=>Faq::STATUS_SHOW]) > 0,
+						),
+						array(
+							'url'=>array('/site/page', 'view'=>'contact'),
+							'label'=>Html::fontAwesome('pencil-square-o', 'a') . Yii::t('common', 'Contact'),
+						),
+						// array(
+						// 	'url'=>array('/site/page', 'view'=>'links'),
+						// 	'label'=>Html::fontAwesome('link', 'a') . Yii::t('common', 'Links'),
+						// ),
+						// array(
+						// 	'url'=>array('/site/page', 'view'=>'disclaimer'),
+						// 	'label'=>Html::fontAwesome('list-alt', 'a') . ($disclaimer == null ? '免责声明' : $disclaimer->getAttributeValue('title')),
+						// 	'visible'=>$disclaimer !== null,
+						// ),
 					),
 				),
 				array(
@@ -200,55 +231,7 @@ class Controller extends CController {
 					'itemOptions'=>array(
 						'class'=>'nav-item',
 					),
-				),
-				// [
-				// 	'label'=>Html::fontAwesome('link', 'a') . Yii::t('common', '金色雨林'),
-				// 	'url'=>'#',
-				// 	'itemOptions'=>[
-				// 		'class'=>'nav-item',
-				// 	],
-				// 	'linkOptions'=>[
-				// 		'target'=>'_blank',
-				// 	],
-				// ],
-				// array(
-				// 	'label'=>Html::fontAwesome('info-circle', 'a') . Yii::t('common', 'More Info') . Html::fontAwesome('angle-down', 'b'),
-				// 	'url'=>'#',
-				// 	'itemOptions'=>array(
-				// 		'class'=>'nav-item dropdown',
-				// 	),
-				// 	'linkOptions'=>array(
-				// 		'class'=>'dropdown-toggle',
-				// 		'data-toggle'=>'dropdown',
-				// 		'data-hover'=>'dropdown',
-				// 		'data-delay'=>0,
-				// 		'data-close-others'=>'false',
-				// 	),
-				// 	'items'=>array(
-				// 		array(
-				// 			'url'=>array('/faq/index'),
-				// 			'label'=>Html::fontAwesome('question-circle', 'a') . Yii::t('common', 'FAQ'),
-				// 			'visible'=>Faq::model()->countByAttributes(['status'=>Faq::STATUS_SHOW]) > 0,
-				// 		),
-				// 		array(
-				// 			'url'=>array('/site/page', 'view'=>'about'),
-				// 			'label'=>Html::fontAwesome('file-text-o', 'a') . Yii::t('common', 'About'),
-				// 		),
-				// 		array(
-				// 			'url'=>array('/site/page', 'view'=>'contact'),
-				// 			'label'=>Html::fontAwesome('pencil-square-o', 'a') . Yii::t('common', 'Contact'),
-				// 		),
-				// 		array(
-				// 			'url'=>array('/site/page', 'view'=>'links'),
-				// 			'label'=>Html::fontAwesome('link', 'a') . Yii::t('common', 'Links'),
-				// 		),
-				// 		array(
-				// 			'url'=>array('/site/page', 'view'=>'disclaimer'),
-				// 			'label'=>Html::fontAwesome('list-alt', 'a') . ($disclaimer == null ? '免责声明' : $disclaimer->getAttributeValue('title')),
-				// 			'visible'=>$disclaimer !== null,
-				// 		),
-				// 	),
-				// ),
+				),	
 			));
 		}
 		return $this->_navibar;
@@ -260,7 +243,7 @@ class Controller extends CController {
 		$applied = !$isGuest && Competition::getAppliedCount($user) > 0;
 		$navibar = array_merge($navibar, array(
 			array(
-				'label'=>'<i class="fa fa-user"></i> <i class="fa fa-angle-down"></i>',
+				'label'=>'<i class="fa fa-user"></i> 个人中心 <i class="fa fa-angle-down"></i>',
 				'url'=>'#',
 				'active'=>$this->id === 'user',
 				'itemOptions'=>array(
@@ -274,10 +257,14 @@ class Controller extends CController {
 					'data-close-others'=>'false',
 				),
 				'items'=>array(
-					// array(
-					// 	'label'=>Yii::t('common', 'Profile'),
-					// 	'url'=>array('/user/profile'),
-					// ),
+					array(
+						'label'=>Yii::t('common', 'Profile'),
+						'url'=>array('/user/profile'),
+					),
+					array(
+						'label'=>Yii::t('common', 'My Registration'),
+						'url'=>array('/user/competitions'),
+					),
 					array(
 						'label'=>Yii::t('common', 'Board'),
 						'url'=>array('/board/news/index'),
