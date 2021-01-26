@@ -51,14 +51,14 @@
                 'type'=>'raw',
                 'value'=>'$data->getEmailLink()',
               ),
-              array(
-                'headerHtmlOptions'=>array(
-                  'class'=>'header-wcaid',
-                ),
-                'name'=>'wcaid',
-                'type'=>'raw',
-                'value'=>'$data->getWcaLink($data->wcaid)',
-              ),
+              // array(
+              //   'headerHtmlOptions'=>array(
+              //     'class'=>'header-wcaid',
+              //   ),
+              //   'name'=>'wcaid',
+              //   'type'=>'raw',
+              //   'value'=>'$data->getWcaLink($data->wcaid)',
+              // ),
               array(
                 'headerHtmlOptions'=>array(
                   'class'=>'header-gender',
@@ -94,16 +94,16 @@
                 'type'=>'raw',
                 'value'=>'$data->getRegionName($data->country)',
               ),
-              // array(
-              //   'name'=>'province_id',
-              //   'type'=>'raw',
-              //   'value'=>'$data->getRegionName($data->province)',
-              // ),
-              // array(
-              //   'name'=>'city_id',
-              //   'type'=>'raw',
-              //   'value'=>'$data->getRegionName($data->city)',
-              // ),
+              array(
+                'name'=>'province_id',
+                'type'=>'raw',
+                'value'=>'$data->getRegionName($data->province)',
+              ),
+              array(
+                'name'=>'city_id',
+                'type'=>'raw',
+                'value'=>'$data->getRegionName($data->city)',
+              ),
               array(
                 'headerHtmlOptions'=>array(
                   'class'=>'header-time',
@@ -130,12 +130,21 @@
                 'type'=>'raw',
                 'value'=>'$data->getRoleName()',
               ),
+             // array(
+             //   'headerHtmlOptions'=>array(
+             //     'class'=>'header-role',
+             //   ),
+             //   'filter'=>UserIdentity::getIdentities(),
+             //   'name'=>'identity',
+             //   'type'=>'raw',
+             //   'value'=>'$data->getIdentityName()',
+             // ),
               array(
                 'headerHtmlOptions'=>array(
                   'class'=>'header-role',
                 ),
-                'filter'=>User::getIdentities(),
                 'name'=>'identity',
+                'filter'=>UserIdentity::getAllIdentities(),
                 'type'=>'raw',
                 'value'=>'$data->getIdentityName()',
               ),
